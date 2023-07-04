@@ -4,6 +4,7 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:url_launcher/url_launcher.dart";
+import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/widgets/welcome_slide_up_animation.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
@@ -49,6 +50,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Container(
       decoration: const BoxDecoration(
@@ -90,35 +92,19 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         Text(
                           loc.welcomeToValonKaupunki,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: "Mulish",
-                            fontWeight: FontWeight.w900,
-                            fontSize: 20.0,
-                            color: Colors.white,
-                            decoration: TextDecoration.none,
-                          ),
+                          style: theme.textTheme.bodyMedium,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              style: const TextStyle(
-                                fontFamily: "Mulish",
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16.0,
-                                color: Colors.white,
-                                height: 1.25,
-                                decoration: TextDecoration.none,
-                              ),
+                              style: theme.textTheme.bodySmall,
                               children: [
                                 TextSpan(text: loc.introductionTextPart1),
                                 TextSpan(
                                   text: loc.introductionTextLink,
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.blue,
-                                  ),
+                                  style: CustomThemeValues.linkTheme(theme),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       _launchWebsite(
@@ -136,22 +122,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               const EdgeInsets.only(top: 24.0, bottom: 24.0),
                           child: OutlinedButton(
                             onPressed: () => {},
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                width: 1.0,
-                                color: Color.fromARGB(0xFF, 0xFF, 0xC7, 0x00),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
+                            style: theme.outlinedButtonTheme.style,
                             child: Text(
                               loc.enterButtonText,
-                              style: const TextStyle(
-                                color: Color.fromARGB(0xFF, 0xFF, 0xC7, 0x00),
-                                height: 1.25,
-                                decoration: TextDecoration.none,
-                              ),
+                              style: theme.outlinedButtonTheme.style!.textStyle!
+                                  .resolve({}),
                             ),
                           ),
                         ),

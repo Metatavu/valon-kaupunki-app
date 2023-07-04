@@ -13,23 +13,41 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Flutter Demo",
+      title: "Valon kaupunki",
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You"ll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn"t reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontFamily: "Mulish",
+            fontWeight: FontWeight.w900,
+            fontSize: 20.0,
+            color: Colors.white,
+            decoration: TextDecoration.none,
+          ),
+          bodySmall: TextStyle(
+            fontFamily: "Mulish",
+            fontWeight: FontWeight.w400,
+            fontSize: 16.0,
+            color: Colors.white,
+            height: 1.25,
+            decoration: TextDecoration.none,
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(
+              width: 1.0,
+              color: Color.fromARGB(0xFF, 0xFF, 0xC7, 0x00),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            textStyle: const TextStyle(
+              color: Color.fromARGB(0xFF, 0xFF, 0xC7, 0x00),
+              height: 1.25,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
