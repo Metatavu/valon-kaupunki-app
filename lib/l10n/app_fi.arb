@@ -1,0 +1,22 @@
+{
+    "welcomeToValonKaupunki": "TERVETULOA TUTUSTUMAAN VALON KAUPUNKIIN!",
+    "@welcomeToValonKaupunki": {
+        "description": "Welcome screen greeting"
+    },
+    "introductionTextPart1": "Sovelluksen avulla löydät tietoa Jyväskylän pysyvistä valaistuskohteista, tapahtuman valoteoksisista sekä yhteistyökumppaneistamme. Lue lisää toiminnastamme ",
+    "@introductionTextPart1": {
+        "description": "Welcome screen text, first component before link"
+    },
+    "introductionTextLink": "Valon kaupungista nettisivuilta",
+    "@introductionTextLink": {
+        "description": "Welcome screen text, link part"
+    },
+    "introductionTextPart2": "Syksyn Valon kaupunki -tapahtuma järjestetään 28.9.-7.10.2023",
+    "@introductionTextPart2": {
+        "description": "Welcome screen text, after link"
+    },
+    "enterButtonText": "Astu sisään!",
+    "@enterButtonText": {
+        "description": "Enter button text"
+    }
+}
