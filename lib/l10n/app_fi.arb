@@ -3,6 +3,10 @@
     "@welcomeToValonKaupunki": {
         "description": "Welcome screen greeting"
     },
+    "appName": "Valon kaupunki",
+    "@appName": {
+        "description": "Application name"
+    },
     "introductionTextPart1": "Sovelluksen avulla löydät tietoa Jyväskylän pysyvistä valaistuskohteista, tapahtuman valoteoksisista sekä yhteistyökumppaneistamme. Lue lisää toiminnastamme ",
     "@introductionTextPart1": {
         "description": "Welcome screen text, first component before link"
@@ -18,5 +22,21 @@
     "enterButtonText": "Astu sisään!",
     "@enterButtonText": {
         "description": "Enter button text"
+    },
+    "homeButtonText": "Koti",
+    "@homeButtonText": {
+        "description": "Home button text"
+    },
+    "exhibitsButtonText": "Kohteet",
+    "@exhibitsButtonText": {
+        "description": "Exhibits button text"
+    },
+    "benefitsButtonText": "Edut",
+    "@benefitsButtonText": {
+        "description": "Benefits button text"
+    },
+    "partnersButtonText": "Kumppanit",
+    "@partnersButtonText": {
+        "description": "Partners button text"
     }
 }

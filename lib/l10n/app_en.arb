@@ -1,7 +1,12 @@
 {
     "welcomeToValonKaupunki": "WELCOME TO VALON KAUPUNKI!",
+    "appName": "Valon kaupunki",
     "introductionTextPart1": "With this application you may find information about Jyväskylä's permanent lighting exhibits, artworks related to the event and about our parners. Read more about Valon kaupunki from the ",
     "introductionTextLink": "webpage",
     "introductionTextPart2": "This autumn's Valon kaupunki event takes place at 28.9.-7.10.2023",
-    "enterButtonText": "Step in!"
+    "enterButtonText": "Step in!",
+    "homeButtonText": "Home",
+    "exhibitsButtonText": "Exhibits",
+    "benefitsButtonText": "Benefits",
+    "partnersButtonText": "Partners"
 }

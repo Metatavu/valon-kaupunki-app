@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:valon_kaupunki_app/screens/welcome_screen.dart";
+import "package:valon_kaupunki_app/screens/map_screen.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
 void main() {
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const WelcomeScreen(),
+      home: const MapScreen(),
     );
   }
 }
