@@ -102,6 +102,7 @@ class _MapScreenState extends State<MapScreen> {
         ),
         children: [
           TileLayer(
+            backgroundColor: Colors.black,
             urlTemplate: const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
             userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
           ),
