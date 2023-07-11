@@ -5,7 +5,15 @@ import "package:flutter_map/flutter_map.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
+
+class _MarkerData {
+  final LatLng point;
+  final String asset;
+
+  const _MarkerData(this.point, this.asset);
+}
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -18,7 +26,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
-  final List<LatLng> _markers = List.empty(growable: true);
+  final List<_MarkerData> _markers = List.empty(growable: true);
+  final StrapiClient _client = StrapiClient.instance();
 
   BottomNavigationBarItem _navBarItem(
       String label, String asset, Color color, void Function() clicked) {
@@ -35,6 +44,34 @@ class _MapScreenState extends State<MapScreen> {
         onPressed: clicked,
       ),
     );
+  }
+
+  void _addMarkers(List<_MarkerData> markers) {
+    setState(() {
+      _markers.addAll(markers);
+    });
+  }
+
+  String _getMarkerAsset(String category) {
+    return {
+          "static": Assets.staticExhibitAsset,
+          "event": Assets.eventExhibitAsset
+        }[category] ??
+        "";
+  }
+
+  void _fetchMarkers() async {
+    final attractionResp = await _client.getAttractions();
+    _addMarkers(attractionResp.data
+        .map((e) => _MarkerData(e!.attraction.location.toMarkerType(),
+            _getMarkerAsset(e.attraction.category)))
+        .toList());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMarkers();
   }
 
   @override
@@ -109,13 +146,11 @@ class _MapScreenState extends State<MapScreen> {
           MarkerLayer(
             markers: _markers
                 .map(
-                  (ll) => Marker(
-                    point: ll,
+                  (data) => Marker(
+                    point: data.point,
                     height: 80,
                     width: 80,
-                    builder: (context) =>
-                        // has to be set accordingly when markers are fetched from API
-                        SvgPicture.asset("assets/kiintea-suosikki.svg"),
+                    builder: (context) => SvgPicture.asset(data.asset),
                   ),
                 )
                 .toList(growable: false),
