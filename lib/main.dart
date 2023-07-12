@@ -1,8 +1,16 @@
 import "package:flutter/material.dart";
+import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
 import "package:valon_kaupunki_app/screens/map_screen.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterMapTileCaching.initialise();
+
+  final instance =
+      FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
+  await instance.manage.createAsync();
+
   runApp(const MyApp());
 }
 

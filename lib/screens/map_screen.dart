@@ -3,6 +3,7 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_animations/flutter_map_animations.dart";
+import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
@@ -193,6 +194,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final instance =
+        FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
+    final provider = instance.getTileProvider();
 
     return Scaffold(
       appBar: AppBar(
@@ -268,6 +272,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             ),
             children: [
               TileLayer(
+                tileProvider: provider,
                 backgroundColor: Colors.black,
                 urlTemplate:
                     const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
