@@ -20,7 +20,7 @@ class _MarkerData {
 
 enum _Section {
   home,
-  exhibits,
+  attractions,
   benefits,
   partners,
 }
@@ -43,7 +43,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   _Section _currentSection = _Section.home;
 
   // Builder functions for the list views
-  Widget? _exhibitsBuilder(BuildContext context, int index) {
+  Widget? _attractionsBuilder(BuildContext context, int index) {
     if (index >= _attractions.length) {
       return null;
     }
@@ -63,7 +63,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: SvgPicture.asset(Assets.exhibitsIconAsset),
+                child: SvgPicture.asset(Assets.attractionsIconAsset),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
@@ -99,7 +99,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Widget get _childForCurrentSection => Listing(
         builder: switch (_currentSection) {
-          _Section.exhibits => _exhibitsBuilder,
+          _Section.attractions => _attractionsBuilder,
           //_Section.benefits => _benefitsBuilder,
           //_Section.partners => _partnersBuilder,
           _ => throw Exception(
@@ -140,8 +140,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   String _getMarkerAsset(String category) {
     return {
-          "static": Assets.staticExhibitAsset,
-          "event": Assets.eventExhibitAsset
+          "static": Assets.permanentAttractionAsset,
+          "event": Assets.eventAttractionAsset
         }[category] ??
         "";
   }
@@ -149,8 +149,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   String _getCategoryLabel(String category) {
     final loc = AppLocalizations.of(context)!;
     return {
-      "static": loc.permanentExhibitText,
-      "event": loc.eventExhibitText,
+      "static": loc.permanentAttractionText,
+      "event": loc.eventAttractionText,
     }[category]!;
   }
 
@@ -227,9 +227,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   _getColorForSection(_Section.home), () {
                 _setSection(_Section.home);
               }),
-              _navBarItem(loc.exhibitsButtonText, Assets.exhibitsIconAsset,
-                  _getColorForSection(_Section.exhibits), () {
-                _setSection(_Section.exhibits);
+              _navBarItem(
+                  loc.attractionsButtonText,
+                  Assets.attractionsIconAsset,
+                  _getColorForSection(_Section.attractions), () {
+                _setSection(_Section.attractions);
               }),
               _navBarItem(loc.benefitsButtonText, Assets.benefitsIconAsset,
                   _getColorForSection(_Section.benefits), () {
