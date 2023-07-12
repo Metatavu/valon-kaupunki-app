@@ -6,8 +6,10 @@ import "package:flutter_map_animations/flutter_map_animations.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
+import "package:valon_kaupunki_app/widgets/listing.dart";
 
 class _MarkerData {
   final LatLng point;
@@ -36,7 +38,74 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
   final List<_MarkerData> _markers = List.empty(growable: true);
   final StrapiClient _client = StrapiClient.instance();
+  final List<Attraction> _attractions = List.empty(growable: true);
+
   _Section _currentSection = _Section.home;
+
+  // Builder functions for the list views
+  Widget? _exhibitsBuilder(BuildContext context, int index) {
+    if (index >= _attractions.length) {
+      return null;
+    }
+
+    final attraction = _attractions[index];
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      height: 60.0,
+      child: Padding(
+        padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.black38,
+          ),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: SvgPicture.asset(Assets.exhibitsIconAsset),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getCategoryLabel(attraction.category),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    Text(
+                      attraction.title,
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  opticalSize: 24.0,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget get _childForCurrentSection => Listing(
+        builder: switch (_currentSection) {
+          _Section.exhibits => _exhibitsBuilder,
+          //_Section.benefits => _benefitsBuilder,
+          //_Section.partners => _partnersBuilder,
+          _ => throw Exception(
+              "invalid section value to get child: $_currentSection"),
+        },
+      );
 
   static const double _animTargetZoom = 14.0;
   late final AnimatedMapController _animMapController = AnimatedMapController(
@@ -77,12 +146,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         "";
   }
 
+  String _getCategoryLabel(String category) {
+    final loc = AppLocalizations.of(context)!;
+    return {
+      "static": loc.permanentExhibitText,
+      "event": loc.eventExhibitText,
+    }[category]!;
+  }
+
   void _fetchMarkers() async {
     final attractionResp = await _client.getAttractions();
     _addMarkers(attractionResp.data
         .map((e) => _MarkerData(e!.attraction.location.toMarkerType(),
             _getMarkerAsset(e.attraction.category)))
         .toList());
+
+    _attractions.addAll(attractionResp.data.map((e) => e!.attraction));
   }
 
   void _setSection(_Section section) {
@@ -211,6 +290,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     // Important empty container; flutter won't render the blur otherwise.
                     child: Container(
                       color: Colors.transparent,
+                      child: _childForCurrentSection,
                     ),
                   ),
                 )

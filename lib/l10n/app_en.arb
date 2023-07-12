@@ -8,5 +8,7 @@
     "homeButtonText": "Home",
     "exhibitsButtonText": "Exhibits",
     "benefitsButtonText": "Benefits",
-    "partnersButtonText": "Partners"
+    "partnersButtonText": "Partners",
+    "permanentExhibitText": "Permanent exhibit",
+    "eventExhibitText": "Event exhibit"
 }

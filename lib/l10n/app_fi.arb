@@ -38,5 +38,13 @@
     "partnersButtonText": "Kumppanit",
     "@partnersButtonText": {
         "description": "Partners button text"
+    },
+    "permanentExhibitText": "Kiinteä kohde",
+    "@permanentExhibitText": {
+        "description": "Permanent exhibit label"
+    },
+    "eventExhibitText": "Tapahtumakohde",
+    "@eventExhibitText": {
+        "description": "Event exhibit label"
     }
 }
