@@ -15,6 +15,13 @@ class _MarkerData {
   const _MarkerData(this.point, this.asset);
 }
 
+enum _Section {
+  home,
+  exhibits,
+  benefits,
+  partners,
+}
+
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
 
@@ -28,6 +35,7 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   final List<_MarkerData> _markers = List.empty(growable: true);
   final StrapiClient _client = StrapiClient.instance();
+  _Section _currentSection = _Section.home;
 
   BottomNavigationBarItem _navBarItem(
       String label, String asset, Color color, void Function() clicked) {
@@ -66,6 +74,16 @@ class _MapScreenState extends State<MapScreen> {
         .map((e) => _MarkerData(e!.attraction.location.toMarkerType(),
             _getMarkerAsset(e.attraction.category)))
         .toList());
+  }
+
+  void _setSection(_Section section) {
+    setState(() {
+      _currentSection = section;
+    });
+  }
+
+  Color _getColorForSection(_Section section) {
+    return section == _currentSection ? Colors.orange : Colors.white;
   }
 
   @override
@@ -108,54 +126,83 @@ class _MapScreenState extends State<MapScreen> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
           child: BottomNavigationBar(
+            enableFeedback: false,
             unselectedItemColor: Colors.white,
             selectedItemColor: Colors.orange,
             unselectedLabelStyle: const TextStyle(color: Colors.white),
             selectedLabelStyle: const TextStyle(color: Colors.orange),
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.transparent.withAlpha(0x7F),
+            currentIndex: _currentSection.index,
             items: [
               _navBarItem(loc.homeButtonText, Assets.homeIconAsset,
-                  Colors.orange, () {}),
+                  _getColorForSection(_Section.home), () {
+                _setSection(_Section.home);
+              }),
               _navBarItem(loc.exhibitsButtonText, Assets.exhibitsIconAsset,
-                  Colors.white, () {}),
+                  _getColorForSection(_Section.exhibits), () {
+                _setSection(_Section.exhibits);
+              }),
               _navBarItem(loc.benefitsButtonText, Assets.benefitsIconAsset,
-                  Colors.white, () {}),
+                  _getColorForSection(_Section.benefits), () {
+                _setSection(_Section.benefits);
+              }),
               _navBarItem(loc.partnersButtonText, Assets.partnersIconAsset,
-                  Colors.white, () {}),
+                  _getColorForSection(_Section.partners), () {
+                _setSection(_Section.partners);
+              }),
             ],
           ),
         ),
       ),
       extendBodyBehindAppBar: true,
       extendBody: true,
-      body: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          center: const LatLng(62.24147, 25.72088),
-          zoom: 12,
-          maxZoom: 18,
-          minZoom: 9,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            backgroundColor: Colors.black,
-            urlTemplate: const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
-            userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              center: const LatLng(62.24147, 25.72088),
+              zoom: 12,
+              maxZoom: 18,
+              minZoom: 9,
+            ),
+            children: [
+              TileLayer(
+                backgroundColor: Colors.black,
+                urlTemplate:
+                    const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
+                userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
+              ),
+              MarkerLayer(
+                markers: _markers
+                    .map(
+                      (data) => Marker(
+                        point: data.point,
+                        height: 80,
+                        width: 80,
+                        builder: (context) => GestureDetector(
+                          child: SvgPicture.asset(data.asset),
+                          onTap: () => _mapController.move(data.point, 14.0),
+                        ),
+                      ),
+                    )
+                    .toList(growable: false),
+                rotate: true,
+              ),
+            ],
           ),
-          MarkerLayer(
-            markers: _markers
-                .map(
-                  (data) => Marker(
-                    point: data.point,
-                    height: 80,
-                    width: 80,
-                    builder: (context) => SvgPicture.asset(data.asset),
+          _currentSection != _Section.home
+              ? ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    // Important empty container; flutter won't render the blur otherwise.
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
                   ),
                 )
-                .toList(growable: false),
-            rotate: true,
-          ),
+              : const SizedBox.shrink(),
         ],
       ),
     );

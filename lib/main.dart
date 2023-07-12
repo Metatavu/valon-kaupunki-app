@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Valon kaupunki",
       theme: ThemeData(
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
             fontFamily: "Mulish",
