@@ -1,6 +1,5 @@
 import "dart:convert";
 
-import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:http/http.dart" as http;
 

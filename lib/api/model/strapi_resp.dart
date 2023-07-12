@@ -1,6 +1,4 @@
 // Has some of the common properties of all successful responses.
-import "dart:convert";
-
 import "package:json_annotation/json_annotation.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/model/benefit.dart";
