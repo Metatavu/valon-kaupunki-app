@@ -22,7 +22,16 @@ enum _Section {
   home,
   attractions,
   benefits,
-  partners,
+  partners;
+
+  String localizedTitle(AppLocalizations loc) {
+    return switch (this) {
+      home => loc.appName,
+      attractions => loc.attractionsButtonText,
+      benefits => loc.benefitsButtonText,
+      partners => loc.partnersButtonText,
+    };
+  }
 }
 
 class MapScreen extends StatefulWidget {
@@ -39,8 +48,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<_MarkerData> _markers = List.empty(growable: true);
   final StrapiClient _client = StrapiClient.instance();
   final List<Attraction> _attractions = List.empty(growable: true);
+  late final AppLocalizations _loc = AppLocalizations.of(context)!;
 
   _Section _currentSection = _Section.home;
+  String get _title => _currentSection.localizedTitle(_loc);
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -147,10 +158,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   String _getCategoryLabel(String category) {
-    final loc = AppLocalizations.of(context)!;
     return {
-      "static": loc.permanentAttractionText,
-      "event": loc.eventAttractionText,
+      "static": _loc.permanentAttractionText,
+      "event": _loc.eventAttractionText,
     }[category]!;
   }
 
@@ -183,7 +193,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -191,7 +200,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         backgroundColor: Colors.transparent.withAlpha(0x7F),
         centerTitle: true,
         title: Text(
-          loc.appName,
+          _title,
           style: theme.textTheme.bodyMedium,
         ),
         leading: IconButton(
@@ -223,21 +232,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             backgroundColor: Colors.transparent.withAlpha(0x7F),
             currentIndex: _currentSection.index,
             items: [
-              _navBarItem(loc.homeButtonText, Assets.homeIconAsset,
+              _navBarItem(_loc.homeButtonText, Assets.homeIconAsset,
                   _getColorForSection(_Section.home), () {
                 _setSection(_Section.home);
               }),
               _navBarItem(
-                  loc.attractionsButtonText,
+                  _loc.attractionsButtonText,
                   Assets.attractionsIconAsset,
                   _getColorForSection(_Section.attractions), () {
                 _setSection(_Section.attractions);
               }),
-              _navBarItem(loc.benefitsButtonText, Assets.benefitsIconAsset,
+              _navBarItem(_loc.benefitsButtonText, Assets.benefitsIconAsset,
                   _getColorForSection(_Section.benefits), () {
                 _setSection(_Section.benefits);
               }),
-              _navBarItem(loc.partnersButtonText, Assets.partnersIconAsset,
+              _navBarItem(_loc.partnersButtonText, Assets.partnersIconAsset,
                   _getColorForSection(_Section.partners), () {
                 _setSection(_Section.partners);
               }),
