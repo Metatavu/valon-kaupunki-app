@@ -2,6 +2,7 @@ import "dart:ui";
 
 import "package:flutter/material.dart";
 import "package:flutter_map/flutter_map.dart";
+import "package:flutter_map_animations/flutter_map_animations.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
@@ -31,11 +32,19 @@ class MapScreen extends StatefulWidget {
   }
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
   final List<_MarkerData> _markers = List.empty(growable: true);
   final StrapiClient _client = StrapiClient.instance();
   _Section _currentSection = _Section.home;
+
+  static const double _animTargetZoom = 14.0;
+  late final AnimatedMapController _animMapController = AnimatedMapController(
+    vsync: this,
+    duration: const Duration(milliseconds: 800),
+    curve: Curves.easeInOut,
+    mapController: _mapController,
+  );
 
   BottomNavigationBarItem _navBarItem(
       String label, String asset, Color color, void Function() clicked) {
@@ -160,7 +169,7 @@ class _MapScreenState extends State<MapScreen> {
       body: Stack(
         children: [
           FlutterMap(
-            mapController: _mapController,
+            mapController: _animMapController.mapController,
             options: MapOptions(
               center: const LatLng(62.24147, 25.72088),
               zoom: 12,
@@ -183,7 +192,10 @@ class _MapScreenState extends State<MapScreen> {
                         width: 80,
                         builder: (context) => GestureDetector(
                           child: SvgPicture.asset(data.asset),
-                          onTap: () => _mapController.move(data.point, 14.0),
+                          onTap: () => _animMapController.animateTo(
+                            dest: data.point,
+                            zoom: _animTargetZoom,
+                          ),
                         ),
                       ),
                     )
