@@ -66,5 +66,9 @@
     "otherText": "Muu",
     "@otherText": {
         "description": "Other text"
+    },
+    "loadingDataFailed": "Tapahtumakohteiden tietojen lataus epäonnistui",
+    "@loadingDataFailed": {
+        "description": "Loading data fail message"
     }
 }

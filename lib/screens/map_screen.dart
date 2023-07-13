@@ -1,3 +1,4 @@
+import "dart:io";
 import "dart:ui";
 
 import "package:flutter/material.dart";
@@ -5,6 +6,7 @@ import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_animations/flutter_map_animations.dart";
 import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:fluttertoast/fluttertoast.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
@@ -200,28 +202,35 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _fetchData() async {
-    final attractionResp = await _client.getAttractions();
-    final markers = List<_MarkerData>.empty(growable: true);
+    try {
+      final attractionResp = await _client.getAttractions();
+      final markers = List<_MarkerData>.empty(growable: true);
 
-    markers.addAll(attractionResp.data
-        .map((e) => _MarkerData(e.attraction.location.toMarkerType(),
-            _getAttractionMarkerAsset(e.attraction.category)))
-        .toList());
+      markers.addAll(attractionResp.data
+          .map((e) => _MarkerData(e.attraction.location.toMarkerType(),
+              _getAttractionMarkerAsset(e.attraction.category)))
+          .toList());
 
-    _attractions.clear();
-    _attractions.addAll(attractionResp.data.map((e) => e.attraction));
+      _attractions.clear();
+      _attractions.addAll(attractionResp.data.map((e) => e.attraction));
 
-    final partnerResp = await _client.getPartners();
-    markers.addAll(partnerResp.data
-        .map((e) => _MarkerData(e.partner.location.toMarkerType(),
-            _getPartnerMarkerAsset(e.partner.category)))
-        .toList());
+      final partnerResp = await _client.getPartners();
+      markers.addAll(partnerResp.data
+          .map((e) => _MarkerData(e.partner.location.toMarkerType(),
+              _getPartnerMarkerAsset(e.partner.category)))
+          .toList());
 
-    _partners.clear();
-    _partners.addAll(partnerResp.data.map((e) => e.partner));
+      _partners.clear();
+      _partners.addAll(partnerResp.data.map((e) => e.partner));
 
-    _markers.clear();
-    _addMarkers(markers);
+      _markers.clear();
+      _addMarkers(markers);
+    } on Exception {
+      await Fluttertoast.showToast(
+        msg: _loc.loadingDataFailed,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    }
   }
 
   void _setSection(_Section section) {

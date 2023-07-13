@@ -15,5 +15,6 @@
     "cafeText": "Cafe",
     "barText": "Bar",
     "shopText": "Shop",
-    "otherText": "Other"
+    "otherText": "Other",
+    "loadingDataFailed": "Loading event attraction data failed"
 }
