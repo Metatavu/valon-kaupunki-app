@@ -199,7 +199,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }[category]!;
   }
 
-  void _fetchMarkers() async {
+  void _fetchData() async {
     final attractionResp = await _client.getAttractions();
     final markers = List<_MarkerData>.empty(growable: true);
 
@@ -208,6 +208,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             _getAttractionMarkerAsset(e.attraction.category)))
         .toList());
 
+    _attractions.clear();
     _attractions.addAll(attractionResp.data.map((e) => e.attraction));
 
     final partnerResp = await _client.getPartners();
@@ -216,7 +217,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             _getPartnerMarkerAsset(e.partner.category)))
         .toList());
 
+    _partners.clear();
     _partners.addAll(partnerResp.data.map((e) => e.partner));
+
+    _markers.clear();
     _addMarkers(markers);
   }
 
@@ -233,7 +237,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _fetchMarkers();
+    _fetchData();
   }
 
   @override
@@ -243,123 +247,131 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
     final provider = instance.getTileProvider();
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 60.0,
-        backgroundColor: Colors.transparent.withAlpha(0x7F),
-        centerTitle: true,
-        title: Text(
-          _title,
-          style: theme.textTheme.bodyMedium,
+    return RefreshIndicator(
+      backgroundColor: const Color.fromARGB(0x7F, 0x1B, 0x26, 0x37),
+      color: Colors.white,
+      onRefresh: () async {
+        _fetchData();
+        await Future.delayed(const Duration(seconds: 1));
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 60.0,
+          backgroundColor: Colors.transparent.withAlpha(0x7F),
+          centerTitle: true,
+          title: Text(
+            _title,
+            style: theme.textTheme.bodyMedium,
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            iconSize: 24.0,
+            color: Colors.white,
+            onPressed: () => {},
+          ),
+          flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              // Important empty container; flutter won't render the blur otherwise.
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          iconSize: 24.0,
-          color: Colors.white,
-          onPressed: () => {},
-        ),
-        flexibleSpace: ClipRect(
+        bottomNavigationBar: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            // Important empty container; flutter won't render the blur otherwise.
-            child: Container(
-              color: Colors.transparent,
+            child: BottomNavigationBar(
+              enableFeedback: false,
+              unselectedItemColor: Colors.white,
+              selectedItemColor: Colors.orange,
+              unselectedLabelStyle: const TextStyle(color: Colors.white),
+              selectedLabelStyle: const TextStyle(color: Colors.orange),
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.transparent.withAlpha(0x7F),
+              currentIndex: _currentSection.index,
+              items: [
+                _navBarItem(_loc.homeButtonText, Assets.homeIconAsset,
+                    _getColorForSection(_Section.home), () {
+                  _setSection(_Section.home);
+                }),
+                _navBarItem(
+                    _loc.attractionsButtonText,
+                    Assets.attractionsIconAsset,
+                    _getColorForSection(_Section.attractions), () {
+                  _setSection(_Section.attractions);
+                }),
+                _navBarItem(_loc.benefitsButtonText, Assets.benefitsIconAsset,
+                    _getColorForSection(_Section.benefits), () {
+                  _setSection(_Section.benefits);
+                }),
+                _navBarItem(_loc.partnersButtonText, Assets.partnersIconAsset,
+                    _getColorForSection(_Section.partners), () {
+                  _setSection(_Section.partners);
+                }),
+              ],
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: BottomNavigationBar(
-            enableFeedback: false,
-            unselectedItemColor: Colors.white,
-            selectedItemColor: Colors.orange,
-            unselectedLabelStyle: const TextStyle(color: Colors.white),
-            selectedLabelStyle: const TextStyle(color: Colors.orange),
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.transparent.withAlpha(0x7F),
-            currentIndex: _currentSection.index,
-            items: [
-              _navBarItem(_loc.homeButtonText, Assets.homeIconAsset,
-                  _getColorForSection(_Section.home), () {
-                _setSection(_Section.home);
-              }),
-              _navBarItem(
-                  _loc.attractionsButtonText,
-                  Assets.attractionsIconAsset,
-                  _getColorForSection(_Section.attractions), () {
-                _setSection(_Section.attractions);
-              }),
-              _navBarItem(_loc.benefitsButtonText, Assets.benefitsIconAsset,
-                  _getColorForSection(_Section.benefits), () {
-                _setSection(_Section.benefits);
-              }),
-              _navBarItem(_loc.partnersButtonText, Assets.partnersIconAsset,
-                  _getColorForSection(_Section.partners), () {
-                _setSection(_Section.partners);
-              }),
-            ],
-          ),
-        ),
-      ),
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      body: Stack(
-        children: [
-          FlutterMap(
-            mapController: _animMapController.mapController,
-            options: MapOptions(
-              center: const LatLng(62.24147, 25.72088),
-              zoom: 12,
-              maxZoom: 18,
-              minZoom: 9,
-            ),
-            children: [
-              TileLayer(
-                tileProvider: provider,
-                backgroundColor: Colors.black,
-                urlTemplate:
-                    const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
-                userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+        body: Stack(
+          children: [
+            FlutterMap(
+              mapController: _animMapController.mapController,
+              options: MapOptions(
+                center: const LatLng(62.24147, 25.72088),
+                zoom: 12,
+                maxZoom: 18,
+                minZoom: 9,
               ),
-              MarkerLayer(
-                markers: _markers
-                    .map(
-                      (data) => Marker(
-                        point: data.point,
-                        height: 80,
-                        width: 80,
-                        builder: (context) => GestureDetector(
-                          child: SvgPicture.asset(data.asset),
-                          onTap: () => {
-                            if (_mapController.center != data.point)
-                              _animMapController.animateTo(
-                                dest: data.point,
-                                zoom: _animTargetZoom,
-                              )
-                          },
+              children: [
+                TileLayer(
+                  tileProvider: provider,
+                  backgroundColor: Colors.black,
+                  urlTemplate:
+                      const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
+                  userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
+                ),
+                MarkerLayer(
+                  markers: _markers
+                      .map(
+                        (data) => Marker(
+                          point: data.point,
+                          height: 80,
+                          width: 80,
+                          builder: (context) => GestureDetector(
+                            child: SvgPicture.asset(data.asset),
+                            onTap: () => {
+                              if (_mapController.center != data.point)
+                                _animMapController.animateTo(
+                                  dest: data.point,
+                                  zoom: _animTargetZoom,
+                                )
+                            },
+                          ),
                         ),
+                      )
+                      .toList(growable: false),
+                  rotate: true,
+                ),
+              ],
+            ),
+            _currentSection != _Section.home
+                ? ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                      // Important empty container; flutter won't render the blur otherwise.
+                      child: Container(
+                        color: Colors.transparent,
+                        child: _childForCurrentSection,
                       ),
-                    )
-                    .toList(growable: false),
-                rotate: true,
-              ),
-            ],
-          ),
-          _currentSection != _Section.home
-              ? ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    // Important empty container; flutter won't render the blur otherwise.
-                    child: Container(
-                      color: Colors.transparent,
-                      child: _childForCurrentSection,
                     ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
       ),
     );
   }
