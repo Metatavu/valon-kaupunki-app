@@ -16,6 +16,9 @@ class Location {
   Location(this.coordinates);
 
   LatLng toMarkerType() => LatLng(lat, lng);
+
+  @override
+  String toString() => toMarkerType().toString();
 }
 
 @JsonSerializable()

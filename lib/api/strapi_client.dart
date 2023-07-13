@@ -5,11 +5,13 @@ import "package:http/http.dart" as http;
 
 enum StrapiContentType {
   attraction,
-  benefit;
+  benefit,
+  partner;
 
   String path() => switch (this) {
         attraction => "attractions",
         benefit => "benefits",
+        partner => "partners",
       };
 
   dynamic fromJson(String jsonData) {
@@ -18,6 +20,7 @@ enum StrapiContentType {
     return switch (this) {
       attraction => StrapiAttractionResponse.fromJson(json),
       benefit => StrapiBenefitResponse.fromJson(json),
+      partner => StrapiPartnerResponse.fromJson(json),
     };
   }
 }
@@ -62,6 +65,10 @@ class StrapiClient {
   Future<StrapiBenefitResponse> getBenefits() async =>
       _getContentType<StrapiBenefitResponse>(
           StrapiContentType.benefit, {"populate": "image,partner"});
+
+  Future<StrapiPartnerResponse> getPartners() async =>
+      _getContentType<StrapiPartnerResponse>(
+          StrapiContentType.partner, {"populate": "image,benefits"});
 }
 
 class ApiException implements Exception {

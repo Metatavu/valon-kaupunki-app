@@ -52,11 +52,41 @@ StrapiBenefitResponse _$StrapiBenefitResponseFromJson(
       (json['data'] as List<dynamic>)
           .map((e) => StrapiBenefit.fromJson(e as Map<String, dynamic>))
           .toList(),
-      StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+      json['meta'] == null
+          ? null
+          : StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$StrapiBenefitResponseToJson(
         StrapiBenefitResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+StrapiPartner _$StrapiPartnerFromJson(Map<String, dynamic> json) =>
+    StrapiPartner(
+      Partner.fromJson(json['attributes'] as Map<String, dynamic>),
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$StrapiPartnerToJson(StrapiPartner instance) =>
+    <String, dynamic>{
+      'attributes': instance.partner,
+      'id': instance.id,
+    };
+
+StrapiPartnerResponse _$StrapiPartnerResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiPartnerResponse(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiPartner.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiPartnerResponseToJson(
+        StrapiPartnerResponse instance) =>
     <String, dynamic>{
       'data': instance.data,
       'meta': instance.meta,
@@ -71,6 +101,17 @@ Map<String, dynamic> _$StrapiImageToJson(StrapiImage instance) =>
     <String, dynamic>{
       'attributes': instance.image,
       'id': instance.id,
+    };
+
+StrapiImageResponse _$StrapiImageResponseFromJson(Map<String, dynamic> json) =>
+    StrapiImageResponse(
+      StrapiImage.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiImageResponseToJson(
+        StrapiImageResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
     };
 
 StrapiResponseMeta _$StrapiResponseMetaFromJson(Map<String, dynamic> json) =>

@@ -150,10 +150,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
-  String _getMarkerAsset(String category) {
+  String _getAttractionMarkerAsset(String category) {
     return {
           "static": Assets.permanentAttractionAsset,
           "event": Assets.eventAttractionAsset
+        }[category] ??
+        "";
+  }
+
+  String _getPartnerMarkerAsset(String category) {
+    return {
+          "restaurant": Assets.restaurantPartnerAsset,
+          "cafe": Assets.cafePartnerAsset,
+          "bar": Assets.barPartnerAsset,
+          "shop": Assets.shopPartnerAsset,
+          "other": Assets.genericPartnerAsset,
         }[category] ??
         "";
   }
@@ -167,12 +178,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   void _fetchMarkers() async {
     final attractionResp = await _client.getAttractions();
-    _addMarkers(attractionResp.data
+    final markers = List<_MarkerData>.empty(growable: true);
+
+    markers.addAll(attractionResp.data
         .map((e) => _MarkerData(e.attraction.location.toMarkerType(),
-            _getMarkerAsset(e.attraction.category)))
+            _getAttractionMarkerAsset(e.attraction.category)))
         .toList());
 
     _attractions.addAll(attractionResp.data.map((e) => e.attraction));
+
+    final partnerResp = await _client.getPartners();
+    markers.addAll(partnerResp.data
+        .map((e) => _MarkerData(e.partner.location.toMarkerType(),
+            _getPartnerMarkerAsset(e.partner.category)))
+        .toList());
+
+    _addMarkers(markers);
   }
 
   void _setSection(_Section section) {

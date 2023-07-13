@@ -3,6 +3,7 @@ import "package:json_annotation/json_annotation.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/image.dart";
+import "package:valon_kaupunki_app/api/model/partner.dart";
 
 part "strapi_resp.g.dart";
 
@@ -35,7 +36,7 @@ class StrapiBenefit {
   final Benefit benefit;
   final int id;
 
-  StrapiBenefit(this.benefit, this.id);
+  const StrapiBenefit(this.benefit, this.id);
 
   factory StrapiBenefit.fromJson(Map<String, dynamic> json) =>
       _$StrapiBenefitFromJson(json);
@@ -44,12 +45,35 @@ class StrapiBenefit {
 @JsonSerializable()
 class StrapiBenefitResponse {
   final List<StrapiBenefit> data;
-  final StrapiResponseMeta meta;
+  final StrapiResponseMeta? meta;
 
   const StrapiBenefitResponse(this.data, this.meta);
 
   factory StrapiBenefitResponse.fromJson(Map<String, dynamic> json) =>
       _$StrapiBenefitResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiPartner {
+  @JsonKey(name: "attributes")
+  final Partner partner;
+  final int id;
+
+  const StrapiPartner(this.partner, this.id);
+
+  factory StrapiPartner.fromJson(Map<String, dynamic> json) =>
+      _$StrapiPartnerFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiPartnerResponse {
+  final List<StrapiPartner> data;
+  final StrapiResponseMeta meta;
+
+  const StrapiPartnerResponse(this.data, this.meta);
+
+  factory StrapiPartnerResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiPartnerResponseFromJson(json);
 }
 
 @JsonSerializable()
@@ -62,6 +86,16 @@ class StrapiImage {
 
   factory StrapiImage.fromJson(Map<String, dynamic> json) =>
       _$StrapiImageFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiImageResponse {
+  final StrapiImage data;
+
+  const StrapiImageResponse(this.data);
+
+  factory StrapiImageResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiImageResponseFromJson(json);
 }
 
 // The meta object in the response.
