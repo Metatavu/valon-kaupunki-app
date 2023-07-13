@@ -18,6 +18,22 @@ Map<String, dynamic> _$StrapiAttractionToJson(StrapiAttraction instance) =>
       'id': instance.id,
     };
 
+StrapiAttractionResponse _$StrapiAttractionResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiAttractionResponse(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiAttraction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiAttractionResponseToJson(
+        StrapiAttractionResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
 StrapiBenefit _$StrapiBenefitFromJson(Map<String, dynamic> json) =>
     StrapiBenefit(
       Benefit.fromJson(json['attributes'] as Map<String, dynamic>),
@@ -28,6 +44,22 @@ Map<String, dynamic> _$StrapiBenefitToJson(StrapiBenefit instance) =>
     <String, dynamic>{
       'attributes': instance.benefit,
       'id': instance.id,
+    };
+
+StrapiBenefitResponse _$StrapiBenefitResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiBenefitResponse(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiBenefit.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiBenefitResponseToJson(
+        StrapiBenefitResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
     };
 
 StrapiImage _$StrapiImageFromJson(Map<String, dynamic> json) => StrapiImage(

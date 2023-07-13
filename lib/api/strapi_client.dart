@@ -3,6 +3,25 @@ import "dart:convert";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:http/http.dart" as http;
 
+enum StrapiContentType {
+  attraction,
+  benefit;
+
+  String path() => switch (this) {
+        attraction => "attractions",
+        benefit => "benefits",
+      };
+
+  dynamic fromJson(String jsonData) {
+    final json = jsonDecode(jsonData);
+
+    return switch (this) {
+      attraction => StrapiAttractionResponse.fromJson(json),
+      benefit => StrapiBenefitResponse.fromJson(json),
+    };
+  }
+}
+
 class StrapiClient {
   static const String _accessToken =
       String.fromEnvironment("STRAPI_ACCESS_TOKEN");
@@ -18,30 +37,31 @@ class StrapiClient {
     return _instance!;
   }
 
-  Future<StrapiResponse<T>> _getContentType<T>(String ctName,
+  Future<T> _getContentType<T>(StrapiContentType ct,
       [Map<String, String>? queryParams]) async {
     final resp = await http.get(
         Uri(
           scheme: "https",
           host: _strapiUrl,
-          pathSegments: [_strapiBase, ctName],
+          pathSegments: [_strapiBase, ct.path()],
           queryParameters: queryParams,
         ),
         headers: {"Authorization": "Bearer $_accessToken"});
 
     if (resp.statusCode != 200) {
-      throw ApiException("failed to retrieve $ctName list");
+      throw ApiException("failed to retrieve ${ct.path()} list");
     }
 
-    return StrapiResponse.fromJson(jsonDecode(resp.body));
+    return ct.fromJson(resp.body);
   }
 
-  Future<StrapiResponse<StrapiAttraction>> getAttractions() async =>
-      _getContentType<StrapiAttraction>(
-          "attractions", {"populate": "image,sound"});
+  Future<StrapiAttractionResponse> getAttractions() async =>
+      _getContentType<StrapiAttractionResponse>(
+          StrapiContentType.attraction, {"populate": "image,sound"});
 
-  Future<StrapiResponse<StrapiBenefit>> getBenefits() async =>
-      _getContentType<StrapiBenefit>("benefits", {"populate": "image,partner"});
+  Future<StrapiBenefitResponse> getBenefits() async =>
+      _getContentType<StrapiBenefitResponse>(
+          StrapiContentType.benefit, {"populate": "image,partner"});
 }
 
 class ApiException implements Exception {

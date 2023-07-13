@@ -6,21 +6,6 @@ import "package:valon_kaupunki_app/api/model/image.dart";
 
 part "strapi_resp.g.dart";
 
-// implemented manually because of generics
-class StrapiResponse<T> {
-  final List<T?> data;
-  final StrapiResponseMeta meta;
-
-  StrapiResponse(this.data, this.meta);
-
-  factory StrapiResponse.fromJson(Map<String, dynamic> json) => StrapiResponse(
-        ((json["data"]) as List<dynamic>)
-            .map((e) => StrapiAttraction.fromJson(e))
-            .toList() as List<T?>,
-        StrapiResponseMeta.fromJson(json["meta"]),
-      );
-}
-
 @JsonSerializable()
 class StrapiAttraction {
   @JsonKey(name: "attributes")
@@ -34,6 +19,17 @@ class StrapiAttraction {
 }
 
 @JsonSerializable()
+class StrapiAttractionResponse {
+  final List<StrapiAttraction> data;
+  final StrapiResponseMeta meta;
+
+  const StrapiAttractionResponse(this.data, this.meta);
+
+  factory StrapiAttractionResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiAttractionResponseFromJson(json);
+}
+
+@JsonSerializable()
 class StrapiBenefit {
   @JsonKey(name: "attributes")
   final Benefit benefit;
@@ -43,6 +39,17 @@ class StrapiBenefit {
 
   factory StrapiBenefit.fromJson(Map<String, dynamic> json) =>
       _$StrapiBenefitFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiBenefitResponse {
+  final List<StrapiBenefit> data;
+  final StrapiResponseMeta meta;
+
+  const StrapiBenefitResponse(this.data, this.meta);
+
+  factory StrapiBenefitResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiBenefitResponseFromJson(json);
 }
 
 @JsonSerializable()

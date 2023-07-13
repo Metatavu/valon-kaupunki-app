@@ -168,11 +168,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void _fetchMarkers() async {
     final attractionResp = await _client.getAttractions();
     _addMarkers(attractionResp.data
-        .map((e) => _MarkerData(e!.attraction.location.toMarkerType(),
+        .map((e) => _MarkerData(e.attraction.location.toMarkerType(),
             _getMarkerAsset(e.attraction.category)))
         .toList());
 
-    _attractions.addAll(attractionResp.data.map((e) => e!.attraction));
+    _attractions.addAll(attractionResp.data.map((e) => e.attraction));
   }
 
   void _setSection(_Section section) {
