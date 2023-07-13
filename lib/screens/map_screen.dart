@@ -11,6 +11,7 @@ import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
+import "package:valon_kaupunki_app/widgets/small_list_card.dart";
 
 class _MarkerData {
   final LatLng point;
@@ -61,49 +62,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     final attraction = _attractions[index];
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      height: 60.0,
-      child: Padding(
-        padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.black38,
-          ),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: SvgPicture.asset(Assets.attractionsIconAsset),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getCategoryLabel(attraction.category),
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    Text(
-                      attraction.title,
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.arrow_forward,
-                  opticalSize: 24.0,
-                  color: Colors.white,
-                ),
-              )
-            ],
-          ),
+    return SmallListCard(
+      index: index,
+      leftIcon: SvgPicture.asset(Assets.attractionsIconAsset),
+      title: _getCategoryLabel(attraction.category),
+      text: attraction.title,
+      proceedIcon: IconButton(
+        onPressed: () {},
+        icon: const Icon(
+          Icons.arrow_forward,
+          opticalSize: 24.0,
+          color: Colors.white,
         ),
       ),
     );
