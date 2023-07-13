@@ -46,5 +46,25 @@
     "eventAttractionText": "Tapahtumakohde",
     "@eventAttractionText": {
         "description": "Event attraction label"
+    },
+    "restaurantText": "Ravintola",
+    "@restaurantText": {
+        "description": "Restaurant text"
+    },
+    "cafeText": "Kahvila",
+    "@cafeText": {
+        "description": "Cafe text"
+    },
+    "barText": "Baari",
+    "@barText": {
+        "description": "Bar text"
+    },
+    "shopText": "Kauppa",
+    "@shopText": {
+        "description": "Shop text"
+    },
+    "otherText": "Muu",
+    "@otherText": {
+        "description": "Other text"
     }
 }

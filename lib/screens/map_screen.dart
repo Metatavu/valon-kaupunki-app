@@ -8,6 +8,7 @@ import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
+import "package:valon_kaupunki_app/api/model/partner.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
@@ -48,8 +49,11 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
   final List<_MarkerData> _markers = List.empty(growable: true);
+
   final StrapiClient _client = StrapiClient.instance();
   final List<Attraction> _attractions = List.empty(growable: true);
+
+  final List<Partner> _partners = List.empty(growable: true);
   late final AppLocalizations _loc = AppLocalizations.of(context)!;
 
   _Section _currentSection = _Section.home;
@@ -65,8 +69,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return SmallListCard(
       index: index,
       leftIcon: SvgPicture.asset(Assets.attractionsIconAsset),
-      title: _getCategoryLabel(attraction.category),
+      title: _getAttractionCategoryLabel(attraction.category),
       text: attraction.title,
+      proceedIcon: IconButton(
+        onPressed: () {},
+        icon: const Icon(
+          Icons.arrow_forward,
+          opticalSize: 24.0,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget? _partnersBuilder(BuildContext context, int index) {
+    if (index >= _partners.length) {
+      return null;
+    }
+
+    final partner = _partners[index];
+    return SmallListCard(
+      index: index,
+      leftIcon: SvgPicture.asset(Assets.partnersIconAsset),
+      title: _getPartnerCategoryLabel(partner.category),
+      text: partner.name,
       proceedIcon: IconButton(
         onPressed: () {},
         icon: const Icon(
@@ -82,7 +108,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         builder: switch (_currentSection) {
           _Section.attractions => _attractionsBuilder,
           //_Section.benefits => _benefitsBuilder,
-          //_Section.partners => _partnersBuilder,
+          _Section.partners => _partnersBuilder,
           _ => throw Exception(
               "invalid section value to get child: $_currentSection"),
         },
@@ -138,10 +164,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         "";
   }
 
-  String _getCategoryLabel(String category) {
+  String _getAttractionCategoryLabel(String category) {
     return {
       "static": _loc.permanentAttractionText,
       "event": _loc.eventAttractionText,
+    }[category]!;
+  }
+
+  String _getPartnerCategoryLabel(String category) {
+    return {
+      "restaurant": _loc.restaurantText,
+      "cafe": _loc.cafeText,
+      "bar": _loc.barText,
+      "shop": _loc.shopText,
+      "other": _loc.otherText,
     }[category]!;
   }
 
@@ -162,6 +198,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             _getPartnerMarkerAsset(e.partner.category)))
         .toList());
 
+    _partners.addAll(partnerResp.data.map((e) => e.partner));
     _addMarkers(markers);
   }
 

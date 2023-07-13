@@ -10,5 +10,10 @@
     "benefitsButtonText": "Benefits",
     "partnersButtonText": "Partners",
     "permanentAttractionText": "Permanent attraction",
-    "eventAttractionText": "Event attraction"
+    "eventAttractionText": "Event attraction",
+    "restaurantText": "Restaurant",
+    "cafeText": "Cafe",
+    "barText": "Bar",
+    "shopText": "Shop",
+    "otherText": "Other"
 }
