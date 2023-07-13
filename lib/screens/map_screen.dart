@@ -287,10 +287,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         width: 80,
                         builder: (context) => GestureDetector(
                           child: SvgPicture.asset(data.asset),
-                          onTap: () => _animMapController.animateTo(
-                            dest: data.point,
-                            zoom: _animTargetZoom,
-                          ),
+                          onTap: () => {
+                            if (_mapController.center != data.point)
+                              _animMapController.animateTo(
+                                dest: data.point,
+                                zoom: _animTargetZoom,
+                              )
+                          },
                         ),
                       ),
                     )
