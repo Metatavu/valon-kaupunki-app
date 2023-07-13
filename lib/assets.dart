@@ -10,6 +10,11 @@ class Assets {
   static const String barPartnerAsset = "assets/baari.svg";
   static const String shopPartnerAsset = "assets/kauppa.svg";
   static const String genericPartnerAsset = "assets/muu.svg";
+  static const String restaurantPartnerAssetIcon = "assets/ravintola-ikoni.svg";
+  static const String cafePartnerAssetIcon = "assets/kahvila-ikoni.svg";
+  static const String barPartnerAssetIcon = "assets/baari-ikoni.svg";
+  static const String shopPartnerAssetIcon = "assets/kauppa-ikoni.svg";
+  static const String genericPartnerAssetIcon = "assets/muu-ikoni.svg";
 
   Assets._();
 }

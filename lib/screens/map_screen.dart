@@ -68,7 +68,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final attraction = _attractions[index];
     return SmallListCard(
       index: index,
-      leftIcon: SvgPicture.asset(Assets.attractionsIconAsset),
+      leftIcon: SvgPicture.asset(
+        Assets.attractionsIconAsset,
+        colorFilter: ColorFilter.mode(
+          attraction.category == "static" ? Colors.orange : Colors.white,
+          BlendMode.srcIn,
+        ),
+      ),
       title: _getAttractionCategoryLabel(attraction.category),
       text: attraction.title,
       proceedIcon: IconButton(
@@ -90,7 +96,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final partner = _partners[index];
     return SmallListCard(
       index: index,
-      leftIcon: SvgPicture.asset(Assets.partnersIconAsset),
+      leftIcon: _getPartnerCategoryIcon(partner.category),
       title: _getPartnerCategoryLabel(partner.category),
       text: partner.name,
       proceedIcon: IconButton(
@@ -162,6 +168,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           "other": Assets.genericPartnerAsset,
         }[category] ??
         "";
+  }
+
+  SvgPicture _getPartnerCategoryIcon(String category) {
+    return SvgPicture.asset(
+      {
+        "restaurant": Assets.restaurantPartnerAssetIcon,
+        "cafe": Assets.cafePartnerAssetIcon,
+        "bar": Assets.barPartnerAssetIcon,
+        "shop": Assets.shopPartnerAssetIcon,
+        "other": Assets.genericPartnerAssetIcon,
+      }[category]!,
+    );
   }
 
   String _getAttractionCategoryLabel(String category) {
