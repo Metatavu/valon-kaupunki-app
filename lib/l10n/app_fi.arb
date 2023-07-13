@@ -27,9 +27,9 @@
     "@homeButtonText": {
         "description": "Home button text"
     },
-    "exhibitsButtonText": "Kohteet",
-    "@exhibitsButtonText": {
-        "description": "Exhibits button text"
+    "attractionsButtonText": "Kohteet",
+    "@attractionsButtonText": {
+        "description": "Attractions button text"
     },
     "benefitsButtonText": "Edut",
     "@benefitsButtonText": {
@@ -38,5 +38,13 @@
     "partnersButtonText": "Kumppanit",
     "@partnersButtonText": {
         "description": "Partners button text"
+    },
+    "permanentAttractionText": "Kiinteä kohde",
+    "@permanentAttractionText": {
+        "description": "Permanent attraction label"
+    },
+    "eventAttractionText": "Tapahtumakohde",
+    "@eventAttractionText": {
+        "description": "Event attraction label"
     }
 }
