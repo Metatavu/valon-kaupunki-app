@@ -61,6 +61,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_loc);
 
+  double _compassAngle = 0.0;
+
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
     if (index >= _attractions.length) {
@@ -334,6 +336,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 zoom: 12,
                 maxZoom: 18,
                 minZoom: 9,
+                onMapEvent: (_) {
+                  setState(() {
+                    _compassAngle = (pi / 180) *
+                        (_mapController.rotation == 360.0
+                            ? 0.0
+                            : _mapController.rotation);
+                  });
+                },
               ),
               children: [
                 TileLayer(
@@ -378,7 +388,28 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       ),
                     ),
                   )
-                : const SizedBox.shrink(),
+                : Padding(
+                    padding: const EdgeInsets.only(top: 94.0),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        onPressed: () => _animMapController.animatedRotateTo(
+                          0.0,
+                          curve: Curves.easeInOut,
+                        ),
+                        iconSize: 36.0,
+                        icon: Transform.rotate(
+                          angle: _compassAngle - (pi / 4),
+                          child: Icon(
+                            Icons.explore,
+                            color: _compassAngle == 0.0
+                                ? Colors.white
+                                : Colors.orange,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
