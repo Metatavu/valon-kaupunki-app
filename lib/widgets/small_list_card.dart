@@ -44,11 +44,13 @@ class _SmallListCardState extends State<SmallListCard> {
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       widget.title,
-                      style: theme.textTheme.bodyMedium,
+                      style:
+                          theme.textTheme.bodyMedium!.copyWith(fontSize: 14.0),
                     ),
                     Text(
                       widget.text,
