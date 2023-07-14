@@ -1,4 +1,3 @@
-import "dart:io";
 import "dart:ui";
 
 import "package:flutter/material.dart";
@@ -62,6 +61,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   String get _title => _currentSection.localizedTitle(_loc);
 
   double _compassAngle = 0.0;
+  bool _dataFetchFailed = false;
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -115,13 +115,26 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget get _childForCurrentSection => Listing(
-        builder: switch (_currentSection) {
-          _Section.attractions => _attractionsBuilder,
-          //_Section.benefits => _benefitsBuilder,
-          _Section.partners => _partnersBuilder,
-          _ => throw Exception(
-              "invalid section value to get child: $_currentSection"),
-        },
+        builder: _dataFetchFailed
+            ? (context, index) {
+                if (index == 0) {
+                  return Center(
+                    child: Text(
+                      _loc.loadingDataFailed,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  );
+                }
+
+                return null;
+              }
+            : switch (_currentSection) {
+                _Section.attractions => _attractionsBuilder,
+                //_Section.benefits => _benefitsBuilder,
+                _Section.partners => _partnersBuilder,
+                _ => throw Exception(
+                    "invalid section value to get child: $_currentSection"),
+              },
       );
 
   static const double _animTargetZoom = 14.0;
@@ -204,6 +217,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _fetchData() async {
+    setState(() {
+      _dataFetchFailed = false;
+    });
+
     try {
       final attractionResp = await _client.getAttractions();
       final markers = List<_MarkerData>.empty(growable: true);
@@ -232,6 +249,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         msg: _loc.loadingDataFailed,
         toastLength: Toast.LENGTH_SHORT,
       );
+
+      setState(() {
+        _dataFetchFailed = true;
+      });
     }
   }
 
