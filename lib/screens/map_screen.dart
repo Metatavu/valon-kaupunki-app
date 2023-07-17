@@ -3,6 +3,7 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_animations/flutter_map_animations.dart";
+import "package:flutter_map_location_marker/flutter_map_location_marker.dart";
 import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:fluttertoast/fluttertoast.dart";
@@ -61,7 +62,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Partner> _partners = List.empty(growable: true);
   late final AppLocalizations _loc = AppLocalizations.of(context)!;
 
+  late final Stream<LocationMarkerPosition?> _posStream;
   final List<Benefit> _benefits = List.empty(growable: true);
+
+  LatLng? _currentLocation;
 
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_loc);
@@ -251,6 +255,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchData();
+
+    const fac = LocationMarkerDataStreamFactory();
+    _posStream = fac.fromGeolocatorPositionStream().asBroadcastStream();
+    _posStream.listen((event) {
+      _currentLocation = event?.latLng;
+    });
   }
 
   @override
@@ -377,6 +387,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       .toList(growable: false),
                   rotate: true,
                 ),
+                CurrentLocationLayer(
+                  followOnLocationUpdate: FollowOnLocationUpdate.always,
+                  headingStream: const Stream.empty(),
+                  positionStream: _posStream,
+                ),
               ],
             ),
             _currentSection != _Section.home
@@ -394,21 +409,46 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.only(top: 94.0),
                     child: Align(
                       alignment: Alignment.topRight,
-                      child: IconButton(
-                        onPressed: () => _animMapController.animatedRotateTo(
-                          0.0,
-                          curve: Curves.easeInOut,
-                        ),
-                        iconSize: 36.0,
-                        icon: Transform.rotate(
-                          angle: _compassAngle - (pi / 4),
-                          child: Icon(
-                            Icons.explore,
-                            color: _compassAngle == 0.0
-                                ? Colors.white
-                                : CustomThemeValues.appOrange,
+                      child: Column(
+                        children: [
+                          IconButton(
+                            onPressed: () =>
+                                _animMapController.animatedRotateTo(
+                              0.0,
+                              curve: Curves.easeInOut,
+                            ),
+                            iconSize: 36.0,
+                            icon: Transform.rotate(
+                              angle: _compassAngle - (pi / 4),
+                              child: Icon(
+                                Icons.explore,
+                                color: _compassAngle == 0.0
+                                    ? Colors.white
+                                    : CustomThemeValues.appOrange,
+                              ),
+                            ),
                           ),
-                        ),
+                          _currentLocation != null
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.location_on,
+                                    color: _mapController.bounds!
+                                            .contains(_currentLocation!)
+                                        ? Colors.white
+                                        : CustomThemeValues.appOrange,
+                                  ),
+                                  iconSize: 36.0,
+                                  onPressed: () {
+                                    if (_currentLocation != null) {
+                                      _animMapController.animateTo(
+                                        dest: _currentLocation,
+                                        zoom: _animTargetZoom,
+                                      );
+                                    }
+                                  },
+                                )
+                              : const SizedBox.shrink(),
+                        ],
                       ),
                     ),
                   ),
