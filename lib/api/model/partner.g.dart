@@ -11,7 +11,10 @@ Partner _$PartnerFromJson(Map<String, dynamic> json) => Partner(
       json['category'] as String,
       StrapiImageResponse.fromJson(json['image'] as Map<String, dynamic>),
       Location.fromJson(json['location'] as Map<String, dynamic>),
-      StrapiBenefitResponse.fromJson(json['benefits'] as Map<String, dynamic>),
+      json['benefits'] == null
+          ? null
+          : StrapiBenefitResponse.fromJson(
+              json['benefits'] as Map<String, dynamic>),
       json['description'] as String?,
       json['link'] as String?,
       json['address'] as String?,

@@ -28,11 +28,3 @@ Map<String, dynamic> _$AttractionToJson(Attraction instance) =>
       'location': instance.location,
       'image': instance.data,
     };
-
-ImageData _$ImageDataFromJson(Map<String, dynamic> json) => ImageData(
-      StrapiImage.fromJson(json['data'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$ImageDataToJson(ImageData instance) => <String, dynamic>{
-      'data': instance.data,
-    };

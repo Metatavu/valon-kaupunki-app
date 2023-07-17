@@ -10,7 +10,7 @@ class Partner {
   final String category;
   final StrapiImageResponse image;
   final Location location;
-  final StrapiBenefitResponse benefits;
+  final StrapiBenefitResponse? benefits;
 
   final String? description;
   final String? link;

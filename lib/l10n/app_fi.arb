@@ -70,5 +70,21 @@
     "loadingDataFailed": "Tapahtumakohteiden tietojen lataus epäonnistui",
     "@loadingDataFailed": {
         "description": "Loading data fail message"
+    },
+    "benefitCoupon": "Etukuponki",
+    "@benefitCoupon": {
+        "description": "Benefit coupon"
+    },
+    "validUntil": "Voimassa {time} asti",
+    "@validUntil": {
+        "description": "Valid until time",
+        "placeholders": {
+            "time": {
+                "type": "DateTime",
+                "format": "dd.M.y",
+                "example": "27.08.2005",
+                "isCustomDateFormat": "true"
+            }
+        }
     }
 }

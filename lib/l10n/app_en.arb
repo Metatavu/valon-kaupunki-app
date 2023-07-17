@@ -16,5 +16,7 @@
     "barText": "Bar",
     "shopText": "Shop",
     "otherText": "Other",
-    "loadingDataFailed": "Loading event attraction data failed"
+    "loadingDataFailed": "Loading event attraction data failed",
+    "benefitCoupon": "Benefit coupon",
+    "validUntil": "Valid until {time}"
 }

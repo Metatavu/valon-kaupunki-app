@@ -63,8 +63,10 @@ class StrapiClient {
           StrapiContentType.attraction, {"populate": "image,sound"});
 
   Future<StrapiBenefitResponse> getBenefits() async =>
-      _getContentType<StrapiBenefitResponse>(
-          StrapiContentType.benefit, {"populate": "image,partner"});
+      _getContentType<StrapiBenefitResponse>(StrapiContentType.benefit, {
+        "populate[1]": Uri.encodeQueryComponent("partner.image"),
+        "populate": "image"
+      });
 
   Future<StrapiPartnerResponse> getPartners() async =>
       _getContentType<StrapiPartnerResponse>(
