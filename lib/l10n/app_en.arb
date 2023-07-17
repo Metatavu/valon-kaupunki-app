@@ -18,5 +18,6 @@
     "otherText": "Other",
     "loadingDataFailed": "Loading event attraction data failed",
     "benefitCoupon": "Benefit coupon",
-    "validUntil": "Valid until {time}"
+    "validUntil": "Valid until {time}",
+    "readMore": "Read more"
 }

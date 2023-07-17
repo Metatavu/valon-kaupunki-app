@@ -137,7 +137,7 @@ class LargeListCard extends StatelessWidget {
                     onPressed: () {},
                     style: theme.outlinedButtonTheme.style,
                     child: Text(
-                      "Lue lisää",
+                      loc.readMore,
                       style: theme.outlinedButtonTheme.style!.textStyle!
                           .resolve({}),
                     ),
