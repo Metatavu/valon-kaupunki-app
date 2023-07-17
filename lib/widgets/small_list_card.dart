@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 
-class SmallListCard extends StatefulWidget {
+class SmallListCard extends StatelessWidget {
   final int index;
   final Widget leftIcon;
   final String title;
@@ -17,20 +17,13 @@ class SmallListCard extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _SmallListCardState();
-  }
-}
-
-class _SmallListCardState extends State<SmallListCard> {
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return SizedBox(
       height: 60.0,
       child: Padding(
-        padding: EdgeInsets.only(top: widget.index == 0 ? 0.0 : 4.0),
+        padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.black38,
@@ -39,7 +32,7 @@ class _SmallListCardState extends State<SmallListCard> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: widget.leftIcon,
+                child: leftIcon,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
@@ -48,19 +41,19 @@ class _SmallListCardState extends State<SmallListCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.title,
+                      title,
                       style:
                           theme.textTheme.bodyMedium!.copyWith(fontSize: 14.0),
                     ),
                     Text(
-                      widget.text,
+                      text,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
                 ),
               ),
               const Spacer(),
-              widget.proceedIcon,
+              proceedIcon,
             ],
           ),
         ),
