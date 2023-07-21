@@ -138,6 +138,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       couponBenefit: benefit.benefitText,
       validTo: benefit.validTo!,
       partner: benefit.partner!.data!.partner,
+      currentLocation: _currentLocation,
     );
   }
 

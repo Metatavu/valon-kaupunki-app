@@ -1,10 +1,12 @@
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:latlong2/latlong.dart";
 import "package:valon_kaupunki_app/api/api_categories.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/location_utils.dart";
 
 class LargeListCard extends StatelessWidget {
   final String _imageUrl;
@@ -12,6 +14,7 @@ class LargeListCard extends StatelessWidget {
   final String _couponBenefit;
   final DateTime _couponValidTo;
   final Partner _partner;
+  final LatLng? _currentLocation;
 
   const LargeListCard(
       {required String imageUrl,
@@ -19,12 +22,14 @@ class LargeListCard extends StatelessWidget {
       required String couponBenefit,
       required DateTime validTo,
       required Partner partner,
+      LatLng? currentLocation,
       Key? key})
       : _imageUrl = imageUrl,
         _couponText = couponText,
         _couponBenefit = couponBenefit,
         _couponValidTo = validTo,
         _partner = partner,
+        _currentLocation = currentLocation,
         super(key: key);
 
   @override
@@ -116,7 +121,11 @@ class LargeListCard extends StatelessWidget {
                                     opticalSize: 24.0,
                                   ),
                                   Text(
-                                    "200m",
+                                    _currentLocation == null
+                                        ? "- m"
+                                        : LocationUtils.formatDistance(
+                                            _partner.location.toMarkerType(),
+                                            _currentLocation!),
                                     style: theme.textTheme.bodySmall,
                                   )
                                 ],
