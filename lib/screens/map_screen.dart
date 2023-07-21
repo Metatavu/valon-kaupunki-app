@@ -365,6 +365,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
                   userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
                 ),
+                CurrentLocationLayer(
+                  headingStream: const Stream.empty(),
+                  positionStream: _posStream,
+                ),
                 MarkerLayer(
                   markers: _markers
                       .map(
@@ -374,23 +378,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           width: 80,
                           builder: (context) => GestureDetector(
                             child: SvgPicture.asset(data.asset),
-                            onTap: () => {
-                              if (_mapController.center != data.point)
+                            onTap: () {
+                              if (_mapController.center != data.point) {
                                 _animMapController.animateTo(
                                   dest: data.point,
                                   zoom: _animTargetZoom,
-                                )
+                                );
+                              }
                             },
                           ),
                         ),
                       )
                       .toList(growable: false),
                   rotate: true,
-                ),
-                CurrentLocationLayer(
-                  followOnLocationUpdate: FollowOnLocationUpdate.always,
-                  headingStream: const Stream.empty(),
-                  positionStream: _posStream,
                 ),
               ],
             ),
