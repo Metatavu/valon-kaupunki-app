@@ -161,7 +161,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 _Section.benefits => _benefitsBuilder,
                 _Section.partners => _partnersBuilder,
                 _ => throw Exception(
-                    "invalid section value to get child: $_currentSection"),
+                    "Invalid section value to get child: $_currentSection"),
               },
       );
 
