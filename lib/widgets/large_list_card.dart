@@ -35,7 +35,7 @@ class LargeListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -67,7 +67,7 @@ class LargeListCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        loc.benefitCoupon,
+                        localizations.benefitCoupon,
                         style:
                             theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
                       ),
@@ -81,7 +81,7 @@ class LargeListCard extends StatelessWidget {
                             .copyWith(color: CustomThemeValues.appOrange),
                       ),
                       Text(
-                        loc.validUntil(_couponValidTo),
+                        localizations.validUntil(_couponValidTo),
                         style:
                             theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
                       ),
@@ -99,7 +99,7 @@ class LargeListCard extends StatelessWidget {
                                 children: [
                                   Text(
                                     getPartnerCategoryLabel(
-                                        _partner.category, loc),
+                                        _partner.category, localizations),
                                     style: theme.textTheme.bodyMedium!
                                         .copyWith(fontSize: 14.0),
                                   ),
@@ -146,7 +146,7 @@ class LargeListCard extends StatelessWidget {
                     onPressed: () {},
                     style: theme.outlinedButtonTheme.style,
                     child: Text(
-                      loc.readMore,
+                      localizations.readMore,
                       style: theme.outlinedButtonTheme.style!.textStyle!
                           .resolve({}),
                     ),

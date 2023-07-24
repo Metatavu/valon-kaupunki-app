@@ -33,12 +33,12 @@ enum _Section {
   benefits,
   partners;
 
-  String localizedTitle(AppLocalizations loc) {
+  String localizedTitle(AppLocalizations localizations) {
     return switch (this) {
-      home => loc.appName,
-      attractions => loc.attractionsButtonText,
-      benefits => loc.benefitsButtonText,
-      partners => loc.partnersButtonText,
+      home => localizations.appName,
+      attractions => localizations.attractionsButtonText,
+      benefits => localizations.benefitsButtonText,
+      partners => localizations.partnersButtonText,
     };
   }
 }
@@ -60,7 +60,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Attraction> _attractions = List.empty(growable: true);
 
   final List<Partner> _partners = List.empty(growable: true);
-  late final AppLocalizations _loc = AppLocalizations.of(context)!;
+  late final AppLocalizations _localizations = AppLocalizations.of(context)!;
 
   late final Stream<LocationMarkerPosition?> _posStream;
   final List<Benefit> _benefits = List.empty(growable: true);
@@ -68,7 +68,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   LatLng? _currentLocation;
 
   _Section _currentSection = _Section.home;
-  String get _title => _currentSection.localizedTitle(_loc);
+  String get _title => _currentSection.localizedTitle(_localizations);
 
   double _compassAngle = 0.0;
   bool _dataFetchFailed = false;
@@ -91,7 +91,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           BlendMode.srcIn,
         ),
       ),
-      title: getAttractionCategoryLabel(attraction.category, _loc),
+      title: getAttractionCategoryLabel(attraction.category, _localizations),
       text: attraction.title,
       proceedIcon: IconButton(
         onPressed: () {},
@@ -113,7 +113,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return SmallListCard(
       index: index,
       leftIcon: getPartnerCategoryIcon(partner.category),
-      title: getPartnerCategoryLabel(partner.category, _loc),
+      title: getPartnerCategoryLabel(partner.category, _localizations),
       text: partner.name,
       proceedIcon: IconButton(
         onPressed: () {},
@@ -148,7 +148,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 if (index == 0) {
                   return Center(
                     child: Text(
-                      _loc.loadingDataFailed,
+                      _localizations.loadingDataFailed,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   );
@@ -230,7 +230,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       _addMarkers(markers);
     } on Exception {
       await Fluttertoast.showToast(
-        msg: _loc.loadingDataFailed,
+        msg: _localizations.loadingDataFailed,
         toastLength: Toast.LENGTH_SHORT,
       );
 
@@ -317,21 +317,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               backgroundColor: Colors.transparent.withAlpha(0x7F),
               currentIndex: _currentSection.index,
               items: [
-                _navBarItem(_loc.homeButtonText, Assets.homeIconAsset,
+                _navBarItem(_localizations.homeButtonText, Assets.homeIconAsset,
                     _getColorForSection(_Section.home), () {
                   _setSection(_Section.home);
                 }),
                 _navBarItem(
-                    _loc.attractionsButtonText,
+                    _localizations.attractionsButtonText,
                     Assets.attractionsIconAsset,
                     _getColorForSection(_Section.attractions), () {
                   _setSection(_Section.attractions);
                 }),
-                _navBarItem(_loc.benefitsButtonText, Assets.benefitsIconAsset,
+                _navBarItem(
+                    _localizations.benefitsButtonText,
+                    Assets.benefitsIconAsset,
                     _getColorForSection(_Section.benefits), () {
                   _setSection(_Section.benefits);
                 }),
-                _navBarItem(_loc.partnersButtonText, Assets.partnersIconAsset,
+                _navBarItem(
+                    _localizations.partnersButtonText,
+                    Assets.partnersIconAsset,
                     _getColorForSection(_Section.partners), () {
                   _setSection(_Section.partners);
                 }),

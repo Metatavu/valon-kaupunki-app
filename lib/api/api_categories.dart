@@ -34,19 +34,21 @@ SvgPicture getPartnerCategoryIcon(String category) {
   );
 }
 
-String getAttractionCategoryLabel(String category, AppLocalizations loc) {
+String getAttractionCategoryLabel(
+    String category, AppLocalizations localizations) {
   return {
-    "static": loc.permanentAttractionText,
-    "event": loc.eventAttractionText,
+    "static": localizations.permanentAttractionText,
+    "event": localizations.eventAttractionText,
   }[category]!;
 }
 
-String getPartnerCategoryLabel(String category, AppLocalizations loc) {
+String getPartnerCategoryLabel(
+    String category, AppLocalizations localizations) {
   return {
-    "restaurant": loc.restaurantText,
-    "cafe": loc.cafeText,
-    "bar": loc.barText,
-    "shop": loc.shopText,
-    "other": loc.otherText,
+    "restaurant": localizations.restaurantText,
+    "cafe": localizations.cafeText,
+    "bar": localizations.barText,
+    "shop": localizations.shopText,
+    "other": localizations.otherText,
   }[category]!;
 }

@@ -49,7 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Container(
@@ -90,7 +90,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       children: [
                         const Spacer(),
                         Text(
-                          loc.welcomeToValonKaupunki,
+                          localizations.welcomeToValonKaupunki,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyMedium,
                         ),
@@ -101,9 +101,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             text: TextSpan(
                               style: theme.textTheme.bodySmall,
                               children: [
-                                TextSpan(text: loc.introductionTextPart1),
                                 TextSpan(
-                                  text: loc.introductionTextLink,
+                                    text: localizations.introductionTextPart1),
+                                TextSpan(
+                                  text: localizations.introductionTextLink,
                                   style: CustomThemeValues.linkTheme(theme),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
@@ -112,7 +113,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                     },
                                 ),
                                 const TextSpan(text: ".\n\n"),
-                                TextSpan(text: loc.introductionTextPart2),
+                                TextSpan(
+                                    text: localizations.introductionTextPart2),
                               ],
                             ),
                           ),
@@ -124,7 +126,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             onPressed: () => {},
                             style: theme.outlinedButtonTheme.style,
                             child: Text(
-                              loc.enterButtonText,
+                              localizations.enterButtonText,
                               style: theme.outlinedButtonTheme.style!.textStyle!
                                   .resolve({}),
                             ),
