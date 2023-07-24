@@ -1,20 +1,20 @@
 class Assets {
-  static const String homeIconAsset = "assets/koti.svg";
-  static const String attractionsIconAsset = "assets/kohde.svg";
-  static const String benefitsIconAsset = "assets/etu.svg";
-  static const String partnersIconAsset = "assets/kumppani.svg";
-  static const String permanentAttractionAsset = "assets/kiintea.svg";
-  static const String eventAttractionAsset = "assets/tapahtumakohde.svg";
-  static const String restaurantPartnerAsset = "assets/ravintola.svg";
-  static const String cafePartnerAsset = "assets/kahvila.svg";
-  static const String barPartnerAsset = "assets/baari.svg";
-  static const String shopPartnerAsset = "assets/kauppa.svg";
-  static const String genericPartnerAsset = "assets/muu.svg";
-  static const String restaurantPartnerAssetIcon = "assets/ravintola-ikoni.svg";
-  static const String cafePartnerAssetIcon = "assets/kahvila-ikoni.svg";
-  static const String barPartnerAssetIcon = "assets/baari-ikoni.svg";
-  static const String shopPartnerAssetIcon = "assets/kauppa-ikoni.svg";
-  static const String genericPartnerAssetIcon = "assets/muu-ikoni.svg";
+  static const String homeIconAsset = "assets/home.svg";
+  static const String attractionsIconAsset = "assets/attraction.svg";
+  static const String benefitsIconAsset = "assets/benefit.svg";
+  static const String partnersIconAsset = "assets/partner.svg";
+  static const String permanentAttractionAsset = "assets/permanent.svg";
+  static const String eventAttractionAsset = "assets/event-attraction.svg";
+  static const String restaurantPartnerAsset = "assets/restaurant.svg";
+  static const String cafePartnerAsset = "assets/cafe.svg";
+  static const String barPartnerAsset = "assets/bar.svg";
+  static const String shopPartnerAsset = "assets/shop.svg";
+  static const String genericPartnerAsset = "assets/other.svg";
+  static const String restaurantPartnerAssetIcon = "assets/restaurant-icon.svg";
+  static const String cafePartnerAssetIcon = "assets/cafe-icon.svg";
+  static const String barPartnerAssetIcon = "assets/bar-icon.svg";
+  static const String shopPartnerAssetIcon = "assets/shop-icon.svg";
+  static const String genericPartnerAssetIcon = "assets/other-icon.svg";
 
   Assets._();
 }
