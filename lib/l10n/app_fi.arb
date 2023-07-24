@@ -1,94 +1,23 @@
 {
     "welcomeToValonKaupunki": "TERVETULOA TUTUSTUMAAN VALON KAUPUNKIIN!",
-    "@welcomeToValonKaupunki": {
-        "description": "Welcome screen greeting"
-    },
     "appName": "Valon kaupunki",
-    "@appName": {
-        "description": "Application name"
-    },
     "introductionTextPart1": "Sovelluksen avulla löydät tietoa Jyväskylän pysyvistä valaistuskohteista, tapahtuman valoteoksisista sekä yhteistyökumppaneistamme. Lue lisää toiminnastamme ",
-    "@introductionTextPart1": {
-        "description": "Welcome screen text, first component before link"
-    },
     "introductionTextLink": "Valon kaupungista nettisivuilta",
-    "@introductionTextLink": {
-        "description": "Welcome screen text, link part"
-    },
     "introductionTextPart2": "Syksyn Valon kaupunki -tapahtuma järjestetään 28.9.-7.10.2023",
-    "@introductionTextPart2": {
-        "description": "Welcome screen text, after link"
-    },
     "enterButtonText": "Astu sisään!",
-    "@enterButtonText": {
-        "description": "Enter button text"
-    },
     "homeButtonText": "Koti",
-    "@homeButtonText": {
-        "description": "Home button text"
-    },
     "attractionsButtonText": "Kohteet",
-    "@attractionsButtonText": {
-        "description": "Attractions button text"
-    },
     "benefitsButtonText": "Edut",
-    "@benefitsButtonText": {
-        "description": "Benefits button text"
-    },
     "partnersButtonText": "Kumppanit",
-    "@partnersButtonText": {
-        "description": "Partners button text"
-    },
     "permanentAttractionText": "Kiinteä kohde",
-    "@permanentAttractionText": {
-        "description": "Permanent attraction label"
-    },
     "eventAttractionText": "Tapahtumakohde",
-    "@eventAttractionText": {
-        "description": "Event attraction label"
-    },
     "restaurantText": "Ravintola",
-    "@restaurantText": {
-        "description": "Restaurant text"
-    },
     "cafeText": "Kahvila",
-    "@cafeText": {
-        "description": "Cafe text"
-    },
     "barText": "Baari",
-    "@barText": {
-        "description": "Bar text"
-    },
     "shopText": "Kauppa",
-    "@shopText": {
-        "description": "Shop text"
-    },
     "otherText": "Muu",
-    "@otherText": {
-        "description": "Other text"
-    },
     "loadingDataFailed": "Tapahtumakohteiden tietojen lataus epäonnistui",
-    "@loadingDataFailed": {
-        "description": "Loading data fail message"
-    },
     "benefitCoupon": "Etukuponki",
-    "@benefitCoupon": {
-        "description": "Benefit coupon"
-    },
     "validUntil": "Voimassa {time} asti",
-    "@validUntil": {
-        "description": "Valid until time",
-        "placeholders": {
-            "time": {
-                "type": "DateTime",
-                "format": "dd.M.y",
-                "example": "27.08.2005",
-                "isCustomDateFormat": "true"
-            }
-        }
-    },
-    "readMore": "Lue lisää",
-    "@readMore": {
-        "description": "Read more"
-    }
+    "readMore": "Lue lisää"
 }

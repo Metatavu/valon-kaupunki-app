@@ -1,23 +1,94 @@
 {
     "welcomeToValonKaupunki": "WELCOME TO VALON KAUPUNKI!",
+    "@welcomeToValonKaupunki": {
+        "description": "Welcome screen greeting"
+    },
     "appName": "Valon kaupunki",
+    "@appName": {
+        "description": "Application name"
+    },
     "introductionTextPart1": "With this application you may find information about Jyväskylä's permanent lighting attractions, artworks related to the event and about our parners. Read more about Valon kaupunki from the ",
+    "@introductionTextPart1": {
+        "description": "Welcome screen text, first component before link"
+    },
     "introductionTextLink": "webpage",
+    "@introductionTextLink": {
+        "description": "Welcome screen text, link part"
+    },
     "introductionTextPart2": "This autumn's Valon kaupunki event takes place at 28.9.-7.10.2023",
+    "@introductionTextPart2": {
+        "description": "Welcome screen text, after link"
+    },
     "enterButtonText": "Step in!",
+    "@enterButtonText": {
+        "description": "Enter button text"
+    },
     "homeButtonText": "Home",
+    "@homeButtonText": {
+        "description": "Home button text"
+    },
     "attractionsButtonText": "Attractions",
+    "@attractionsButtonText": {
+        "description": "Attractions button text"
+    },
     "benefitsButtonText": "Benefits",
+    "@benefitsButtonText": {
+        "description": "Benefits button text"
+    },
     "partnersButtonText": "Partners",
+    "@partnersButtonText": {
+        "description": "Partners button text"
+    },
     "permanentAttractionText": "Permanent attraction",
+    "@permanentAttractionText": {
+        "description": "Permanent attraction label"
+    },
     "eventAttractionText": "Event attraction",
+    "@eventAttractionText": {
+        "description": "Event attraction label"
+    },
     "restaurantText": "Restaurant",
+    "@restaurantText": {
+        "description": "Restaurant text"
+    },
     "cafeText": "Cafe",
+    "@cafeText": {
+        "description": "Cafe text"
+    },
     "barText": "Bar",
+    "@barText": {
+        "description": "Bar text"
+    },
     "shopText": "Shop",
+    "@shopText": {
+        "description": "Shop text"
+    },
     "otherText": "Other",
+    "@otherText": {
+        "description": "Other text"
+    },
     "loadingDataFailed": "Loading event attraction data failed",
+    "@loadingDataFailed": {
+        "description": "Loading data fail message"
+    },
     "benefitCoupon": "Benefit coupon",
+    "@benefitCoupon": {
+        "description": "Benefit coupon"
+    },
     "validUntil": "Valid until {time}",
-    "readMore": "Read more"
+    "@validUntil": {
+        "description": "Valid until time",
+        "placeholders": {
+            "time": {
+                "type": "DateTime",
+                "format": "dd.M.y",
+                "example": "27.08.2005",
+                "isCustomDateFormat": "true"
+            }
+        }
+    },
+    "readMore": "Read more",
+    "@readMore": {
+        "description": "Read more"
+    }
 }
