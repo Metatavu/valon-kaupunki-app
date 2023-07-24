@@ -16,15 +16,15 @@ class LargeListCard extends StatelessWidget {
   final Partner _partner;
   final LatLng? _currentLocation;
 
-  const LargeListCard(
-      {required String imageUrl,
-      required String couponText,
-      required String couponBenefit,
-      required DateTime validTo,
-      required Partner partner,
-      LatLng? currentLocation,
-      Key? key})
-      : _imageUrl = imageUrl,
+  const LargeListCard({
+    required String imageUrl,
+    required String couponText,
+    required String couponBenefit,
+    required DateTime validTo,
+    required Partner partner,
+    LatLng? currentLocation,
+    Key? key,
+  })  : _imageUrl = imageUrl,
         _couponText = couponText,
         _couponBenefit = couponBenefit,
         _couponValidTo = validTo,

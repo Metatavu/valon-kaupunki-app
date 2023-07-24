@@ -7,14 +7,14 @@ class SmallListCard extends StatelessWidget {
   final String text;
   final Widget proceedIcon;
 
-  const SmallListCard(
-      {required this.index,
-      required this.leftIcon,
-      required this.title,
-      required this.text,
-      required this.proceedIcon,
-      Key? key})
-      : super(key: key);
+  const SmallListCard({
+    required this.index,
+    required this.leftIcon,
+    required this.title,
+    required this.text,
+    required this.proceedIcon,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
