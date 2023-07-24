@@ -3,7 +3,7 @@ import "package:latlong2/latlong.dart";
 class LocationUtils {
   LocationUtils._();
 
-  // By default, returns kilometers. Adjust `multiplier` to get different magnitudes
+  /// By default, returns kilometers. Adjust [multiplier] to get different magnitudes
   static double distanceBetween(LatLng point, LatLng another,
       [double multiplier = 0.001]) {
     final meters = const Distance().as(LengthUnit.Meter, point, another);
