@@ -257,8 +257,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.initState();
     _fetchData();
 
-    const fac = LocationMarkerDataStreamFactory();
-    _posStream = fac.fromGeolocatorPositionStream().asBroadcastStream();
+    const dataStreamFactory = LocationMarkerDataStreamFactory();
+    _posStream =
+        dataStreamFactory.fromGeolocatorPositionStream().asBroadcastStream();
     _posStream.listen((event) {
       _currentLocation = event?.latLng;
     });
