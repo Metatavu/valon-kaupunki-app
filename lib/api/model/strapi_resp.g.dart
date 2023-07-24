@@ -6,6 +6,27 @@ part of 'strapi_resp.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+ImageData _$ImageDataFromJson(Map<String, dynamic> json) => ImageData(
+      json['data'] == null
+          ? null
+          : StrapiImage.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ImageDataToJson(ImageData instance) => <String, dynamic>{
+      'data': instance.data,
+    };
+
+PartnerData _$PartnerDataFromJson(Map<String, dynamic> json) => PartnerData(
+      json['data'] == null
+          ? null
+          : StrapiPartner.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$PartnerDataToJson(PartnerData instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
 StrapiAttraction _$StrapiAttractionFromJson(Map<String, dynamic> json) =>
     StrapiAttraction(
       Attraction.fromJson(json['attributes'] as Map<String, dynamic>),

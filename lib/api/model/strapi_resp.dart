@@ -8,6 +8,26 @@ import "package:valon_kaupunki_app/api/model/partner.dart";
 part "strapi_resp.g.dart";
 
 @JsonSerializable()
+class ImageData {
+  final StrapiImage? data;
+
+  const ImageData(this.data);
+
+  factory ImageData.fromJson(Map<String, dynamic> json) =>
+      _$ImageDataFromJson(json);
+}
+
+@JsonSerializable()
+class PartnerData {
+  final StrapiPartner? data;
+
+  const PartnerData(this.data);
+
+  factory PartnerData.fromJson(Map<String, dynamic> json) =>
+      _$PartnerDataFromJson(json);
+}
+
+@JsonSerializable()
 class StrapiAttraction {
   @JsonKey(name: "attributes")
   Attraction attraction;

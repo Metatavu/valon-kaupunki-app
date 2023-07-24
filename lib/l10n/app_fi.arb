@@ -1,50 +1,23 @@
 {
     "welcomeToValonKaupunki": "TERVETULOA TUTUSTUMAAN VALON KAUPUNKIIN!",
-    "@welcomeToValonKaupunki": {
-        "description": "Welcome screen greeting"
-    },
     "appName": "Valon kaupunki",
-    "@appName": {
-        "description": "Application name"
-    },
     "introductionTextPart1": "Sovelluksen avulla löydät tietoa Jyväskylän pysyvistä valaistuskohteista, tapahtuman valoteoksisista sekä yhteistyökumppaneistamme. Lue lisää toiminnastamme ",
-    "@introductionTextPart1": {
-        "description": "Welcome screen text, first component before link"
-    },
     "introductionTextLink": "Valon kaupungista nettisivuilta",
-    "@introductionTextLink": {
-        "description": "Welcome screen text, link part"
-    },
     "introductionTextPart2": "Syksyn Valon kaupunki -tapahtuma järjestetään 28.9.-7.10.2023",
-    "@introductionTextPart2": {
-        "description": "Welcome screen text, after link"
-    },
     "enterButtonText": "Astu sisään!",
-    "@enterButtonText": {
-        "description": "Enter button text"
-    },
     "homeButtonText": "Koti",
-    "@homeButtonText": {
-        "description": "Home button text"
-    },
     "attractionsButtonText": "Kohteet",
-    "@attractionsButtonText": {
-        "description": "Attractions button text"
-    },
     "benefitsButtonText": "Edut",
-    "@benefitsButtonText": {
-        "description": "Benefits button text"
-    },
     "partnersButtonText": "Kumppanit",
-    "@partnersButtonText": {
-        "description": "Partners button text"
-    },
     "permanentAttractionText": "Kiinteä kohde",
-    "@permanentAttractionText": {
-        "description": "Permanent attraction label"
-    },
     "eventAttractionText": "Tapahtumakohde",
-    "@eventAttractionText": {
-        "description": "Event attraction label"
-    }
+    "restaurantText": "Ravintola",
+    "cafeText": "Kahvila",
+    "barText": "Baari",
+    "shopText": "Kauppa",
+    "otherText": "Muu",
+    "loadingDataFailed": "Tapahtumakohteiden tietojen lataus epäonnistui",
+    "benefitCoupon": "Etukuponki",
+    "validUntil": "Voimassa {time} asti",
+    "readMore": "Lue lisää"
 }

@@ -22,15 +22,5 @@ class Attraction {
   @JsonKey(name: "image")
   final ImageData data;
 
-  StrapiImage get image => data.data;
-}
-
-@JsonSerializable()
-class ImageData {
-  final StrapiImage data;
-
-  const ImageData(this.data);
-
-  factory ImageData.fromJson(Map<String, dynamic> json) =>
-      _$ImageDataFromJson(json);
+  StrapiImage? get image => data.data;
 }

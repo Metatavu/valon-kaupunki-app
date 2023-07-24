@@ -15,6 +15,12 @@ Benefit _$BenefitFromJson(Map<String, dynamic> json) => Benefit(
       json['validTo'] == null
           ? null
           : DateTime.parse(json['validTo'] as String),
+      json['image'] == null
+          ? null
+          : ImageData.fromJson(json['image'] as Map<String, dynamic>),
+      json['partner'] == null
+          ? null
+          : PartnerData.fromJson(json['partner'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BenefitToJson(Benefit instance) => <String, dynamic>{
@@ -22,4 +28,6 @@ Map<String, dynamic> _$BenefitToJson(Benefit instance) => <String, dynamic>{
       'benefitText': instance.benefitText,
       'validFrom': instance.validFrom?.toIso8601String(),
       'validTo': instance.validTo?.toIso8601String(),
+      'partner': instance.partner,
+      'image': instance.data,
     };
