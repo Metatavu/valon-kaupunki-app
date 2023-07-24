@@ -5,21 +5,19 @@ import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
 String getAttractionMarkerAsset(String category) {
   return {
-        "static": Assets.permanentAttractionAsset,
-        "event": Assets.eventAttractionAsset
-      }[category] ??
-      "";
+    "static": Assets.permanentAttractionAsset,
+    "event": Assets.eventAttractionAsset
+  }[category]!;
 }
 
 String getPartnerMarkerAsset(String category) {
   return {
-        "restaurant": Assets.restaurantPartnerAsset,
-        "cafe": Assets.cafePartnerAsset,
-        "bar": Assets.barPartnerAsset,
-        "shop": Assets.shopPartnerAsset,
-        "other": Assets.genericPartnerAsset,
-      }[category] ??
-      "";
+    "restaurant": Assets.restaurantPartnerAsset,
+    "cafe": Assets.cafePartnerAsset,
+    "bar": Assets.barPartnerAsset,
+    "shop": Assets.shopPartnerAsset,
+    "other": Assets.genericPartnerAsset,
+  }[category]!;
 }
 
 SvgPicture getPartnerCategoryIcon(String category) {
