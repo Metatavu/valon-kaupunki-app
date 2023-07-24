@@ -16,6 +16,7 @@ import "package:valon_kaupunki_app/api/model/partner.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
 import "package:valon_kaupunki_app/widgets/small_list_card.dart";
@@ -66,6 +67,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Benefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
+  AttractionInfoOverlay? _currentAttractionInfo = AttractionInfoOverlay();
 
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_localizations);
@@ -383,10 +385,83 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     ];
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMainContent() {
     final theme = Theme.of(context);
 
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 60.0,
+        backgroundColor: Colors.transparent.withAlpha(0x7F),
+        centerTitle: true,
+        title: Text(
+          _title,
+          style: theme.textTheme.bodyMedium,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          iconSize: 24.0,
+          color: Colors.white,
+          onPressed: () => {},
+        ),
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+            // Important empty container; flutter won't render the blur otherwise.
+            child: Container(
+              color: Colors.transparent,
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: BottomNavigationBar(
+            enableFeedback: false,
+            unselectedItemColor: Colors.white,
+            selectedItemColor: CustomThemeValues.appOrange,
+            unselectedLabelStyle: const TextStyle(color: Colors.white),
+            selectedLabelStyle: TextStyle(color: CustomThemeValues.appOrange),
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent.withAlpha(0x7F),
+            currentIndex: _currentSection.index,
+            items: [
+              _navBarItem(_localizations.homeButtonText, Assets.homeIconAsset,
+                  _getColorForSection(_Section.home), () {
+                _setSection(_Section.home);
+              }),
+              _navBarItem(
+                  _localizations.attractionsButtonText,
+                  Assets.attractionsIconAsset,
+                  _getColorForSection(_Section.attractions), () {
+                _setSection(_Section.attractions);
+              }),
+              _navBarItem(
+                  _localizations.benefitsButtonText,
+                  Assets.benefitsIconAsset,
+                  _getColorForSection(_Section.benefits), () {
+                _setSection(_Section.benefits);
+              }),
+              _navBarItem(
+                  _localizations.partnersButtonText,
+                  Assets.partnersIconAsset,
+                  _getColorForSection(_Section.partners), () {
+                _setSection(_Section.partners);
+              }),
+            ],
+          ),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      body: Stack(
+        children: _buildMapContent(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return RefreshIndicator(
       backgroundColor: const Color.fromARGB(0x7F, 0x1B, 0x26, 0x37),
       color: Colors.white,
@@ -394,76 +469,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         _fetchData();
         await Future.delayed(const Duration(seconds: 1));
       },
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 60.0,
-          backgroundColor: Colors.transparent.withAlpha(0x7F),
-          centerTitle: true,
-          title: Text(
-            _title,
-            style: theme.textTheme.bodyMedium,
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            iconSize: 24.0,
-            color: Colors.white,
-            onPressed: () => {},
-          ),
-          flexibleSpace: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              // Important empty container; flutter won't render the blur otherwise.
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          ),
-        ),
-        bottomNavigationBar: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: BottomNavigationBar(
-              enableFeedback: false,
-              unselectedItemColor: Colors.white,
-              selectedItemColor: CustomThemeValues.appOrange,
-              unselectedLabelStyle: const TextStyle(color: Colors.white),
-              selectedLabelStyle: TextStyle(color: CustomThemeValues.appOrange),
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.transparent.withAlpha(0x7F),
-              currentIndex: _currentSection.index,
-              items: [
-                _navBarItem(_localizations.homeButtonText, Assets.homeIconAsset,
-                    _getColorForSection(_Section.home), () {
-                  _setSection(_Section.home);
-                }),
-                _navBarItem(
-                    _localizations.attractionsButtonText,
-                    Assets.attractionsIconAsset,
-                    _getColorForSection(_Section.attractions), () {
-                  _setSection(_Section.attractions);
-                }),
-                _navBarItem(
-                    _localizations.benefitsButtonText,
-                    Assets.benefitsIconAsset,
-                    _getColorForSection(_Section.benefits), () {
-                  _setSection(_Section.benefits);
-                }),
-                _navBarItem(
-                    _localizations.partnersButtonText,
-                    Assets.partnersIconAsset,
-                    _getColorForSection(_Section.partners), () {
-                  _setSection(_Section.partners);
-                }),
+      child: _currentAttractionInfo == null
+          ? _buildMainContent()
+          : Stack(
+              children: [
+                _buildMainContent(),
+                _currentAttractionInfo!,
               ],
             ),
-          ),
-        ),
-        extendBodyBehindAppBar: true,
-        extendBody: true,
-        body: Stack(
-          children: _buildMapContent(),
-        ),
-      ),
     );
   }
 }
