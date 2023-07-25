@@ -56,7 +56,10 @@ class HeightConstrainedImage extends StatelessWidget {
   }
 
   Widget _loadingBuilder(
-      BuildContext context, Widget? child, ImageChunkEvent? event) {
+    BuildContext context,
+    Widget? child,
+    ImageChunkEvent? event,
+  ) {
     final placeholder = SizedBox(
       width: MediaQuery.of(context).size.width,
       height: height,
