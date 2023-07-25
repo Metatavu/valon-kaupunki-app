@@ -16,6 +16,7 @@ import "package:valon_kaupunki_app/api/model/partner.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
 import "package:valon_kaupunki_app/widgets/small_list_card.dart";
@@ -66,12 +67,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Benefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
+  AttractionInfoOverlay? _currentAttractionInfo;
 
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_localizations);
 
   double _compassAngle = 0.0;
   bool _dataFetchFailed = false;
+
+  LatLng? _lastTapTarget;
+  double _zoomLevel = 12.0;
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -265,13 +270,225 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  List<Widget> _buildMapContent() {
     final instance =
         FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
     final provider = instance.getTileProvider();
 
+    return [
+      FlutterMap(
+        mapController: _animMapController.mapController,
+        options: MapOptions(
+          center: _lastTapTarget ?? const LatLng(62.24147, 25.72088),
+          zoom: _zoomLevel,
+          maxZoom: 18,
+          minZoom: 9,
+          onMapEvent: (_) {
+            _zoomLevel = _mapController.zoom;
+            setState(() {
+              _compassAngle = (pi / 180) *
+                  (_mapController.rotation == 360.0
+                      ? 0.0
+                      : _mapController.rotation);
+            });
+          },
+        ),
+        children: [
+          TileLayer(
+            tileProvider: provider,
+            backgroundColor: Colors.black,
+            urlTemplate: const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
+            userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
+          ),
+          CurrentLocationLayer(
+            headingStream: const Stream.empty(),
+            positionStream: _posStream,
+          ),
+          MarkerLayer(
+            markers: _markers
+                .map(
+                  (data) => Marker(
+                    point: data.point,
+                    height: 80,
+                    width: 80,
+                    builder: (context) => GestureDetector(
+                      child: SvgPicture.asset(data.asset),
+                      onTap: () async {
+                        if (_mapController.center != data.point) {
+                          await _animMapController.animateTo(
+                            dest: data.point,
+                            zoom: _animTargetZoom,
+                          );
+
+                          _lastTapTarget = data.point;
+                        }
+
+                        if (_attractions.any((attraction) =>
+                            attraction.location.toMarkerType() == data.point)) {
+                          final attractionInfo = AttractionInfoOverlay(
+                            attraction: _attractions
+                                .where((attraction) =>
+                                    attraction.location.toMarkerType() ==
+                                    data.point)
+                                .first,
+                            currentLocation: _currentLocation,
+                            onClose: () {
+                              setState(() {
+                                _currentAttractionInfo = null;
+                              });
+                            },
+                          );
+
+                          setState(() {
+                            _currentAttractionInfo = attractionInfo;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                )
+                .toList(growable: false),
+            rotate: true,
+          ),
+        ],
+      ),
+      _currentSection != _Section.home
+          ? ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                // Important empty container; flutter won't render the blur otherwise.
+                child: Container(
+                  color: Colors.transparent,
+                  child: _childForCurrentSection,
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.only(top: 94.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Column(
+                  children: [
+                    IconButton(
+                      onPressed: () => _animMapController.animatedRotateTo(
+                        0.0,
+                        curve: Curves.easeInOut,
+                      ),
+                      iconSize: 36.0,
+                      icon: Transform.rotate(
+                        angle: _compassAngle - (pi / 4),
+                        child: Icon(
+                          Icons.explore,
+                          color: _compassAngle == 0.0
+                              ? Colors.white
+                              : CustomThemeValues.appOrange,
+                        ),
+                      ),
+                    ),
+                    _currentLocation != null
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.location_on,
+                              color: _mapController.bounds!
+                                      .contains(_currentLocation!)
+                                  ? Colors.white
+                                  : CustomThemeValues.appOrange,
+                            ),
+                            iconSize: 36.0,
+                            onPressed: () {
+                              if (_currentLocation != null) {
+                                _animMapController.animateTo(
+                                  dest: _currentLocation,
+                                  zoom: _animTargetZoom,
+                                );
+                              }
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ),
+    ];
+  }
+
+  Widget _buildMainContent() {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 60.0,
+        backgroundColor: Colors.transparent.withAlpha(0x7F),
+        centerTitle: true,
+        title: Text(
+          _title,
+          style: theme.textTheme.bodyMedium,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          iconSize: 24.0,
+          color: Colors.white,
+          onPressed: () => {},
+        ),
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+            // Important empty container; flutter won't render the blur otherwise.
+            child: Container(
+              color: Colors.transparent,
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+          child: BottomNavigationBar(
+            enableFeedback: false,
+            unselectedItemColor: Colors.white,
+            selectedItemColor: CustomThemeValues.appOrange,
+            unselectedLabelStyle: const TextStyle(color: Colors.white),
+            selectedLabelStyle: TextStyle(color: CustomThemeValues.appOrange),
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent.withAlpha(0x7F),
+            currentIndex: _currentSection.index,
+            items: [
+              _navBarItem(_localizations.homeButtonText, Assets.homeIconAsset,
+                  _getColorForSection(_Section.home), () {
+                _setSection(_Section.home);
+              }),
+              _navBarItem(
+                  _localizations.attractionsButtonText,
+                  Assets.attractionsIconAsset,
+                  _getColorForSection(_Section.attractions), () {
+                _setSection(_Section.attractions);
+              }),
+              _navBarItem(
+                  _localizations.benefitsButtonText,
+                  Assets.benefitsIconAsset,
+                  _getColorForSection(_Section.benefits), () {
+                _setSection(_Section.benefits);
+              }),
+              _navBarItem(
+                  _localizations.partnersButtonText,
+                  Assets.partnersIconAsset,
+                  _getColorForSection(_Section.partners), () {
+                _setSection(_Section.partners);
+              }),
+            ],
+          ),
+        ),
+      ),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      body: Stack(
+        children: _buildMapContent(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return RefreshIndicator(
       backgroundColor: const Color.fromARGB(0x7F, 0x1B, 0x26, 0x37),
       color: Colors.white,
@@ -279,188 +496,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         _fetchData();
         await Future.delayed(const Duration(seconds: 1));
       },
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 60.0,
-          backgroundColor: Colors.transparent.withAlpha(0x7F),
-          centerTitle: true,
-          title: Text(
-            _title,
-            style: theme.textTheme.bodyMedium,
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            iconSize: 24.0,
-            color: Colors.white,
-            onPressed: () => {},
-          ),
-          flexibleSpace: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              // Important empty container; flutter won't render the blur otherwise.
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          ),
-        ),
-        bottomNavigationBar: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: BottomNavigationBar(
-              enableFeedback: false,
-              unselectedItemColor: Colors.white,
-              selectedItemColor: CustomThemeValues.appOrange,
-              unselectedLabelStyle: const TextStyle(color: Colors.white),
-              selectedLabelStyle: TextStyle(color: CustomThemeValues.appOrange),
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.transparent.withAlpha(0x7F),
-              currentIndex: _currentSection.index,
-              items: [
-                _navBarItem(_localizations.homeButtonText, Assets.homeIconAsset,
-                    _getColorForSection(_Section.home), () {
-                  _setSection(_Section.home);
-                }),
-                _navBarItem(
-                    _localizations.attractionsButtonText,
-                    Assets.attractionsIconAsset,
-                    _getColorForSection(_Section.attractions), () {
-                  _setSection(_Section.attractions);
-                }),
-                _navBarItem(
-                    _localizations.benefitsButtonText,
-                    Assets.benefitsIconAsset,
-                    _getColorForSection(_Section.benefits), () {
-                  _setSection(_Section.benefits);
-                }),
-                _navBarItem(
-                    _localizations.partnersButtonText,
-                    Assets.partnersIconAsset,
-                    _getColorForSection(_Section.partners), () {
-                  _setSection(_Section.partners);
-                }),
-              ],
-            ),
-          ),
-        ),
-        extendBodyBehindAppBar: true,
-        extendBody: true,
-        body: Stack(
-          children: [
-            FlutterMap(
-              mapController: _animMapController.mapController,
-              options: MapOptions(
-                center: const LatLng(62.24147, 25.72088),
-                zoom: 12,
-                maxZoom: 18,
-                minZoom: 9,
-                onMapEvent: (_) {
-                  setState(() {
-                    _compassAngle = (pi / 180) *
-                        (_mapController.rotation == 360.0
-                            ? 0.0
-                            : _mapController.rotation);
-                  });
-                },
-              ),
+      child: _currentAttractionInfo == null
+          ? _buildMainContent()
+          : Stack(
               children: [
-                TileLayer(
-                  tileProvider: provider,
-                  backgroundColor: Colors.black,
-                  urlTemplate:
-                      const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
-                  userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
-                ),
-                CurrentLocationLayer(
-                  headingStream: const Stream.empty(),
-                  positionStream: _posStream,
-                ),
-                MarkerLayer(
-                  markers: _markers
-                      .map(
-                        (data) => Marker(
-                          point: data.point,
-                          height: 80,
-                          width: 80,
-                          builder: (context) => GestureDetector(
-                            child: SvgPicture.asset(data.asset),
-                            onTap: () {
-                              if (_mapController.center != data.point) {
-                                _animMapController.animateTo(
-                                  dest: data.point,
-                                  zoom: _animTargetZoom,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      )
-                      .toList(growable: false),
-                  rotate: true,
-                ),
+                _buildMainContent(),
+                _currentAttractionInfo!,
               ],
             ),
-            _currentSection != _Section.home
-                ? ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                      // Important empty container; flutter won't render the blur otherwise.
-                      child: Container(
-                        color: Colors.transparent,
-                        child: _childForCurrentSection,
-                      ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(top: 94.0),
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: Column(
-                        children: [
-                          IconButton(
-                            onPressed: () =>
-                                _animMapController.animatedRotateTo(
-                              0.0,
-                              curve: Curves.easeInOut,
-                            ),
-                            iconSize: 36.0,
-                            icon: Transform.rotate(
-                              angle: _compassAngle - (pi / 4),
-                              child: Icon(
-                                Icons.explore,
-                                color: _compassAngle == 0.0
-                                    ? Colors.white
-                                    : CustomThemeValues.appOrange,
-                              ),
-                            ),
-                          ),
-                          _currentLocation != null
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.location_on,
-                                    color: _mapController.bounds!
-                                            .contains(_currentLocation!)
-                                        ? Colors.white
-                                        : CustomThemeValues.appOrange,
-                                  ),
-                                  iconSize: 36.0,
-                                  onPressed: () {
-                                    if (_currentLocation != null) {
-                                      _animMapController.animateTo(
-                                        dest: _currentLocation,
-                                        zoom: _animTargetZoom,
-                                      );
-                                    }
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                        ],
-                      ),
-                    ),
-                  ),
-          ],
-        ),
-      ),
     );
   }
 }

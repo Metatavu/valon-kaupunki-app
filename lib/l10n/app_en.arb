@@ -90,5 +90,25 @@
     "readMore": "Read more",
     "@readMore": {
         "description": "Read more"
+    },
+    "category": "Category",
+    "@category": {
+        "description": "Category text"
+    },
+    "distanceToTarget": "Distance to attraction",
+    "@distanceToTarget": {
+        "description": "Distance to attraction label"
+    },
+    "address": "Address",
+    "@address": {
+        "description": "Address label"
+    },
+    "designer": "Designer",
+    "@designer": {
+        "description": "Designer of attraction label"
+    },
+    "errorLoadingImageText": "Error loading image",
+    "@errorLoadingImageText": {
+        "description": "Error loading image text"
     }
 }
