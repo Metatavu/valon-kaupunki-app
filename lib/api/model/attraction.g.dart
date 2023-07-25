@@ -9,6 +9,7 @@ part of 'attraction.dart';
 Attraction _$AttractionFromJson(Map<String, dynamic> json) => Attraction(
       json['title'] as String,
       json['category'] as String,
+      json['subTitle'] as String,
       json['description'] as String?,
       json['artist'] as String?,
       json['link'] as String?,
@@ -21,6 +22,7 @@ Map<String, dynamic> _$AttractionToJson(Attraction instance) =>
     <String, dynamic>{
       'title': instance.title,
       'category': instance.category,
+      'subTitle': instance.subTitle,
       'description': instance.description,
       'artist': instance.artist,
       'link': instance.link,

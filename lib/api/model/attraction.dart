@@ -6,14 +6,15 @@ part "attraction.g.dart";
 
 @JsonSerializable()
 class Attraction {
-  Attraction(this.title, this.category, this.description, this.artist,
-      this.link, this.address, this.location, this.data);
+  Attraction(this.title, this.category, this.subTitle, this.description,
+      this.artist, this.link, this.address, this.location, this.data);
 
   factory Attraction.fromJson(Map<String, dynamic> json) =>
       _$AttractionFromJson(json);
 
   final String title;
   final String category;
+  final String subTitle;
   final String? description;
   final String? artist;
   final String? link;
