@@ -106,5 +106,9 @@
     "designer": "Designer",
     "@designer": {
         "description": "Designer of attraction label"
+    },
+    "errorLoadingImageText": "Error loading image",
+    "@errorLoadingImageText": {
+        "description": "Error loading image text"
     }
 }

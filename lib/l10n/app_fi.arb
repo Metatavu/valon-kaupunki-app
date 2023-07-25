@@ -23,5 +23,6 @@
     "category": "Kategoria",
     "distanceToTarget": "Etäisyys kohteeseen",
     "address": "Osoite",
-    "designer": "Valaistuksen suunnittelija"
+    "designer": "Valaistuksen suunnittelija",
+    "errorLoadingImageText": "Virhe ladattaessa kuvaa"
 }

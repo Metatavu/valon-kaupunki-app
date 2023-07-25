@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
 /// An image constrained only by height, without distorting its aspect ratio.
 class HeightConstrainedImage extends StatelessWidget {
@@ -37,6 +38,7 @@ class HeightConstrainedImage extends StatelessWidget {
 
   Widget _errorBuilder(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -45,7 +47,7 @@ class HeightConstrainedImage extends StatelessWidget {
         color: Colors.black,
         child: Center(
           child: Text(
-            "Virhe ladattaessa kuvaa",
+            localizations.errorLoadingImageText,
             style: theme.textTheme.bodyMedium,
           ),
         ),
