@@ -19,5 +19,9 @@
     "loadingDataFailed": "Tapahtumakohteiden tietojen lataus epäonnistui",
     "benefitCoupon": "Etukuponki",
     "validUntil": "Voimassa {time} asti",
-    "readMore": "Lue lisää"
+    "readMore": "Lue lisää",
+    "category": "Kategoria",
+    "distanceToTarget": "Etäisyys kohteeseen",
+    "address": "Osoite",
+    "designer": "Valaistuksen suunnittelija"
 }

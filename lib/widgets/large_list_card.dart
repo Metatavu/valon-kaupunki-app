@@ -7,6 +7,8 @@ import "package:valon_kaupunki_app/assets.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
+import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
+import "package:valon_kaupunki_app/widgets/property_info.dart";
 
 class LargeListCard extends StatelessWidget {
   final String _imageUrl;
@@ -48,16 +50,10 @@ class LargeListCard extends StatelessWidget {
         child: SizedBox(
           child: Column(
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
+              HeightConstrainedImage.network(
                 height: 200,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Image.network(
-                    _imageUrl,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
+                radius: 5.0,
+                url: _imageUrl,
               ),
               Align(
                 alignment: Alignment.topLeft,
@@ -85,53 +81,31 @@ class LargeListCard extends StatelessWidget {
                         style:
                             theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
                       ),
-                      SizedBox(
-                        height: 60.0,
-                        child: Row(
-                          children: [
+                      PropertyInfo(
+                        leading:
                             SvgPicture.asset(Assets.restaurantPartnerAssetIcon),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    getPartnerCategoryLabel(
-                                        _partner.category, localizations),
-                                    style: theme.textTheme.bodyMedium!
-                                        .copyWith(fontSize: 14.0),
-                                  ),
-                                  Text(
-                                    _partner.name,
-                                    style: theme.textTheme.bodySmall,
-                                  ),
-                                ],
+                        title: getPartnerCategoryLabel(
+                            _partner.category, localizations),
+                        text: _partner.name,
+                        trailing: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: Colors.white,
+                                opticalSize: 24.0,
                               ),
-                            ),
-                            const Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_outlined,
-                                    color: Colors.white,
-                                    opticalSize: 24.0,
-                                  ),
-                                  Text(
-                                    _currentLocation == null
-                                        ? "- m"
-                                        : LocationUtils.formatDistance(
-                                            _partner.location.toMarkerType(),
-                                            _currentLocation!),
-                                    style: theme.textTheme.bodySmall,
-                                  )
-                                ],
+                              Text(
+                                _currentLocation == null
+                                    ? "- m"
+                                    : LocationUtils.formatDistance(
+                                        _partner.location.toMarkerType(),
+                                        _currentLocation!),
+                                style: theme.textTheme.bodySmall,
                               ),
-                            )
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],

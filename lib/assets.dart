@@ -15,6 +15,8 @@ class Assets {
   static const String barPartnerAssetIcon = "assets/bar-icon.svg";
   static const String shopPartnerAssetIcon = "assets/shop-icon.svg";
   static const String genericPartnerAssetIcon = "assets/other-icon.svg";
+  static const String locationIconAsset = "assets/location-icon.svg";
+  static const String designerIconAsset = "assets/designer-icon.svg";
 
   Assets._();
 }

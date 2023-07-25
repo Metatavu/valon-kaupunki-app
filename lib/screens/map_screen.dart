@@ -67,13 +67,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Benefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
-  AttractionInfoOverlay? _currentAttractionInfo = AttractionInfoOverlay();
+  AttractionInfoOverlay? _currentAttractionInfo;
 
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_localizations);
 
   double _compassAngle = 0.0;
   bool _dataFetchFailed = false;
+
+  LatLng? _lastTapTarget;
+  double _zoomLevel = 12.0;
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -276,11 +279,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       FlutterMap(
         mapController: _animMapController.mapController,
         options: MapOptions(
-          center: const LatLng(62.24147, 25.72088),
-          zoom: 12,
+          center: _lastTapTarget ?? const LatLng(62.24147, 25.72088),
+          zoom: _zoomLevel,
           maxZoom: 18,
           minZoom: 9,
           onMapEvent: (_) {
+            _zoomLevel = _mapController.zoom;
             setState(() {
               _compassAngle = (pi / 180) *
                   (_mapController.rotation == 360.0
@@ -309,12 +313,35 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     width: 80,
                     builder: (context) => GestureDetector(
                       child: SvgPicture.asset(data.asset),
-                      onTap: () {
+                      onTap: () async {
                         if (_mapController.center != data.point) {
-                          _animMapController.animateTo(
+                          await _animMapController.animateTo(
                             dest: data.point,
                             zoom: _animTargetZoom,
                           );
+
+                          _lastTapTarget = data.point;
+                        }
+
+                        if (_attractions.any((attraction) =>
+                            attraction.location.toMarkerType() == data.point)) {
+                          final attractionInfo = AttractionInfoOverlay(
+                            attraction: _attractions
+                                .where((attraction) =>
+                                    attraction.location.toMarkerType() ==
+                                    data.point)
+                                .first,
+                            currentLocation: _currentLocation,
+                            onClose: () {
+                              setState(() {
+                                _currentAttractionInfo = null;
+                              });
+                            },
+                          );
+
+                          setState(() {
+                            _currentAttractionInfo = attractionInfo;
+                          });
                         }
                       },
                     ),
