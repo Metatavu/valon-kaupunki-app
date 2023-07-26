@@ -17,6 +17,7 @@ import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
+import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
 import "package:valon_kaupunki_app/widgets/small_list_card.dart";
@@ -67,7 +68,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<Benefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
-  AttractionInfoOverlay? _currentAttractionInfo;
+  Widget? _currentOverlay;
 
   _Section _currentSection = _Section.home;
   String get _title => _currentSection.localizedTitle(_localizations);
@@ -144,6 +145,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       validTo: benefit.validTo!,
       partner: benefit.partner!.data!.partner,
       currentLocation: _currentLocation,
+      readMore: () {
+        setState(() {
+          _currentOverlay = CouponOverlay(
+            benefit: benefit,
+            currentLocation: _currentLocation,
+            onClose: () => setState(() => _currentOverlay = null),
+          );
+        });
+      },
     );
   }
 
@@ -334,13 +344,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             currentLocation: _currentLocation,
                             onClose: () {
                               setState(() {
-                                _currentAttractionInfo = null;
+                                _currentOverlay = null;
                               });
                             },
                           );
 
                           setState(() {
-                            _currentAttractionInfo = attractionInfo;
+                            _currentOverlay = attractionInfo;
                           });
                         }
                       },
@@ -496,12 +506,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         _fetchData();
         await Future.delayed(const Duration(seconds: 1));
       },
-      child: _currentAttractionInfo == null
+      child: _currentOverlay == null
           ? _buildMainContent()
           : Stack(
               children: [
                 _buildMainContent(),
-                _currentAttractionInfo!,
+                _currentOverlay!,
               ],
             ),
     );

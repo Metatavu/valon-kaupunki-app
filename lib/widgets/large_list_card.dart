@@ -17,6 +17,7 @@ class LargeListCard extends StatelessWidget {
   final DateTime _couponValidTo;
   final Partner _partner;
   final LatLng? _currentLocation;
+  final void Function() _readMore;
 
   const LargeListCard({
     required String imageUrl,
@@ -24,6 +25,7 @@ class LargeListCard extends StatelessWidget {
     required String couponBenefit,
     required DateTime validTo,
     required Partner partner,
+    required void Function() readMore,
     LatLng? currentLocation,
     Key? key,
   })  : _imageUrl = imageUrl,
@@ -32,6 +34,7 @@ class LargeListCard extends StatelessWidget {
         _couponValidTo = validTo,
         _partner = partner,
         _currentLocation = currentLocation,
+        _readMore = readMore,
         super(key: key);
 
   @override
@@ -82,8 +85,7 @@ class LargeListCard extends StatelessWidget {
                             theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
                       ),
                       PropertyInfo(
-                        leading:
-                            SvgPicture.asset(Assets.restaurantPartnerAssetIcon),
+                        leading: getPartnerCategoryIcon(_partner.category),
                         title: getPartnerCategoryLabel(
                             _partner.category, localizations),
                         text: _partner.name,
@@ -117,7 +119,7 @@ class LargeListCard extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: _readMore,
                     style: theme.outlinedButtonTheme.style,
                     child: Text(
                       localizations.readMore,

@@ -7,14 +7,15 @@ part "benefit.g.dart";
 class Benefit {
   final String title;
   final String benefitText;
+  final String description;
   final DateTime? validFrom;
   final DateTime? validTo;
   final PartnerData? partner;
   @JsonKey(name: "image")
   final ImageData? data;
 
-  const Benefit(this.title, this.benefitText, this.validFrom, this.validTo,
-      this.data, this.partner);
+  const Benefit(this.title, this.benefitText, this.description, this.validFrom,
+      this.validTo, this.data, this.partner);
 
   factory Benefit.fromJson(Map<String, dynamic> json) =>
       _$BenefitFromJson(json);

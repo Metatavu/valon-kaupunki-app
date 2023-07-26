@@ -110,5 +110,13 @@
     "errorLoadingImageText": "Error loading image",
     "@errorLoadingImageText": {
         "description": "Error loading image text"
+    },
+    "readMoreAbout": "Read more",
+    "@readMoreAbout": {
+        "description": "Read more about target label"
+    },
+    "linkOpensInNewWindow": "Link opens in new window",
+    "@linkOpensInNewWindow": {
+        "description": "Link opens in new window label"
     }
 }

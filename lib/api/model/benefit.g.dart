@@ -9,6 +9,7 @@ part of 'benefit.dart';
 Benefit _$BenefitFromJson(Map<String, dynamic> json) => Benefit(
       json['title'] as String,
       json['benefitText'] as String,
+      json['description'] as String,
       json['validFrom'] == null
           ? null
           : DateTime.parse(json['validFrom'] as String),
@@ -26,6 +27,7 @@ Benefit _$BenefitFromJson(Map<String, dynamic> json) => Benefit(
 Map<String, dynamic> _$BenefitToJson(Benefit instance) => <String, dynamic>{
       'title': instance.title,
       'benefitText': instance.benefitText,
+      'description': instance.description,
       'validFrom': instance.validFrom?.toIso8601String(),
       'validTo': instance.validTo?.toIso8601String(),
       'partner': instance.partner,
