@@ -26,5 +26,7 @@
     "designer": "Valaistuksen suunnittelija",
     "errorLoadingImageText": "Virhe ladattaessa kuvaa",
     "readMoreAbout": "Lue lisää kohteessa",
-    "linkOpensInNewWindow": "Linkki avautuu uudessa ikkunassa"
+    "linkOpensInNewWindow": "Linkki avautuu uudessa ikkunassa",
+    "close": "Sulje",
+    "claimBenefit": "Lunasta kuponki"
 }

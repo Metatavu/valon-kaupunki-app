@@ -118,5 +118,13 @@
     "linkOpensInNewWindow": "Link opens in new window",
     "@linkOpensInNewWindow": {
         "description": "Link opens in new window label"
+    },
+    "close": "Close",
+    "@close": {
+        "description": "Close text"
+    },
+    "claimBenefit": "Claim benefit",
+    "@claimbenefit": {
+        "description": "Claim benefit text"
     }
 }
