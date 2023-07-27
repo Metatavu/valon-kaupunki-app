@@ -1,9 +1,7 @@
 import "package:flutter/material.dart";
-import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:valon_kaupunki_app/api/api_categories.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
-import "package:valon_kaupunki_app/assets.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
