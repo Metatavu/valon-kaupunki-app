@@ -34,7 +34,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context)!;
 
-    if ((widget.attraction.image != null && _showFullscreenImage)) {
+    if (widget.attraction.image != null && _showFullscreenImage) {
       return WillPopScope(
         onWillPop: () async {
           final retval = !_showFullscreenImage;
