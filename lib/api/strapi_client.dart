@@ -1,17 +1,21 @@
 import "dart:convert";
 
+import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:http/http.dart" as http;
+import "package:valon_kaupunki_app/unique_device_info.dart";
 
 enum StrapiContentType {
   attraction,
   benefit,
-  partner;
+  partner,
+  benefitUser;
 
   String path() => switch (this) {
         attraction => "attractions",
         benefit => "benefits",
         partner => "partners",
+        benefitUser => "benefit-users",
       };
 
   dynamic fromJson(String jsonData) {
@@ -21,6 +25,7 @@ enum StrapiContentType {
       attraction => StrapiAttractionResponse.fromJson(json),
       benefit => StrapiBenefitResponse.fromJson(json),
       partner => StrapiPartnerResponse.fromJson(json),
+      benefitUser => StrapiBenefitUserResponse.fromJson(json),
     };
   }
 }
@@ -32,6 +37,7 @@ class StrapiClient {
   static const String _strapiBase = String.fromEnvironment("STRAPI_BASE_PATH");
 
   static StrapiClient? _instance;
+  static String? _deviceId;
 
   StrapiClient._();
 
@@ -68,9 +74,41 @@ class StrapiClient {
         "populate": "image"
       });
 
+  Future<List<Benefit>> getBenefitsForDevice() async {
+    _deviceId ??= await getUniqueDeviceId();
+    final resp = await _getContentType<StrapiBenefitUserResponse>(
+        StrapiContentType.benefitUser,
+        {"populate": "benefit,benefit.image,partner.image"});
+
+    return Future.value(
+        resp.data.map((e) => e.benefitUser.benefit.data.benefit).toList());
+  }
+
   Future<StrapiPartnerResponse> getPartners() async =>
       _getContentType<StrapiPartnerResponse>(
           StrapiContentType.partner, {"populate": "image,benefits"});
+
+  Future<void> claimBenefit(int id) async {
+    _deviceId ??= await getUniqueDeviceId();
+    final resp = await http.post(
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [_strapiBase, StrapiContentType.benefitUser.path()],
+      ),
+      body: {
+        "deviceIdentifier": _deviceId!,
+        "benefit": id,
+      },
+      headers: {
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw const ApiException("failed to add benefit user");
+    }
+  }
 }
 
 class ApiException implements Exception {
