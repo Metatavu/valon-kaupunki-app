@@ -63,6 +63,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   late final AppLocalizations _localizations = AppLocalizations.of(context)!;
 
   late final Stream<LocationMarkerPosition?> _posStream;
+  final Set<int> _usedBenefits = {};
   final List<StrapiBenefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
@@ -136,6 +137,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
 
     final benefit = _benefits[index].benefit;
+    final alreadyUsed = _usedBenefits.contains(_benefits[index].id);
+
     return LargeListCard(
       imageUrl: benefit.image!.image.url,
       couponText: benefit.title,
@@ -143,24 +146,33 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       validTo: benefit.validTo!,
       partner: benefit.partner!.data!.partner,
       currentLocation: _currentLocation,
-      readMore: () {
-        setState(() {
-          _currentOverlay = CouponOverlay(
-            benefit: benefit,
-            currentLocation: _currentLocation,
-            onClose: () => setState(() => _currentOverlay = null),
-            onClaim: () async {
-              if (!await _client.claimBenefit(_benefits[index].id)) {
-                // Ideally, this should never happen. Benefits should be greyed out once used.
-                Fluttertoast.showToast(
-                  msg: _localizations.cannotUseBenefit(benefit.title),
-                  toastLength: Toast.LENGTH_SHORT,
+      readMore: alreadyUsed
+          ? null
+          : () {
+              setState(() {
+                _currentOverlay = CouponOverlay(
+                  benefit: benefit,
+                  currentLocation: _currentLocation,
+                  onClose: () => setState(() => _currentOverlay = null),
+                  onClaim: () async {
+                    if (!await _client.claimBenefit(_benefits[index].id)) {
+                      // Ideally, this should never happen. Benefits should be greyed out once used.
+                      Fluttertoast.showToast(
+                        msg: _localizations.cannotUseBenefit(benefit.title),
+                        toastLength: Toast.LENGTH_SHORT,
+                      );
+                    } else {
+                      _usedBenefits.add(_benefits[index].id);
+                    }
+
+                    setState(() {
+                      _currentOverlay = null;
+                    });
+                  },
                 );
-              }
+              });
             },
-          );
-        });
-      },
+      alreadyUsed: alreadyUsed,
     );
   }
 
@@ -244,9 +256,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               getPartnerMarkerAsset(e.partner.category)))
           .toList());
 
-      final benefitsResp = await _client.getBenefits();
+      final benefitsResp = await _client.getUsedBenefitsForDevice();
+      _usedBenefits.clear();
+      _usedBenefits.addAll(benefitsResp.map((e) => e.id));
+
+      final allBenefitsResp = await _client.getBenefits();
       _benefits.clear();
-      _benefits.addAll(benefitsResp.data);
+      _benefits.addAll(allBenefitsResp.data);
 
       _markers.clear();
       _addMarkers(markers);

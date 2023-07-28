@@ -15,7 +15,8 @@ class LargeListCard extends StatelessWidget {
   final DateTime _couponValidTo;
   final Partner _partner;
   final LatLng? _currentLocation;
-  final void Function() _readMore;
+  final void Function()? _readMore;
+  final bool alreadyUsed;
 
   const LargeListCard({
     required String imageUrl,
@@ -23,7 +24,8 @@ class LargeListCard extends StatelessWidget {
     required String couponBenefit,
     required DateTime validTo,
     required Partner partner,
-    required void Function() readMore,
+    required void Function()? readMore,
+    required this.alreadyUsed,
     LatLng? currentLocation,
     Key? key,
   })  : _imageUrl = imageUrl,
@@ -51,10 +53,17 @@ class LargeListCard extends StatelessWidget {
         child: SizedBox(
           child: Column(
             children: [
-              HeightConstrainedImage.network(
-                height: 200,
-                radius: 5.0,
-                url: _imageUrl,
+              Container(
+                foregroundDecoration: BoxDecoration(
+                  color: alreadyUsed ? Colors.grey : Colors.transparent,
+                  backgroundBlendMode:
+                      alreadyUsed ? BlendMode.saturation : null,
+                ),
+                child: HeightConstrainedImage.network(
+                  height: 200,
+                  radius: 5.0,
+                  url: _imageUrl,
+                ),
               ),
               Align(
                 alignment: Alignment.topLeft,
@@ -118,11 +127,22 @@ class LargeListCard extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: OutlinedButton(
                     onPressed: _readMore,
-                    style: theme.outlinedButtonTheme.style,
+                    style: _readMore == null
+                        ? theme.outlinedButtonTheme.style!.copyWith(
+                            backgroundColor:
+                                const MaterialStatePropertyAll(Colors.grey),
+                            side: const MaterialStatePropertyAll(
+                                BorderSide(style: BorderStyle.none)),
+                          )
+                        : theme.outlinedButtonTheme.style,
                     child: Text(
-                      localizations.readMore,
-                      style: theme.outlinedButtonTheme.style!.textStyle!
-                          .resolve({}),
+                      _readMore == null
+                          ? localizations.claimed
+                          : localizations.readMore,
+                      style: _readMore == null
+                          ? const TextStyle(color: Colors.white)
+                          : theme.outlinedButtonTheme.style!.textStyle!
+                              .resolve({}),
                     ),
                   ),
                 ),

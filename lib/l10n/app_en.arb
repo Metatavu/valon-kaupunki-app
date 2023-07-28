@@ -135,5 +135,9 @@
                 "type": "String"
             }
         }
+    },
+    "claimed": "Claimed",
+    "@claimed": {
+        "description": "Claimed"
     }
 }

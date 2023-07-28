@@ -1,6 +1,5 @@
 import "dart:convert";
 
-import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:http/http.dart" as http;
 import "package:valon_kaupunki_app/unique_device_info.dart";
@@ -74,11 +73,13 @@ class StrapiClient {
         "populate": "image"
       });
 
-  Future<List<StrapiBenefit>> getBenefitsForDevice() async {
+  Future<List<StrapiBenefit>> getUsedBenefitsForDevice() async {
     _deviceId ??= await getUniqueDeviceId();
     final resp = await _getContentType<StrapiBenefitUserResponse>(
-        StrapiContentType.benefitUser,
-        {"populate": "benefit,benefit.image,partner.image"});
+        StrapiContentType.benefitUser, {
+      "populate": "benefit,benefit.image,partner.image",
+      "filters[deviceIdentifier][\$eq]": _deviceId!
+    });
 
     return Future.value(
         resp.data.map((e) => e.benefitUser.benefit.data).toList());
@@ -90,8 +91,8 @@ class StrapiClient {
 
   Future<bool> claimBenefit(int id) async {
     _deviceId ??= await getUniqueDeviceId();
-    final unusedBenefits = await getBenefitsForDevice();
-    if (!unusedBenefits.map((e) => e.id).contains(id)) {
+    final usedBenefits = await getUsedBenefitsForDevice();
+    if (usedBenefits.map((e) => e.id).contains(id)) {
       return false;
     }
 
