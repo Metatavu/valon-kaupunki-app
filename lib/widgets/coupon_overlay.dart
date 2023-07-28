@@ -16,12 +16,14 @@ class CouponOverlay extends StatelessWidget {
   final Benefit benefit;
   final LatLng? currentLocation;
   final void Function() onClose;
+  final void Function() onClaim;
 
   const CouponOverlay({
     super.key,
     required this.benefit,
     required this.currentLocation,
     required this.onClose,
+    required this.onClaim,
   });
 
   @override
@@ -184,7 +186,7 @@ class CouponOverlay extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: OutlinedButton(
                                   style: theme.outlinedButtonTheme.style,
-                                  onPressed: () {},
+                                  onPressed: onClaim,
                                   child: Text(
                                     localizations.claimBenefit,
                                     style: theme.textTheme.bodySmall!,

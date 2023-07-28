@@ -28,5 +28,6 @@
     "readMoreAbout": "Lue lisää kohteessa",
     "linkOpensInNewWindow": "Linkki avautuu uudessa ikkunassa",
     "close": "Sulje",
-    "claimBenefit": "Lunasta kuponki"
+    "claimBenefit": "Lunasta kuponki",
+    "cannotUseBenefit": "Ei voitu lunastaa kuponkia {text}. Kuponki on jo käytetty tällä laitteella."
 }

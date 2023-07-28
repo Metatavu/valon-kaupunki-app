@@ -149,6 +149,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             benefit: benefit,
             currentLocation: _currentLocation,
             onClose: () => setState(() => _currentOverlay = null),
+            onClaim: () async {
+              if (!await _client.claimBenefit(_benefits[index].id)) {
+                // Ideally, this should never happen. Benefits should be greyed out once used.
+                Fluttertoast.showToast(
+                  msg: _localizations.cannotUseBenefit(benefit.title),
+                  toastLength: Toast.LENGTH_SHORT,
+                );
+              }
+            },
           );
         });
       },

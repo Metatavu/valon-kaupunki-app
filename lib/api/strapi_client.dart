@@ -74,44 +74,59 @@ class StrapiClient {
         "populate": "image"
       });
 
-  Future<List<Benefit>> getBenefitsForDevice() async {
+  Future<List<StrapiBenefit>> getBenefitsForDevice() async {
     _deviceId ??= await getUniqueDeviceId();
     final resp = await _getContentType<StrapiBenefitUserResponse>(
         StrapiContentType.benefitUser,
         {"populate": "benefit,benefit.image,partner.image"});
 
     return Future.value(
-        resp.data.map((e) => e.benefitUser.benefit.data.benefit).toList());
+        resp.data.map((e) => e.benefitUser.benefit.data).toList());
   }
 
   Future<StrapiPartnerResponse> getPartners() async =>
       _getContentType<StrapiPartnerResponse>(
           StrapiContentType.partner, {"populate": "image,benefits"});
 
-  Future<void> claimBenefit(int id) async {
+  Future<bool> claimBenefit(int id) async {
     _deviceId ??= await getUniqueDeviceId();
+    final unusedBenefits = await getBenefitsForDevice();
+    if (!unusedBenefits.map((e) => e.id).contains(id)) {
+      return false;
+    }
+
     final resp = await http.post(
       Uri(
         scheme: "https",
         host: _strapiUrl,
         pathSegments: [_strapiBase, StrapiContentType.benefitUser.path()],
       ),
-      body: {
-        "deviceIdentifier": _deviceId!,
-        "benefit": id,
-      },
+      body: jsonEncode(
+        {
+          "data": {
+            "deviceIdentifier": _deviceId!,
+            "benefit": id,
+          },
+        },
+      ),
       headers: {
+        "Content-Type": "application/json",
         "Authorization": "Bearer $_accessToken",
       },
     );
 
     if (resp.statusCode != 200) {
-      throw const ApiException("failed to add benefit user");
+      throw ApiException("failed to add benefit user: ${resp.body}");
     }
+
+    return true;
   }
 }
 
 class ApiException implements Exception {
   final String msg;
   const ApiException(this.msg);
+
+  @override
+  String toString() => "ApiException[$msg]";
 }

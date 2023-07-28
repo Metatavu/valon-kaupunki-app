@@ -124,7 +124,16 @@
         "description": "Close text"
     },
     "claimBenefit": "Claim benefit",
-    "@claimbenefit": {
+    "@claimBenefit": {
         "description": "Claim benefit text"
+    },
+    "cannotUseBenefit": "Could not claim benefit {text}. Benefit already claimed on this device",
+    "@cannotUseBenefit": {
+        "description": "Could not use benefit message",
+        "placeholders": {
+            "text": {
+                "type": "String"
+            }
+        }
     }
 }
