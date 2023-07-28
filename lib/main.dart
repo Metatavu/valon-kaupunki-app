@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
+import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/screens/map_screen.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
@@ -16,6 +17,7 @@ void main() async {
       .copyWith(systemNavigationBarColor: Colors.black);
   SystemChrome.setSystemUIOverlayStyle(mySystemTheme);
 
+  await Preferences.init();
   runApp(const MyApp());
 }
 

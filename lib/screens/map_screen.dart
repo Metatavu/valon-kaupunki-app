@@ -14,6 +14,7 @@ import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
@@ -79,16 +80,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   LatLng? _lastTapTarget;
   double _zoomLevel = 12.0;
 
-  bool _showPermanentAttractions = true;
-  bool _showEventAttractions = true;
+  bool _showPermanentAttractions = Preferences.showPermanentAttractions;
+  bool _showEventAttractions = Preferences.showEventAttractions;
 
-  bool _showRestaurants = true;
-  bool _showCafes = true;
+  bool _showRestaurants = Preferences.showRestaurants;
+  bool _showCafes = Preferences.showCafes;
 
-  bool _showBars = true;
-  bool _showShops = true;
+  bool _showBars = Preferences.showBars;
+  bool _showShops = Preferences.showShops;
 
-  bool _showOthers = true;
+  bool _showOthers = Preferences.showOthers;
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -239,7 +240,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void _addMarkers(List<_MarkerData> markers) {
     setState(() {
       _allMarkers.addAll(markers);
-      _markers.addAll(markers);
+      _markers.addAll(_filterMarkers(markers));
     });
   }
 
@@ -279,7 +280,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
       _allMarkers.clear();
 
-      // No point in filtering here - buttons are at default state
       _addMarkers(markers);
     } on Exception {
       await Fluttertoast.showToast(
@@ -519,8 +519,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.attractionsIconAsset,
                   label: _localizations.permanentAttractionsFilterText,
                   color: CustomThemeValues.appOrange,
-                  onClick: () {
+                  onClick: () async {
                     _showPermanentAttractions = !_showPermanentAttractions;
+                    await Preferences.setShowPermanentAttractions(
+                        _showPermanentAttractions);
                   },
                   state: _showPermanentAttractions,
                 ),
@@ -528,8 +530,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.attractionsIconAsset,
                   label: _localizations.eventAttractionsFilterText,
                   color: CustomThemeValues.eventColor,
-                  onClick: () {
+                  onClick: () async {
                     _showEventAttractions = !_showEventAttractions;
+                    await Preferences.setShowEventAttractions(
+                        _showEventAttractions);
                   },
                   state: _showEventAttractions,
                 ),
@@ -537,8 +541,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.restaurantPartnerAssetIcon,
                   label: _localizations.restaurantsFilterText,
                   color: CustomThemeValues.restaurantColor,
-                  onClick: () {
+                  onClick: () async {
                     _showRestaurants = !_showRestaurants;
+                    await Preferences.setShowRestaurants(_showRestaurants);
                   },
                   state: _showRestaurants,
                 ),
@@ -546,8 +551,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.barPartnerAssetIcon,
                   label: _localizations.barsFilterText,
                   color: CustomThemeValues.barsColor,
-                  onClick: () {
+                  onClick: () async {
                     _showBars = !_showBars;
+                    await Preferences.setShowBars(_showBars);
                   },
                   state: _showBars,
                 ),
@@ -555,8 +561,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.cafePartnerAssetIcon,
                   label: _localizations.cafesFilterText,
                   color: CustomThemeValues.cafeColor,
-                  onClick: () {
+                  onClick: () async {
                     _showCafes = !_showCafes;
+                    await Preferences.setShowCafes(_showCafes);
                   },
                   state: _showCafes,
                 ),
@@ -564,8 +571,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   iconAsset: Assets.shopPartnerAssetIcon,
                   label: _localizations.shopsFilterText,
                   color: CustomThemeValues.shopsColor,
-                  onClick: () {
+                  onClick: () async {
                     _showShops = !_showShops;
+                    await Preferences.setShowShops(_showShops);
                   },
                   state: _showShops,
                 ),
@@ -574,8 +582,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   label: _localizations.othersFilterText,
                   color: CustomThemeValues.othersColor,
                   noPad: true,
-                  onClick: () {
+                  onClick: () async {
                     _showOthers = !_showOthers;
+                    await Preferences.setShowOthers(_showOthers);
                   },
                   state: _showOthers,
                 ),
