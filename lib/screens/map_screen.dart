@@ -54,7 +54,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
-  final List<_MarkerData> _markers = List.empty(growable: true);
+  final List<_MarkerData> _allMarkers = List.empty(growable: true);
+  List<_MarkerData> _markers = List.empty(growable: true);
 
   final StrapiClient _client = StrapiClient.instance();
   final List<StrapiAttraction> _attractions = List.empty(growable: true);
@@ -77,6 +78,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   LatLng? _lastTapTarget;
   double _zoomLevel = 12.0;
+
+  bool _showPermanentAttractions = true;
+  bool _showEventAttractions = true;
+
+  bool _showRestaurants = true;
+  bool _showCafes = true;
+
+  bool _showBars = true;
+  bool _showShops = true;
+
+  bool _showOthers = true;
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
@@ -226,6 +238,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   void _addMarkers(List<_MarkerData> markers) {
     setState(() {
+      _allMarkers.addAll(markers);
       _markers.addAll(markers);
     });
   }
@@ -264,7 +277,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       _benefits.clear();
       _benefits.addAll(allBenefitsResp.data);
 
-      _markers.clear();
+      _allMarkers.clear();
+
+      // No point in filtering here - buttons are at default state
       _addMarkers(markers);
     } on Exception {
       await Fluttertoast.showToast(
@@ -276,6 +291,47 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         _dataFetchFailed = true;
       });
     }
+  }
+
+  List<_MarkerData> _filterMarkers(List<_MarkerData> markers) {
+    final result = List<_MarkerData>.empty(growable: true);
+
+    if (_showPermanentAttractions) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.permanentAttractionAsset));
+    }
+
+    if (_showEventAttractions) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.eventAttractionAsset));
+    }
+
+    if (_showRestaurants) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.restaurantPartnerAsset));
+    }
+
+    if (_showCafes) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.cafePartnerAsset));
+    }
+
+    if (_showBars) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.barPartnerAsset));
+    }
+
+    if (_showShops) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.shopPartnerAsset));
+    }
+
+    if (_showOthers) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.genericPartnerAsset));
+    }
+
+    return result;
   }
 
   void _setSection(_Section section) {
@@ -301,6 +357,67 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _posStream.listen((event) {
       _currentLocation = event?.latLng;
     });
+  }
+
+  Widget _filterButton({
+    required String iconAsset,
+    required String label,
+    required Color color,
+    required void Function() onClick,
+    required bool state,
+    bool noPad = false,
+  }) {
+    final theme = Theme.of(context);
+
+    var style = theme.outlinedButtonTheme.style!.copyWith(
+      padding: const MaterialStatePropertyAll(
+        EdgeInsets.only(left: 8.0, right: 8.0),
+      ),
+      side: MaterialStatePropertyAll(theme.outlinedButtonTheme.style!.side!
+          .resolve({})!.copyWith(color: color)),
+    );
+
+    var textStyle = theme.outlinedButtonTheme.style!.textStyle!
+        .resolve({})!.copyWith(color: color);
+    var svgColor = color;
+
+    if (state) {
+      style = style.copyWith(
+        backgroundColor: MaterialStatePropertyAll(color),
+      );
+
+      textStyle = textStyle.copyWith(
+        color: Colors.white,
+      );
+
+      svgColor = Colors.white;
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(right: noPad ? 0.0 : 8.0),
+      child: OutlinedButton(
+        onPressed: () => setState(() {
+          onClick();
+          _markers = _filterMarkers(_allMarkers);
+        }),
+        style: style,
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              iconAsset,
+              colorFilter: ColorFilter.mode(svgColor, BlendMode.srcIn),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                label,
+                style: textStyle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildMapContent() {
@@ -388,6 +505,85 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
+      Padding(
+        padding: const EdgeInsets.only(top: 104.0),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              children: [
+                _filterButton(
+                  iconAsset: Assets.attractionsIconAsset,
+                  label: _localizations.permanentAttractionsFilterText,
+                  color: CustomThemeValues.appOrange,
+                  onClick: () {
+                    _showPermanentAttractions = !_showPermanentAttractions;
+                  },
+                  state: _showPermanentAttractions,
+                ),
+                _filterButton(
+                  iconAsset: Assets.attractionsIconAsset,
+                  label: _localizations.eventAttractionsFilterText,
+                  color: CustomThemeValues.eventColor,
+                  onClick: () {
+                    _showEventAttractions = !_showEventAttractions;
+                  },
+                  state: _showEventAttractions,
+                ),
+                _filterButton(
+                  iconAsset: Assets.restaurantPartnerAssetIcon,
+                  label: _localizations.restaurantsFilterText,
+                  color: CustomThemeValues.restaurantColor,
+                  onClick: () {
+                    _showRestaurants = !_showRestaurants;
+                  },
+                  state: _showRestaurants,
+                ),
+                _filterButton(
+                  iconAsset: Assets.barPartnerAssetIcon,
+                  label: _localizations.barsFilterText,
+                  color: CustomThemeValues.barsColor,
+                  onClick: () {
+                    _showBars = !_showBars;
+                  },
+                  state: _showBars,
+                ),
+                _filterButton(
+                  iconAsset: Assets.cafePartnerAssetIcon,
+                  label: _localizations.cafesFilterText,
+                  color: CustomThemeValues.cafeColor,
+                  onClick: () {
+                    _showCafes = !_showCafes;
+                  },
+                  state: _showCafes,
+                ),
+                _filterButton(
+                  iconAsset: Assets.shopPartnerAssetIcon,
+                  label: _localizations.shopsFilterText,
+                  color: CustomThemeValues.shopsColor,
+                  onClick: () {
+                    _showShops = !_showShops;
+                  },
+                  state: _showShops,
+                ),
+                _filterButton(
+                  iconAsset: Assets.genericPartnerAssetIcon,
+                  label: _localizations.othersFilterText,
+                  color: CustomThemeValues.othersColor,
+                  noPad: true,
+                  onClick: () {
+                    _showOthers = !_showOthers;
+                  },
+                  state: _showOthers,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       _currentSection != _Section.home
           ? ClipRect(
               child: BackdropFilter(
@@ -400,7 +596,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             )
           : Padding(
-              padding: const EdgeInsets.only(top: 94.0),
+              padding: const EdgeInsets.only(top: 144.0),
               child: Align(
                 alignment: Alignment.topRight,
                 child: Column(

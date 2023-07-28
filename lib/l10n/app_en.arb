@@ -139,5 +139,12 @@
     "claimed": "Claimed",
     "@claimed": {
         "description": "Claimed"
-    }
+    },
+    "permanentAttractionsFilterText": "Permanent attractions",
+    "eventAttractionsFilterText": "Event attractions",
+    "restaurantsFilterText": "Restaurants",
+    "cafesFilterText": "Cafes",
+    "barsFilterText": "Bars",
+    "shopsFilterText": "Shops",
+    "othersFilterText": "Other partners"
 }

@@ -1,7 +1,7 @@
 {
     "editor": {
         "formatOnSave": true,
-        "formatOnType": true,
+        "formatOnType": false,
         "rulers": [
             80
         ],
