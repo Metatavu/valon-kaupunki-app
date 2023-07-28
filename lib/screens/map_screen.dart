@@ -10,9 +10,7 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:latlong2/latlong.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/api/api_categories.dart";
-import "package:valon_kaupunki_app/api/model/attraction.dart";
-import "package:valon_kaupunki_app/api/model/benefit.dart";
-import "package:valon_kaupunki_app/api/model/partner.dart";
+import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
@@ -59,13 +57,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final List<_MarkerData> _markers = List.empty(growable: true);
 
   final StrapiClient _client = StrapiClient.instance();
-  final List<Attraction> _attractions = List.empty(growable: true);
+  final List<StrapiAttraction> _attractions = List.empty(growable: true);
 
-  final List<Partner> _partners = List.empty(growable: true);
+  final List<StrapiPartner> _partners = List.empty(growable: true);
   late final AppLocalizations _localizations = AppLocalizations.of(context)!;
 
   late final Stream<LocationMarkerPosition?> _posStream;
-  final List<Benefit> _benefits = List.empty(growable: true);
+  final List<StrapiBenefit> _benefits = List.empty(growable: true);
 
   LatLng? _currentLocation;
   Widget? _currentOverlay;
@@ -85,7 +83,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       return null;
     }
 
-    final attraction = _attractions[index];
+    final attraction = _attractions[index].attraction;
     return SmallListCard(
       index: index,
       leftIcon: SvgPicture.asset(
@@ -115,7 +113,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       return null;
     }
 
-    final partner = _partners[index];
+    final partner = _partners[index].partner;
     return SmallListCard(
       index: index,
       leftIcon: getPartnerCategoryIcon(partner.category),
@@ -137,7 +135,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       return null;
     }
 
-    final benefit = _benefits[index];
+    final benefit = _benefits[index].benefit;
     return LargeListCard(
       imageUrl: benefit.image!.image.url,
       couponText: benefit.title,
@@ -226,20 +224,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           .toList());
 
       _attractions.clear();
-      _attractions.addAll(attractionResp.data.map((e) => e.attraction));
+      _attractions.addAll(attractionResp.data);
 
       final partnerResp = await _client.getPartners();
-      markers.addAll(partnerResp.data
+      _partners.clear();
+      _partners.addAll(partnerResp.data);
+
+      markers.addAll(_partners
           .map((e) => _MarkerData(e.partner.location.toMarkerType(),
               getPartnerMarkerAsset(e.partner.category)))
           .toList());
 
-      _partners.clear();
-      _partners.addAll(partnerResp.data.map((e) => e.partner));
-
       final benefitsResp = await _client.getBenefits();
       _benefits.clear();
-      _benefits.addAll(benefitsResp.data.map((e) => e.benefit));
+      _benefits.addAll(benefitsResp.data);
 
       _markers.clear();
       _addMarkers(markers);
@@ -334,13 +332,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         }
 
                         if (_attractions.any((attraction) =>
-                            attraction.location.toMarkerType() == data.point)) {
+                            attraction.attraction.location.toMarkerType() ==
+                            data.point)) {
                           final attractionInfo = AttractionInfoOverlay(
                             attraction: _attractions
                                 .where((attraction) =>
-                                    attraction.location.toMarkerType() ==
+                                    attraction.attraction.location
+                                        .toMarkerType() ==
                                     data.point)
-                                .first,
+                                .first
+                                .attraction,
                             currentLocation: _currentLocation,
                             onClose: () {
                               setState(() {
