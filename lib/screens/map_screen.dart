@@ -194,6 +194,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget get _childForCurrentSection => Listing(
+        filter: _currentSection == _Section.attractions
+            ? Column(
+                children: [
+                  SizedBox(height: 40, child: _filterList),
+                ],
+              )
+            : null,
         builder: _dataFetchFailed
             ? (context, index) {
                 if (index == 0) {
@@ -363,6 +370,50 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
+  Widget get _filterList {
+    return FilterButtonList(
+      onMarkerFilterUpdate: () => setState(() {
+        _markers = _filterMarkers(_allMarkers);
+      }),
+      onFilterPermanentAttractions: () async {
+        _showPermanentAttractions = !_showPermanentAttractions;
+        await Preferences.setShowPermanentAttractions(
+            _showPermanentAttractions);
+      },
+      onFilterEventAttractions: () async {
+        _showEventAttractions = !_showEventAttractions;
+        await Preferences.setShowEventAttractions(_showEventAttractions);
+      },
+      onFilterRestaurants: () async {
+        _showRestaurants = !_showRestaurants;
+        await Preferences.setShowRestaurants(_showRestaurants);
+      },
+      onFilterBars: () async {
+        _showBars = !_showBars;
+        await Preferences.setShowBars(_showBars);
+      },
+      onFilterCafes: () async {
+        _showCafes = !_showCafes;
+        await Preferences.setShowCafes(_showCafes);
+      },
+      onFilterShops: () async {
+        _showShops = !_showShops;
+        await Preferences.setShowShops(_showShops);
+      },
+      onFilterOthers: () async {
+        _showOthers = !_showOthers;
+        await Preferences.setShowOthers(_showOthers);
+      },
+      permanentAttractionsState: _showPermanentAttractions,
+      eventAttractionsState: _showEventAttractions,
+      restaurantsState: _showRestaurants,
+      barsState: _showBars,
+      cafesState: _showCafes,
+      shopsState: _showShops,
+      othersState: _showOthers,
+    );
+  }
+
   List<Widget> _buildMapContent() {
     final instance =
         FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
@@ -455,48 +506,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             alignment: Alignment.topCenter,
             child: SizedBox(
               height: 40,
-              child: FilterButtonList(
-                onMarkerFilterUpdate: () => setState(() {
-                  _markers = _filterMarkers(_allMarkers);
-                }),
-                onFilterPermanentAttractions: () async {
-                  _showPermanentAttractions = !_showPermanentAttractions;
-                  await Preferences.setShowPermanentAttractions(
-                      _showPermanentAttractions);
-                },
-                onFilterEventAttractions: () async {
-                  _showEventAttractions = !_showEventAttractions;
-                  await Preferences.setShowEventAttractions(
-                      _showEventAttractions);
-                },
-                onFilterRestaurants: () async {
-                  _showRestaurants = !_showRestaurants;
-                  await Preferences.setShowRestaurants(_showRestaurants);
-                },
-                onFilterBars: () async {
-                  _showBars = !_showBars;
-                  await Preferences.setShowBars(_showBars);
-                },
-                onFilterCafes: () async {
-                  _showCafes = !_showCafes;
-                  await Preferences.setShowCafes(_showCafes);
-                },
-                onFilterShops: () async {
-                  _showShops = !_showShops;
-                  await Preferences.setShowShops(_showShops);
-                },
-                onFilterOthers: () async {
-                  _showOthers = !_showOthers;
-                  await Preferences.setShowOthers(_showOthers);
-                },
-                permanentAttractionsState: _showPermanentAttractions,
-                eventAttractionsState: _showEventAttractions,
-                restaurantsState: _showRestaurants,
-                barsState: _showBars,
-                cafesState: _showCafes,
-                shopsState: _showShops,
-                othersState: _showOthers,
-              ),
+              child: _filterList,
             ),
           ),
         ),

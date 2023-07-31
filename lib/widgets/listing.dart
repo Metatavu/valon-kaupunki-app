@@ -1,18 +1,25 @@
 import "package:flutter/material.dart";
 
-class Listing extends StatefulWidget {
+class Listing extends StatelessWidget {
   final Widget? Function(BuildContext ctx, int index) builder;
-  const Listing({required this.builder, Key? key}) : super(key: key);
+  final Widget? filter;
 
-  @override
-  State<StatefulWidget> createState() => _ListingState();
-}
+  const Listing({required this.builder, required this.filter, Key? key})
+      : super(key: key);
 
-class _ListingState extends State<Listing> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemBuilder: widget.builder,
+      itemBuilder: (context, index) {
+        if (index == 0 && filter != null) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: filter!,
+          );
+        }
+
+        return builder(context, index - (filter != null ? 1 : 0));
+      },
     );
   }
 }
