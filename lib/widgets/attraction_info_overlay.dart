@@ -10,7 +10,7 @@ import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
-class AttractionInfoOverlay extends StatelessWidget {
+class AttractionInfoOverlay extends StatefulWidget {
   final Attraction attraction;
   final LatLng? currentLocation;
   final void Function() onClose;
@@ -23,9 +23,35 @@ class AttractionInfoOverlay extends StatelessWidget {
   });
 
   @override
+  State<AttractionInfoOverlay> createState() => _AttractionInfoOverlayState();
+}
+
+class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
+  bool _showFullscreenImage = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context)!;
+
+    if (widget.attraction.image != null && _showFullscreenImage) {
+      return WillPopScope(
+        onWillPop: () async {
+          final retval = !_showFullscreenImage;
+          setState(() {
+            _showFullscreenImage = false;
+          });
+
+          return retval;
+        },
+        child: SizedBox.expand(
+          child: Container(
+            color: Colors.black,
+            child: Image.network(widget.attraction.image!.image.url),
+          ),
+        ),
+      );
+    }
 
     return ClipRect(
       child: BackdropFilter(
@@ -42,11 +68,11 @@ class AttractionInfoOverlay extends StatelessWidget {
                     Icons.close,
                     color: Colors.white,
                   ),
-                  onPressed: onClose,
+                  onPressed: widget.onClose,
                 ),
                 title: Center(
                   child: Text(
-                    attraction.title,
+                    widget.attraction.title,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
@@ -56,18 +82,20 @@ class AttractionInfoOverlay extends StatelessWidget {
                       Icons.open_in_full,
                       color: Colors.white,
                     ),
-                    onPressed: () {},
+                    onPressed: () => setState(() {
+                      _showFullscreenImage = true;
+                    }),
                   ),
                 ],
               ),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (attraction.image != null)
+                    if (widget.attraction.image != null)
                       HeightConstrainedImage.network(
                         height: 200,
                         radius: 00,
-                        url: attraction.image!.image.url,
+                        url: widget.attraction.image!.image.url,
                       ),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -77,15 +105,15 @@ class AttractionInfoOverlay extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              attraction.subTitle,
+                              widget.attraction.subTitle,
                               textAlign: TextAlign.left,
                               style: theme.textTheme.bodyMedium,
                             ),
-                            if (attraction.description != null)
+                            if (widget.attraction.description != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  attraction.description!,
+                                  widget.attraction.description!,
                                   textAlign: TextAlign.left,
                                   style: theme.textTheme.bodySmall,
                                 ),
@@ -104,10 +132,10 @@ class AttractionInfoOverlay extends StatelessWidget {
                       ),
                       title: localizations.category,
                       text: getAttractionCategoryLabel(
-                          attraction.category, localizations),
+                          widget.attraction.category, localizations),
                       trailing: null,
                     ),
-                    if (attraction.address != null)
+                    if (widget.attraction.address != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.homeIconAsset,
@@ -117,7 +145,7 @@ class AttractionInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.address,
-                        text: attraction.address!,
+                        text: widget.attraction.address!,
                         trailing: null,
                       ),
                     PropertyInfo(
@@ -129,15 +157,15 @@ class AttractionInfoOverlay extends StatelessWidget {
                             Colors.white, BlendMode.srcIn),
                       ),
                       title: localizations.distanceToTarget,
-                      text: currentLocation == null
+                      text: widget.currentLocation == null
                           ? "- m"
                           : LocationUtils.formatDistance(
-                              attraction.location.toMarkerType(),
-                              currentLocation!,
+                              widget.attraction.location.toMarkerType(),
+                              widget.currentLocation!,
                             ),
                       trailing: null,
                     ),
-                    if (attraction.artist != null)
+                    if (widget.attraction.artist != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.designerIconAsset,
@@ -147,7 +175,7 @@ class AttractionInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.designer,
-                        text: attraction.artist!,
+                        text: widget.attraction.artist!,
                         trailing: null,
                       ),
                   ],
