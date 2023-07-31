@@ -151,12 +151,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     final benefit = _benefits[index].benefit;
     final alreadyUsed = _usedBenefits.contains(_benefits[index].id);
+    if (benefit.partner?.data?.partner == null) {
+      return null;
+    }
 
     return LargeListCard(
-      imageUrl: benefit.image!.image.url,
+      imageUrl: benefit.image?.image.url,
       couponText: benefit.title,
       couponBenefit: benefit.benefitText,
-      validTo: benefit.validTo!,
+      validTo: benefit.validTo,
       partner: benefit.partner!.data!.partner,
       currentLocation: _currentLocation,
       readMore: alreadyUsed
