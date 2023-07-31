@@ -17,6 +17,7 @@ import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
+import "package:valon_kaupunki_app/widgets/filter_button_list.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
 import "package:valon_kaupunki_app/widgets/small_list_card.dart";
@@ -362,67 +363,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
   }
 
-  Widget _filterButton({
-    required String iconAsset,
-    required String label,
-    required Color color,
-    required void Function() onClick,
-    required bool state,
-    bool noPad = false,
-  }) {
-    final theme = Theme.of(context);
-
-    var style = theme.outlinedButtonTheme.style!.copyWith(
-      padding: const MaterialStatePropertyAll(
-        EdgeInsets.only(left: 8.0, right: 8.0),
-      ),
-      side: MaterialStatePropertyAll(theme.outlinedButtonTheme.style!.side!
-          .resolve({})!.copyWith(color: color)),
-    );
-
-    var textStyle = theme.outlinedButtonTheme.style!.textStyle!
-        .resolve({})!.copyWith(color: color);
-    var svgColor = color;
-
-    if (state) {
-      style = style.copyWith(
-        backgroundColor: MaterialStatePropertyAll(color),
-      );
-
-      textStyle = textStyle.copyWith(
-        color: Colors.white,
-      );
-
-      svgColor = Colors.white;
-    }
-
-    return Padding(
-      padding: EdgeInsets.only(right: noPad ? 0.0 : 8.0),
-      child: OutlinedButton(
-        onPressed: () => setState(() {
-          onClick();
-          _markers = _filterMarkers(_allMarkers);
-        }),
-        style: style,
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              iconAsset,
-              colorFilter: ColorFilter.mode(svgColor, BlendMode.srcIn),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                label,
-                style: textStyle,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   List<Widget> _buildMapContent() {
     final instance =
         FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
@@ -514,84 +454,49 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           alignment: Alignment.topCenter,
           child: SizedBox(
             height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              children: [
-                _filterButton(
-                  iconAsset: Assets.attractionsIconAsset,
-                  label: _localizations.permanentAttractionsFilterText,
-                  color: CustomThemeValues.appOrange,
-                  onClick: () async {
-                    _showPermanentAttractions = !_showPermanentAttractions;
-                    await Preferences.setShowPermanentAttractions(
-                        _showPermanentAttractions);
-                  },
-                  state: _showPermanentAttractions,
-                ),
-                _filterButton(
-                  iconAsset: Assets.attractionsIconAsset,
-                  label: _localizations.eventAttractionsFilterText,
-                  color: CustomThemeValues.eventColor,
-                  onClick: () async {
-                    _showEventAttractions = !_showEventAttractions;
-                    await Preferences.setShowEventAttractions(
-                        _showEventAttractions);
-                  },
-                  state: _showEventAttractions,
-                ),
-                _filterButton(
-                  iconAsset: Assets.restaurantPartnerAssetIcon,
-                  label: _localizations.restaurantsFilterText,
-                  color: CustomThemeValues.restaurantColor,
-                  onClick: () async {
-                    _showRestaurants = !_showRestaurants;
-                    await Preferences.setShowRestaurants(_showRestaurants);
-                  },
-                  state: _showRestaurants,
-                ),
-                _filterButton(
-                  iconAsset: Assets.barPartnerAssetIcon,
-                  label: _localizations.barsFilterText,
-                  color: CustomThemeValues.barsColor,
-                  onClick: () async {
-                    _showBars = !_showBars;
-                    await Preferences.setShowBars(_showBars);
-                  },
-                  state: _showBars,
-                ),
-                _filterButton(
-                  iconAsset: Assets.cafePartnerAssetIcon,
-                  label: _localizations.cafesFilterText,
-                  color: CustomThemeValues.cafeColor,
-                  onClick: () async {
-                    _showCafes = !_showCafes;
-                    await Preferences.setShowCafes(_showCafes);
-                  },
-                  state: _showCafes,
-                ),
-                _filterButton(
-                  iconAsset: Assets.shopPartnerAssetIcon,
-                  label: _localizations.shopsFilterText,
-                  color: CustomThemeValues.shopsColor,
-                  onClick: () async {
-                    _showShops = !_showShops;
-                    await Preferences.setShowShops(_showShops);
-                  },
-                  state: _showShops,
-                ),
-                _filterButton(
-                  iconAsset: Assets.genericPartnerAssetIcon,
-                  label: _localizations.othersFilterText,
-                  color: CustomThemeValues.othersColor,
-                  noPad: true,
-                  onClick: () async {
-                    _showOthers = !_showOthers;
-                    await Preferences.setShowOthers(_showOthers);
-                  },
-                  state: _showOthers,
-                ),
-              ],
+            child: FilterButtonList(
+              onMarkerFilterUpdate: () => setState(() {
+                _markers = _filterMarkers(_allMarkers);
+              }),
+              onFilterPermanentAttractions: () async {
+                _showPermanentAttractions = !_showPermanentAttractions;
+                await Preferences.setShowPermanentAttractions(
+                    _showPermanentAttractions);
+              },
+              onFilterEventAttractions: () async {
+                _showEventAttractions = !_showEventAttractions;
+                await Preferences.setShowEventAttractions(
+                    _showEventAttractions);
+              },
+              onFilterRestaurants: () async {
+                _showRestaurants = !_showRestaurants;
+                await Preferences.setShowRestaurants(_showRestaurants);
+              },
+              onFilterBars: () async {
+                _showBars = !_showBars;
+                await Preferences.setShowBars(_showBars);
+              },
+              onFilterCafes: () async {
+                _showCafes = !_showCafes;
+                await Preferences.setShowCafes(_showCafes);
+              },
+              onFilterShops: () async {
+                _showShops = !_showShops;
+                await Preferences.setShowShops(_showShops);
+              },
+              onFilterOthers: () async {
+                _showOthers = !_showOthers;
+                await Preferences.setShowOthers(_showOthers);
+              },
+              permanentAttractionsState: _showPermanentAttractions,
+              eventAttractionsState: _showEventAttractions,
+              restaurantsState: _showRestaurants,
+              barsState: _showBars,
+              cafesState: _showCafes,
+              shopsState: _showShops,
+              othersState: _showOthers,
+              showAssets: true,
+              useColor: true,
             ),
           ),
         ),
