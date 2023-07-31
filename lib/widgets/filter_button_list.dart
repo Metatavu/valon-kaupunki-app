@@ -23,9 +23,6 @@ class FilterButtonList extends StatefulWidget {
   final bool shopsState;
   final bool othersState;
 
-  final bool showAssets;
-  final bool useColor;
-
   const FilterButtonList({
     required this.onMarkerFilterUpdate,
     required this.onFilterPermanentAttractions,
@@ -42,8 +39,6 @@ class FilterButtonList extends StatefulWidget {
     required this.barsState,
     required this.shopsState,
     required this.othersState,
-    required this.showAssets,
-    required this.useColor,
     Key? key,
   }) : super(key: key);
 
@@ -76,7 +71,7 @@ class _FilterButtonListState extends State<FilterButtonList> {
         .resolve({})!.copyWith(color: color);
     var svgColor = color;
 
-    if (state && widget.useColor) {
+    if (state) {
       style = style.copyWith(
         backgroundColor: MaterialStatePropertyAll(color),
       );
@@ -98,11 +93,10 @@ class _FilterButtonListState extends State<FilterButtonList> {
         style: style,
         child: Row(
           children: [
-            if (widget.showAssets)
-              SvgPicture.asset(
-                iconAsset,
-                colorFilter: ColorFilter.mode(svgColor, BlendMode.srcIn),
-              ),
+            SvgPicture.asset(
+              iconAsset,
+              colorFilter: ColorFilter.mode(svgColor, BlendMode.srcIn),
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(

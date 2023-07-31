@@ -496,8 +496,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 cafesState: _showCafes,
                 shopsState: _showShops,
                 othersState: _showOthers,
-                showAssets: true,
-                useColor: true,
               ),
             ),
           ),
