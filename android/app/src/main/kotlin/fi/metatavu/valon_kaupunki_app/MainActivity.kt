@@ -1,4 +1,4 @@
-package com.example.valon_kaupunki_app
+package fi.metatavu.valon_kaupunki_app
 
 import io.flutter.embedding.android.FlutterActivity
 

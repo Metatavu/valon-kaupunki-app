@@ -2,6 +2,7 @@
 import "package:json_annotation/json_annotation.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/model/benefit.dart";
+import "package:valon_kaupunki_app/api/model/benefit_user.dart";
 import "package:valon_kaupunki_app/api/model/image.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
 
@@ -116,6 +117,29 @@ class StrapiImageResponse {
 
   factory StrapiImageResponse.fromJson(Map<String, dynamic> json) =>
       _$StrapiImageResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiBenefitUser {
+  @JsonKey(name: "attributes")
+  final BenefitUser benefitUser;
+  final int id;
+
+  const StrapiBenefitUser(this.benefitUser, this.id);
+
+  factory StrapiBenefitUser.fromJson(Map<String, dynamic> json) =>
+      _$StrapiBenefitUserFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiBenefitUserResponse {
+  final List<StrapiBenefitUser> data;
+  final StrapiResponseMeta? meta;
+
+  const StrapiBenefitUserResponse(this.data, this.meta);
+
+  factory StrapiBenefitUserResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiBenefitUserResponseFromJson(json);
 }
 
 // The meta object in the response.

@@ -1,9 +1,7 @@
 import "package:flutter/material.dart";
-import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:valon_kaupunki_app/api/api_categories.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
-import "package:valon_kaupunki_app/assets.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
@@ -17,6 +15,8 @@ class LargeListCard extends StatelessWidget {
   final DateTime _couponValidTo;
   final Partner _partner;
   final LatLng? _currentLocation;
+  final void Function()? _readMore;
+  final bool alreadyUsed;
 
   const LargeListCard({
     required String imageUrl,
@@ -24,6 +24,8 @@ class LargeListCard extends StatelessWidget {
     required String couponBenefit,
     required DateTime validTo,
     required Partner partner,
+    required void Function()? readMore,
+    required this.alreadyUsed,
     LatLng? currentLocation,
     Key? key,
   })  : _imageUrl = imageUrl,
@@ -32,6 +34,7 @@ class LargeListCard extends StatelessWidget {
         _couponValidTo = validTo,
         _partner = partner,
         _currentLocation = currentLocation,
+        _readMore = readMore,
         super(key: key);
 
   @override
@@ -50,10 +53,17 @@ class LargeListCard extends StatelessWidget {
         child: SizedBox(
           child: Column(
             children: [
-              HeightConstrainedImage.network(
-                height: 200,
-                radius: 5.0,
-                url: _imageUrl,
+              Container(
+                foregroundDecoration: BoxDecoration(
+                  color: alreadyUsed ? Colors.grey : Colors.transparent,
+                  backgroundBlendMode:
+                      alreadyUsed ? BlendMode.saturation : null,
+                ),
+                child: HeightConstrainedImage.network(
+                  height: 200,
+                  radius: 5.0,
+                  url: _imageUrl,
+                ),
               ),
               Align(
                 alignment: Alignment.topLeft,
@@ -82,8 +92,7 @@ class LargeListCard extends StatelessWidget {
                             theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
                       ),
                       PropertyInfo(
-                        leading:
-                            SvgPicture.asset(Assets.restaurantPartnerAssetIcon),
+                        leading: getPartnerCategoryIcon(_partner.category),
                         title: getPartnerCategoryLabel(
                             _partner.category, localizations),
                         text: _partner.name,
@@ -117,12 +126,23 @@ class LargeListCard extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: OutlinedButton(
-                    onPressed: () {},
-                    style: theme.outlinedButtonTheme.style,
+                    onPressed: _readMore,
+                    style: _readMore == null
+                        ? theme.outlinedButtonTheme.style!.copyWith(
+                            backgroundColor:
+                                const MaterialStatePropertyAll(Colors.grey),
+                            side: const MaterialStatePropertyAll(
+                                BorderSide(style: BorderStyle.none)),
+                          )
+                        : theme.outlinedButtonTheme.style,
                     child: Text(
-                      localizations.readMore,
-                      style: theme.outlinedButtonTheme.style!.textStyle!
-                          .resolve({}),
+                      _readMore == null
+                          ? localizations.claimed
+                          : localizations.readMore,
+                      style: _readMore == null
+                          ? const TextStyle(color: Colors.white)
+                          : theme.outlinedButtonTheme.style!.textStyle!
+                              .resolve({}),
                     ),
                   ),
                 ),

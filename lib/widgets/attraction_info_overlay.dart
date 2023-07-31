@@ -46,140 +46,145 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
         },
         child: SizedBox.expand(
           child: Container(
-            color: Colors.black54,
+            color: Colors.black,
             child: Image.network(widget.attraction.image!.image.url),
           ),
         ),
       );
-    } else {
-      return ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-          child: SizedBox.expand(
-            child: Container(
-              color: Colors.black38,
-              child: Column(
-                children: [
-                  AppBar(
-                    backgroundColor: Colors.black,
-                    leading: IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                      onPressed: widget.onClose,
-                    ),
-                    title: Center(
-                      child: Text(
-                        widget.attraction.title,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.open_in_full,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => setState(() {
-                          _showFullscreenImage = true;
-                        }),
-                      ),
-                    ],
+    }
+
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: SizedBox.expand(
+          child: Container(
+            color: Colors.black38,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                backgroundColor: Colors.black,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.white,
                   ),
-                  if (widget.attraction.image != null)
-                    HeightConstrainedImage.network(
-                      height: 200,
-                      radius: 00,
-                      url: widget.attraction.image!.image.url,
-                    ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.attraction.subTitle,
-                            textAlign: TextAlign.left,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          if (widget.attraction.description != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                widget.attraction.description!,
-                                textAlign: TextAlign.left,
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
+                  onPressed: widget.onClose,
+                ),
+                title: Center(
+                  child: Text(
+                    widget.attraction.title,
+                    style: theme.textTheme.bodyMedium,
                   ),
-                  PropertyInfo(
-                    leading: SvgPicture.asset(
-                      Assets.attractionsIconAsset,
-                      width: 24.0,
-                      height: 24.0,
-                      colorFilter:
-                          const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.open_in_full,
+                      color: Colors.white,
                     ),
-                    title: localizations.category,
-                    text: getAttractionCategoryLabel(
-                        widget.attraction.category, localizations),
-                    trailing: null,
+                    onPressed: () => setState(() {
+                      _showFullscreenImage = true;
+                    }),
                   ),
-                  if (widget.attraction.address != null)
-                    PropertyInfo(
-                      leading: SvgPicture.asset(
-                        Assets.homeIconAsset,
-                        width: 24.0,
-                        height: 24.0,
-                        colorFilter: const ColorFilter.mode(
-                            Colors.white, BlendMode.srcIn),
-                      ),
-                      title: localizations.address,
-                      text: widget.attraction.address!,
-                      trailing: null,
-                    ),
-                  PropertyInfo(
-                    leading: SvgPicture.asset(
-                      Assets.locationIconAsset,
-                      width: 24.0,
-                      height: 24.0,
-                      colorFilter:
-                          const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                    ),
-                    title: localizations.distanceToTarget,
-                    text: widget.currentLocation == null
-                        ? "- m"
-                        : LocationUtils.formatDistance(
-                            widget.attraction.location.toMarkerType(),
-                            widget.currentLocation!,
-                          ),
-                    trailing: null,
-                  ),
-                  if (widget.attraction.artist != null)
-                    PropertyInfo(
-                      leading: SvgPicture.asset(
-                        Assets.designerIconAsset,
-                        width: 24.0,
-                        height: 24.0,
-                        colorFilter: const ColorFilter.mode(
-                            Colors.white, BlendMode.srcIn),
-                      ),
-                      title: localizations.designer,
-                      text: widget.attraction.artist!,
-                      trailing: null,
-                    ),
                 ],
+              ),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (widget.attraction.image != null)
+                      HeightConstrainedImage.network(
+                        height: 200,
+                        radius: 00,
+                        url: widget.attraction.image!.image.url,
+                      ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.attraction.subTitle,
+                              textAlign: TextAlign.left,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            if (widget.attraction.description != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  widget.attraction.description!,
+                                  textAlign: TextAlign.left,
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    PropertyInfo(
+                      leading: SvgPicture.asset(
+                        Assets.attractionsIconAsset,
+                        width: 24.0,
+                        height: 24.0,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                      title: localizations.category,
+                      text: getAttractionCategoryLabel(
+                          widget.attraction.category, localizations),
+                      trailing: null,
+                    ),
+                    if (widget.attraction.address != null)
+                      PropertyInfo(
+                        leading: SvgPicture.asset(
+                          Assets.homeIconAsset,
+                          width: 24.0,
+                          height: 24.0,
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
+                        title: localizations.address,
+                        text: widget.attraction.address!,
+                        trailing: null,
+                      ),
+                    PropertyInfo(
+                      leading: SvgPicture.asset(
+                        Assets.locationIconAsset,
+                        width: 24.0,
+                        height: 24.0,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.white, BlendMode.srcIn),
+                      ),
+                      title: localizations.distanceToTarget,
+                      text: widget.currentLocation == null
+                          ? "- m"
+                          : LocationUtils.formatDistance(
+                              widget.attraction.location.toMarkerType(),
+                              widget.currentLocation!,
+                            ),
+                      trailing: null,
+                    ),
+                    if (widget.attraction.artist != null)
+                      PropertyInfo(
+                        leading: SvgPicture.asset(
+                          Assets.designerIconAsset,
+                          width: 24.0,
+                          height: 24.0,
+                          colorFilter: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn),
+                        ),
+                        title: localizations.designer,
+                        text: widget.attraction.artist!,
+                        trailing: null,
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 }

@@ -24,5 +24,11 @@
     "distanceToTarget": "Etäisyys kohteeseen",
     "address": "Osoite",
     "designer": "Valaistuksen suunnittelija",
-    "errorLoadingImageText": "Virhe ladattaessa kuvaa"
+    "errorLoadingImageText": "Virhe ladattaessa kuvaa",
+    "readMoreAbout": "Lue lisää kohteessa",
+    "linkOpensInNewWindow": "Linkki avautuu uudessa ikkunassa",
+    "close": "Sulje",
+    "claimBenefit": "Lunasta kuponki",
+    "cannotUseBenefit": "Ei voitu lunastaa kuponkia {text}. Kuponki on jo käytetty tällä laitteella.",
+    "claimed": "Lunastettu"
 }

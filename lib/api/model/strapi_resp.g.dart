@@ -135,6 +135,36 @@ Map<String, dynamic> _$StrapiImageResponseToJson(
       'data': instance.data,
     };
 
+StrapiBenefitUser _$StrapiBenefitUserFromJson(Map<String, dynamic> json) =>
+    StrapiBenefitUser(
+      BenefitUser.fromJson(json['attributes'] as Map<String, dynamic>),
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$StrapiBenefitUserToJson(StrapiBenefitUser instance) =>
+    <String, dynamic>{
+      'attributes': instance.benefitUser,
+      'id': instance.id,
+    };
+
+StrapiBenefitUserResponse _$StrapiBenefitUserResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiBenefitUserResponse(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiBenefitUser.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['meta'] == null
+          ? null
+          : StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiBenefitUserResponseToJson(
+        StrapiBenefitUserResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
 StrapiResponseMeta _$StrapiResponseMetaFromJson(Map<String, dynamic> json) =>
     StrapiResponseMeta(
       Pagination.fromJson(json['pagination'] as Map<String, dynamic>),
