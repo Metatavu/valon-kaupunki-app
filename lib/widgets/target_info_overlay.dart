@@ -52,17 +52,46 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
     if (widget.imageUrl != null && _showFullscreenImage) {
       return WillPopScope(
         onWillPop: () async {
-          final retval = !_showFullscreenImage;
           setState(() {
             _showFullscreenImage = false;
           });
 
-          return retval;
+          return false;
         },
-        child: SizedBox.expand(
-          child: Container(
-            color: Colors.black,
-            child: Image.network(widget.imageUrl!),
+        child: GestureDetector(
+          onVerticalDragCancel: () => setState(() {
+            _showFullscreenImage = false;
+          }),
+          child: SizedBox.expand(
+            child: Container(
+              color: Colors.black,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40, left: 4),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _showFullscreenImage = false;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 100),
+                    child: Image.network(widget.imageUrl!),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );
