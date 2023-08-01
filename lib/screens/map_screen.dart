@@ -309,35 +309,39 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  void _sortAttractions(Sorting sorting) {
+    _shownAttractions = _shownAttractions.where((attraction) {
+      return (_showPermanentAttractions &&
+              attraction.attraction.category == "static") ||
+          (_showEventAttractions && attraction.attraction.category == "event");
+    }).toList();
+
+    _shownAttractions.sort((attraction, another) {
+      if (sorting == Sorting.alphabetical) {
+        return attraction.attraction.title.compareTo(another.attraction.title);
+      } else if (_currentLocation != null) {
+        final distanceToFirst = LocationUtils.distanceBetween(
+            attraction.attraction.location.toMarkerType(), _currentLocation!);
+        final distanceToSecond = LocationUtils.distanceBetween(
+            another.attraction.location.toMarkerType(), _currentLocation!);
+
+        if (distanceToFirst == distanceToSecond) {
+          return 0;
+        }
+
+        return distanceToFirst < distanceToSecond ? -1 : 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
   void _updateAttractions(Sorting sorting) {
     _shownAttractions.clear();
     _shownAttractions.addAll(_attractions);
 
     setState(() {
-      _shownAttractions = _shownAttractions.where((attraction) {
-        return (_showPermanentAttractions &&
-                attraction.attraction.category == "static") ||
-            (_showEventAttractions &&
-                attraction.attraction.category == "event");
-      }).toList();
-
-      _shownAttractions.sort((attraction, another) {
-        if (sorting == Sorting.alphabetical) {
-          return attraction.attraction.title
-              .compareTo(another.attraction.title);
-        } else if (_currentLocation != null) {
-          final distanceToFirst = LocationUtils.distanceBetween(
-              attraction.attraction.location.toMarkerType(), _currentLocation!);
-          final distanceToSecond = LocationUtils.distanceBetween(
-              another.attraction.location.toMarkerType(), _currentLocation!);
-
-          return (distanceToFirst == distanceToSecond)
-              ? 0
-              : (distanceToFirst < distanceToSecond ? -1 : 1);
-        } else {
-          return 0;
-        }
-      });
+      _sortAttractions(sorting);
     });
   }
 

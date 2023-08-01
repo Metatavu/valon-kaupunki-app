@@ -9,7 +9,7 @@ import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
-class TargetInfoOverlay extends StatelessWidget {
+class TargetInfoOverlay extends StatefulWidget {
   final LatLng? currentLocation;
   final void Function() onClose;
   final bool showFullscreenButton;
@@ -38,9 +38,35 @@ class TargetInfoOverlay extends StatelessWidget {
   });
 
   @override
+  State<TargetInfoOverlay> createState() => _TargetInfoOverlayState();
+}
+
+class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
+  bool _showFullscreenImage = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context)!;
+
+    if (widget.imageUrl != null && _showFullscreenImage) {
+      return WillPopScope(
+        onWillPop: () async {
+          final retval = !_showFullscreenImage;
+          setState(() {
+            _showFullscreenImage = false;
+          });
+
+          return retval;
+        },
+        child: SizedBox.expand(
+          child: Container(
+            color: Colors.black,
+            child: Image.network(widget.imageUrl!),
+          ),
+        ),
+      );
+    }
 
     return ClipRect(
       child: BackdropFilter(
@@ -57,33 +83,35 @@ class TargetInfoOverlay extends StatelessWidget {
                     Icons.close,
                     color: Colors.white,
                   ),
-                  onPressed: onClose,
+                  onPressed: widget.onClose,
                 ),
                 title: Center(
                   child: Text(
-                    title,
+                    widget.title,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
                 actions: [
-                  if (showFullscreenButton)
+                  if (widget.showFullscreenButton)
                     IconButton(
                       icon: const Icon(
                         Icons.open_in_full,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () => setState(() {
+                        _showFullscreenImage = true;
+                      }),
                     ),
                 ],
               ),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (imageUrl != null)
+                    if (widget.imageUrl != null)
                       HeightConstrainedImage.network(
                         height: 200,
                         radius: 00,
-                        url: imageUrl!,
+                        url: widget.imageUrl!,
                       ),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -93,15 +121,15 @@ class TargetInfoOverlay extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              subTitle,
+                              widget.subTitle,
                               textAlign: TextAlign.left,
                               style: theme.textTheme.bodyMedium,
                             ),
-                            if (description != null)
+                            if (widget.description != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  description!,
+                                  widget.description!,
                                   textAlign: TextAlign.left,
                                   style: theme.textTheme.bodySmall,
                                 ),
@@ -119,10 +147,10 @@ class TargetInfoOverlay extends StatelessWidget {
                             Colors.white, BlendMode.srcIn),
                       ),
                       title: localizations.category,
-                      text: category,
+                      text: widget.category,
                       trailing: null,
                     ),
-                    if (address != null)
+                    if (widget.address != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.homeIconAsset,
@@ -132,7 +160,7 @@ class TargetInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.address,
-                        text: address!,
+                        text: widget.address!,
                         trailing: null,
                       ),
                     PropertyInfo(
@@ -144,15 +172,15 @@ class TargetInfoOverlay extends StatelessWidget {
                             Colors.white, BlendMode.srcIn),
                       ),
                       title: localizations.distanceToTarget,
-                      text: currentLocation == null
+                      text: widget.currentLocation == null
                           ? "- m"
                           : LocationUtils.formatDistance(
-                              location.toMarkerType(),
-                              currentLocation!,
+                              widget.location.toMarkerType(),
+                              widget.currentLocation!,
                             ),
                       trailing: null,
                     ),
-                    if (artist != null)
+                    if (widget.artist != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.designerIconAsset,
@@ -162,7 +190,7 @@ class TargetInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.designer,
-                        text: artist!,
+                        text: widget.artist!,
                         trailing: null,
                       ),
                   ],
