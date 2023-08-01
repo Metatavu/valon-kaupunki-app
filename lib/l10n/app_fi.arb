@@ -37,5 +37,7 @@
     "cafesFilterText": "Kahvilat",
     "barsFilterText": "Baarit",
     "shopsFilterText": "Kaupat",
-    "othersFilterText": "Muut kumppanit"
+    "othersFilterText": "Muut kumppanit",
+    "sortingAlphabetical": "Aakkosittain",
+    "sortingClosest": "Lähinnä"
 }

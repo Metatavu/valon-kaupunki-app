@@ -1,4 +1,5 @@
 import "package:shared_preferences/shared_preferences.dart";
+import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
 class Preferences {
   // So that the dart code completer does not suggest constructing the object
@@ -56,4 +57,34 @@ class Preferences {
       _sharedPrefs!.getBool(_keyShowOthersMap) ?? true;
   static Future<void> setShowOthers(bool showOthers) async =>
       await _sharedPrefs!.setBool(_keyShowOthersMap, showOthers);
+
+  static const String _keySorting = "$_keyPrefix.filter.sorting";
+
+  static Sorting get sorting =>
+      Sorting.parse(_sharedPrefs!.getString(_keySorting)!) ??
+      Sorting.alphabetical;
+
+  static Future<void> setSorting(Sorting sorting) async =>
+      await _sharedPrefs!.setString(_keySorting, sorting.prefValue);
+}
+
+enum Sorting {
+  alphabetical,
+  distance;
+
+  static Sorting? parse(String value) {
+    return switch (value) {
+      "alphabetical" => alphabetical,
+      "distance" => distance,
+      _ => null,
+    };
+  }
+
+  String get prefValue => this == alphabetical ? "alphabetical" : "distance";
+  String getDisplayValue(AppLocalizations localizations) {
+    return switch (this) {
+      alphabetical => localizations.sortingAlphabetical,
+      distance => localizations.sortingClosest,
+    };
+  }
 }

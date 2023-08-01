@@ -146,5 +146,7 @@
     "cafesFilterText": "Cafes",
     "barsFilterText": "Bars",
     "shopsFilterText": "Shops",
-    "othersFilterText": "Other partners"
+    "othersFilterText": "Other partners",
+    "sortingAlphabetical": "Alphabetical",
+    "sortingClosest": "Closest"
 }

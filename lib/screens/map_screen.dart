@@ -1,5 +1,6 @@
 import "dart:ui";
 
+import "package:dropdown_button2/dropdown_button2.dart";
 import "package:flutter/material.dart";
 import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_animations/flutter_map_animations.dart";
@@ -14,6 +15,7 @@ import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/location_utils.dart";
 import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
@@ -61,6 +63,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   final StrapiClient _client = StrapiClient.instance();
   final List<StrapiAttraction> _attractions = List.empty(growable: true);
+  List<StrapiAttraction> _shownAttractions = List.empty(growable: true);
 
   final List<StrapiPartner> _partners = List.empty(growable: true);
   late final AppLocalizations _localizations = AppLocalizations.of(context)!;
@@ -94,11 +97,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
-    if (index >= _attractions.length) {
+    if (index >= _shownAttractions.length) {
       return null;
     }
 
-    final attraction = _attractions[index].attraction;
+    final attraction = _shownAttractions[index].attraction;
     return SmallListCard(
       index: index,
       leftIcon: SvgPicture.asset(
@@ -193,10 +196,52 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget get _filterDropdown {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.white,
+        ),
+        child: SizedBox(
+          height: 50,
+          child: DropdownButtonFormField2<Sorting>(
+            alignment: Alignment.centerLeft,
+            isExpanded: true,
+            onChanged: (item) async {
+              await Preferences.setSorting(item!);
+              _updateAttractions(item);
+            },
+            value: Preferences.sorting,
+            decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(style: BorderStyle.none)),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(style: BorderStyle.none)),
+                prefixIcon: Icon(
+                  Icons.filter_list,
+                  color: Colors.black,
+                )),
+            items: Sorting.values.map((item) {
+              final text = item.getDisplayValue(_localizations);
+              return DropdownMenuItem(
+                value: item,
+                alignment: Alignment.centerLeft,
+                child: Text(text),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget get _childForCurrentSection => Listing(
         filter: _currentSection == _Section.attractions
             ? Column(
                 children: [
+                  _filterDropdown,
                   SizedBox(height: 40, child: _filterList),
                 ],
               )
@@ -246,6 +291,38 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         onPressed: clicked,
       ),
     );
+  }
+
+  void _updateAttractions(Sorting sorting) {
+    _shownAttractions.clear();
+    _shownAttractions.addAll(_attractions);
+
+    setState(() {
+      _shownAttractions = _shownAttractions.where((attraction) {
+        return (_showPermanentAttractions &&
+                attraction.attraction.category == "static") ||
+            (_showEventAttractions &&
+                attraction.attraction.category == "event");
+      }).toList();
+
+      _shownAttractions.sort((attraction, another) {
+        if (sorting == Sorting.alphabetical) {
+          return attraction.attraction.title
+              .compareTo(another.attraction.title);
+        } else if (_currentLocation != null) {
+          final distanceToFirst = LocationUtils.distanceBetween(
+              attraction.attraction.location.toMarkerType(), _currentLocation!);
+          final distanceToSecond = LocationUtils.distanceBetween(
+              another.attraction.location.toMarkerType(), _currentLocation!);
+
+          return (distanceToFirst == distanceToSecond)
+              ? 0
+              : (distanceToFirst < distanceToSecond ? -1 : 1);
+        } else {
+          return 0;
+        }
+      });
+    });
   }
 
   void _addMarkers(List<_MarkerData> markers) {
@@ -342,6 +419,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           .where((marker) => marker.asset == Assets.genericPartnerAsset));
     }
 
+    _updateAttractions(Preferences.sorting);
     return result;
   }
 
