@@ -6,12 +6,14 @@ class SmallListCard extends StatelessWidget {
   final String title;
   final String text;
   final Widget proceedIcon;
+  final Widget? secondaryLabel;
 
   const SmallListCard({
     required this.index,
     required this.leftIcon,
     required this.title,
     required this.text,
+    required this.secondaryLabel,
     required this.proceedIcon,
     Key? key,
   }) : super(key: key);
@@ -53,6 +55,7 @@ class SmallListCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              if (secondaryLabel != null) secondaryLabel!,
               proceedIcon,
             ],
           ),

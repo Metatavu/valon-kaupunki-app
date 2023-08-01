@@ -115,6 +115,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
       title: getAttractionCategoryLabel(attraction.category, _localizations),
       text: attraction.title,
+      secondaryLabel: Text(
+        _currentLocation == null
+            ? "- m"
+            : LocationUtils.formatDistance(
+                _currentLocation!, attraction.location.toMarkerType()),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
       proceedIcon: IconButton(
         onPressed: () {},
         icon: const Icon(
@@ -137,6 +144,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       leftIcon: getPartnerCategoryIcon(partner.category),
       title: getPartnerCategoryLabel(partner.category, _localizations),
       text: partner.name,
+      secondaryLabel: Text(
+        _currentLocation == null
+            ? "- m"
+            : LocationUtils.formatDistance(
+                _currentLocation!, partner.location.toMarkerType()),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
       proceedIcon: IconButton(
         onPressed: () {},
         icon: const Icon(
