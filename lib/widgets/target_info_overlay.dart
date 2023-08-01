@@ -2,24 +2,39 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
-import "package:valon_kaupunki_app/api/api_categories.dart";
-import "package:valon_kaupunki_app/api/model/attraction.dart";
+import "package:valon_kaupunki_app/api/model/location.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
 import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
-class AttractionInfoOverlay extends StatelessWidget {
-  final Attraction attraction;
+class TargetInfoOverlay extends StatelessWidget {
   final LatLng? currentLocation;
   final void Function() onClose;
+  final bool showFullscreenButton;
+  final String title;
+  final String? imageUrl;
+  final String subTitle;
+  final String? description;
+  final String? address;
+  final String category;
+  final Location location;
+  final String? artist;
 
-  const AttractionInfoOverlay({
+  const TargetInfoOverlay({
     super.key,
-    required this.attraction,
     required this.currentLocation,
     required this.onClose,
+    required this.showFullscreenButton,
+    required this.title,
+    required this.imageUrl,
+    required this.subTitle,
+    required this.description,
+    required this.address,
+    required this.category,
+    required this.location,
+    required this.artist,
   });
 
   @override
@@ -46,28 +61,29 @@ class AttractionInfoOverlay extends StatelessWidget {
                 ),
                 title: Center(
                   child: Text(
-                    attraction.title,
+                    title,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.open_in_full,
-                      color: Colors.white,
+                  if (showFullscreenButton)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.open_in_full,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {},
                     ),
-                    onPressed: () {},
-                  ),
                 ],
               ),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (attraction.image != null)
+                    if (imageUrl != null)
                       HeightConstrainedImage.network(
                         height: 200,
                         radius: 00,
-                        url: attraction.image!.image.url,
+                        url: imageUrl!,
                       ),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -77,15 +93,15 @@ class AttractionInfoOverlay extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              attraction.subTitle,
+                              subTitle,
                               textAlign: TextAlign.left,
                               style: theme.textTheme.bodyMedium,
                             ),
-                            if (attraction.description != null)
+                            if (description != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  attraction.description!,
+                                  description!,
                                   textAlign: TextAlign.left,
                                   style: theme.textTheme.bodySmall,
                                 ),
@@ -103,11 +119,10 @@ class AttractionInfoOverlay extends StatelessWidget {
                             Colors.white, BlendMode.srcIn),
                       ),
                       title: localizations.category,
-                      text: getAttractionCategoryLabel(
-                          attraction.category, localizations),
+                      text: category,
                       trailing: null,
                     ),
-                    if (attraction.address != null)
+                    if (address != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.homeIconAsset,
@@ -117,7 +132,7 @@ class AttractionInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.address,
-                        text: attraction.address!,
+                        text: address!,
                         trailing: null,
                       ),
                     PropertyInfo(
@@ -132,12 +147,12 @@ class AttractionInfoOverlay extends StatelessWidget {
                       text: currentLocation == null
                           ? "- m"
                           : LocationUtils.formatDistance(
-                              attraction.location.toMarkerType(),
+                              location.toMarkerType(),
                               currentLocation!,
                             ),
                       trailing: null,
                     ),
-                    if (attraction.artist != null)
+                    if (artist != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.designerIconAsset,
@@ -147,7 +162,7 @@ class AttractionInfoOverlay extends StatelessWidget {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.designer,
-                        text: attraction.artist!,
+                        text: artist!,
                         trailing: null,
                       ),
                   ],
