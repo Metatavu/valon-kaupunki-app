@@ -152,7 +152,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         style: Theme.of(context).textTheme.bodySmall,
       ),
       proceedIcon: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          _showPartnerInfoOverlay(partner.location.toMarkerType());
+        },
         icon: const Icon(
           Icons.arrow_forward,
           opticalSize: 24.0,
@@ -524,6 +526,35 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       artist: attraction.artist,
       currentLocation: _currentLocation,
       showFullscreenButton: true,
+      onClose: () {
+        setState(() {
+          _currentOverlay = null;
+        });
+      },
+    );
+
+    setState(() {
+      _currentOverlay = targetInfo;
+    });
+  }
+
+  void _showPartnerInfoOverlay(LatLng at) {
+    final partner = _partners
+        .where((p) => p.partner.location.toMarkerType() == at)
+        .first
+        .partner;
+
+    final targetInfo = TargetInfoOverlay(
+      title: partner.name,
+      imageUrl: partner.image.data.image.url,
+      subTitle: partner.name,
+      description: partner.description,
+      address: partner.address,
+      category: getPartnerCategoryLabel(partner.category, _localizations),
+      location: partner.location,
+      artist: null,
+      currentLocation: _currentLocation,
+      showFullscreenButton: false,
       onClose: () {
         setState(() {
           _currentOverlay = null;
