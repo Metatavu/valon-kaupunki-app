@@ -323,9 +323,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         final distanceToSecond = LocationUtils.distanceBetween(
             another.attraction.location.toMarkerType(), _currentLocation!);
 
-        return (distanceToFirst == distanceToSecond)
-            ? 0
-            : (distanceToFirst < distanceToSecond ? -1 : 1);
+        if (distanceToFirst == distanceToSecond) {
+          return 0;
+        }
+
+        return distanceToFirst < distanceToSecond ? -1 : 1;
       } else {
         return 0;
       }
