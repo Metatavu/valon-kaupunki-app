@@ -2,31 +2,46 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
-import "package:valon_kaupunki_app/api/api_categories.dart";
-import "package:valon_kaupunki_app/api/model/attraction.dart";
+import "package:valon_kaupunki_app/api/model/location.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
 import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
-class AttractionInfoOverlay extends StatefulWidget {
-  final Attraction attraction;
+class TargetInfoOverlay extends StatefulWidget {
   final LatLng? currentLocation;
   final void Function() onClose;
+  final bool showFullscreenButton;
+  final String title;
+  final String? imageUrl;
+  final String subTitle;
+  final String? description;
+  final String? address;
+  final String category;
+  final Location location;
+  final String? artist;
 
-  const AttractionInfoOverlay({
+  const TargetInfoOverlay({
     super.key,
-    required this.attraction,
     required this.currentLocation,
     required this.onClose,
+    required this.showFullscreenButton,
+    required this.title,
+    required this.imageUrl,
+    required this.subTitle,
+    required this.description,
+    required this.address,
+    required this.category,
+    required this.location,
+    required this.artist,
   });
 
   @override
-  State<AttractionInfoOverlay> createState() => _AttractionInfoOverlayState();
+  State<TargetInfoOverlay> createState() => _TargetInfoOverlayState();
 }
 
-class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
+class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
   bool _showFullscreenImage = false;
 
   @override
@@ -34,7 +49,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context)!;
 
-    if (widget.attraction.image != null && _showFullscreenImage) {
+    if (widget.imageUrl != null && _showFullscreenImage) {
       return WillPopScope(
         onWillPop: () async {
           final retval = !_showFullscreenImage;
@@ -47,7 +62,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
         child: SizedBox.expand(
           child: Container(
             color: Colors.black,
-            child: Image.network(widget.attraction.image!.image.url),
+            child: Image.network(widget.imageUrl!),
           ),
         ),
       );
@@ -72,30 +87,31 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                 ),
                 title: Center(
                   child: Text(
-                    widget.attraction.title,
+                    widget.title,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.open_in_full,
-                      color: Colors.white,
+                  if (widget.showFullscreenButton)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.open_in_full,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => setState(() {
+                        _showFullscreenImage = true;
+                      }),
                     ),
-                    onPressed: () => setState(() {
-                      _showFullscreenImage = true;
-                    }),
-                  ),
                 ],
               ),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (widget.attraction.image != null)
+                    if (widget.imageUrl != null)
                       HeightConstrainedImage.network(
                         height: 200,
                         radius: 00,
-                        url: widget.attraction.image!.image.url,
+                        url: widget.imageUrl!,
                       ),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -105,15 +121,15 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.attraction.subTitle,
+                              widget.subTitle,
                               textAlign: TextAlign.left,
                               style: theme.textTheme.bodyMedium,
                             ),
-                            if (widget.attraction.description != null)
+                            if (widget.description != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  widget.attraction.description!,
+                                  widget.description!,
                                   textAlign: TextAlign.left,
                                   style: theme.textTheme.bodySmall,
                                 ),
@@ -131,11 +147,10 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                             Colors.white, BlendMode.srcIn),
                       ),
                       title: localizations.category,
-                      text: getAttractionCategoryLabel(
-                          widget.attraction.category, localizations),
+                      text: widget.category,
                       trailing: null,
                     ),
-                    if (widget.attraction.address != null)
+                    if (widget.address != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.homeIconAsset,
@@ -145,7 +160,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.address,
-                        text: widget.attraction.address!,
+                        text: widget.address!,
                         trailing: null,
                       ),
                     PropertyInfo(
@@ -160,12 +175,12 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                       text: widget.currentLocation == null
                           ? "- m"
                           : LocationUtils.formatDistance(
-                              widget.attraction.location.toMarkerType(),
+                              widget.location.toMarkerType(),
                               widget.currentLocation!,
                             ),
                       trailing: null,
                     ),
-                    if (widget.attraction.artist != null)
+                    if (widget.artist != null)
                       PropertyInfo(
                         leading: SvgPicture.asset(
                           Assets.designerIconAsset,
@@ -175,7 +190,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                               Colors.white, BlendMode.srcIn),
                         ),
                         title: localizations.designer,
-                        text: widget.attraction.artist!,
+                        text: widget.artist!,
                         trailing: null,
                       ),
                   ],

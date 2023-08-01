@@ -17,7 +17,7 @@ import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
 import "package:valon_kaupunki_app/preferences/preferences.dart";
-import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
+import "package:valon_kaupunki_app/widgets/target_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
 import "package:valon_kaupunki_app/widgets/filter_button_list.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
@@ -152,7 +152,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         style: Theme.of(context).textTheme.bodySmall,
       ),
       proceedIcon: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          _showPartnerInfoOverlay(partner.location.toMarkerType());
+        },
         icon: const Icon(
           Icons.arrow_forward,
           opticalSize: 24.0,
@@ -510,6 +512,65 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  void _showAttractionInfoOverlay(LatLng at) {
+    final attraction = _attractions
+        .where(
+            (attraction) => attraction.attraction.location.toMarkerType() == at)
+        .first
+        .attraction;
+
+    final targetInfo = TargetInfoOverlay(
+      title: attraction.title,
+      imageUrl: attraction.image?.image.url,
+      subTitle: attraction.subTitle,
+      description: attraction.description,
+      address: attraction.address,
+      category: getAttractionCategoryLabel(attraction.category, _localizations),
+      location: attraction.location,
+      artist: attraction.artist,
+      currentLocation: _currentLocation,
+      showFullscreenButton: true,
+      onClose: () {
+        setState(() {
+          _currentOverlay = null;
+        });
+      },
+    );
+
+    setState(() {
+      _currentOverlay = targetInfo;
+    });
+  }
+
+  void _showPartnerInfoOverlay(LatLng at) {
+    final partner = _partners
+        .where((p) => p.partner.location.toMarkerType() == at)
+        .first
+        .partner;
+
+    final targetInfo = TargetInfoOverlay(
+      title: partner.name,
+      imageUrl: partner.image.data.image.url,
+      subTitle: partner.name,
+      description: partner.description,
+      address: partner.address,
+      category: getPartnerCategoryLabel(partner.category, _localizations),
+      location: partner.location,
+      artist: null,
+      currentLocation: _currentLocation,
+      showFullscreenButton: false,
+      onClose: () {
+        setState(() {
+          _currentOverlay = null;
+        });
+      },
+    );
+
+    setState(() {
+      _currentOverlay = targetInfo;
+    });
+  }
+
   List<Widget> _buildMapContent() {
     final instance =
         FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
@@ -566,25 +627,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         if (_attractions.any((attraction) =>
                             attraction.attraction.location.toMarkerType() ==
                             data.point)) {
-                          final attractionInfo = AttractionInfoOverlay(
-                            attraction: _attractions
-                                .where((attraction) =>
-                                    attraction.attraction.location
-                                        .toMarkerType() ==
-                                    data.point)
-                                .first
-                                .attraction,
-                            currentLocation: _currentLocation,
-                            onClose: () {
-                              setState(() {
-                                _currentOverlay = null;
-                              });
-                            },
-                          );
-
-                          setState(() {
-                            _currentOverlay = attractionInfo;
-                          });
+                          _showAttractionInfoOverlay(data.point);
                         }
                       },
                     ),

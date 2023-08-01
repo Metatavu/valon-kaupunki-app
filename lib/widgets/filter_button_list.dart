@@ -77,10 +77,10 @@ class _FilterButtonListState extends State<FilterButtonList> {
       );
 
       textStyle = textStyle.copyWith(
-        color: Colors.white,
+        color: Colors.black,
       );
 
-      svgColor = Colors.white;
+      svgColor = Colors.black;
     }
 
     return Padding(
