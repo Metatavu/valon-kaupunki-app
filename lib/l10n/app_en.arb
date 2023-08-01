@@ -141,12 +141,39 @@
         "description": "Claimed"
     },
     "permanentAttractionsFilterText": "Permanent attractions",
+    "@permanentAttractionsFilterText": {
+        "description": "Permanent attractions filter text"
+    },
     "eventAttractionsFilterText": "Event attractions",
+    "@eventAttractionsFilterText": {
+        "description": "Event attractions filter text"
+    },
     "restaurantsFilterText": "Restaurants",
+    "@restaurantsFilterText": {
+        "description": "Restaurants filter text"
+    },
     "cafesFilterText": "Cafes",
+    "@cafesFilterText": {
+        "description": "Cafes filter text"
+    },
     "barsFilterText": "Bars",
+    "@barsFilterText": {
+        "description": "Bars filter text"
+    },
     "shopsFilterText": "Shops",
+    "@shopsFilterText": {
+        "description": "Shops filter text"
+    },
     "othersFilterText": "Other partners",
+    "@othersFilterText": {
+        "description": "Others filter text"
+    },
     "sortingAlphabetical": "Alphabetical",
-    "sortingClosest": "Closest"
+    "@sortingAlphabetical": {
+        "description": "Sorting alphabetically"
+    },
+    "sortingClosest": "Closest",
+    "@sortingClosest": {
+        "description": "Sorting by closest"
+    }
 }
