@@ -30,5 +30,14 @@
     "close": "Sulje",
     "claimBenefit": "Lunasta kuponki",
     "cannotUseBenefit": "Ei voitu lunastaa kuponkia {text}. Kuponki on jo käytetty tällä laitteella.",
-    "claimed": "Lunastettu"
+    "claimed": "Lunastettu",
+    "permanentAttractionsFilterText": "Kiinteät kohteet",
+    "eventAttractionsFilterText": "Tapahtumakohteet",
+    "restaurantsFilterText": "Ravintolat",
+    "cafesFilterText": "Kahvilat",
+    "barsFilterText": "Baarit",
+    "shopsFilterText": "Kaupat",
+    "othersFilterText": "Muut kumppanit",
+    "sortingAlphabetical": "Aakkosittain",
+    "sortingClosest": "Lähimpänä"
 }

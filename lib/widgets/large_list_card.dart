@@ -9,20 +9,20 @@ import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
 
 class LargeListCard extends StatelessWidget {
-  final String _imageUrl;
+  final String? _imageUrl;
   final String _couponText;
   final String _couponBenefit;
-  final DateTime _couponValidTo;
+  final DateTime? _couponValidTo;
   final Partner _partner;
   final LatLng? _currentLocation;
   final void Function()? _readMore;
   final bool alreadyUsed;
 
   const LargeListCard({
-    required String imageUrl,
+    required String? imageUrl,
     required String couponText,
     required String couponBenefit,
-    required DateTime validTo,
+    required DateTime? validTo,
     required Partner partner,
     required void Function()? readMore,
     required this.alreadyUsed,
@@ -53,18 +53,19 @@ class LargeListCard extends StatelessWidget {
         child: SizedBox(
           child: Column(
             children: [
-              Container(
-                foregroundDecoration: BoxDecoration(
-                  color: alreadyUsed ? Colors.grey : Colors.transparent,
-                  backgroundBlendMode:
-                      alreadyUsed ? BlendMode.saturation : null,
+              if (_imageUrl != null)
+                Container(
+                  foregroundDecoration: BoxDecoration(
+                    color: alreadyUsed ? Colors.grey : Colors.transparent,
+                    backgroundBlendMode:
+                        alreadyUsed ? BlendMode.saturation : null,
+                  ),
+                  child: HeightConstrainedImage.network(
+                    height: 200,
+                    radius: 5.0,
+                    url: _imageUrl!,
+                  ),
                 ),
-                child: HeightConstrainedImage.network(
-                  height: 200,
-                  radius: 5.0,
-                  url: _imageUrl,
-                ),
-              ),
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
@@ -86,11 +87,12 @@ class LargeListCard extends StatelessWidget {
                         style: theme.textTheme.bodyMedium!
                             .copyWith(color: CustomThemeValues.appOrange),
                       ),
-                      Text(
-                        localizations.validUntil(_couponValidTo),
-                        style:
-                            theme.textTheme.bodySmall!.copyWith(fontSize: 12.0),
-                      ),
+                      if (_couponValidTo != null)
+                        Text(
+                          localizations.validUntil(_couponValidTo!),
+                          style: theme.textTheme.bodySmall!
+                              .copyWith(fontSize: 12.0),
+                        ),
                       PropertyInfo(
                         leading: getPartnerCategoryIcon(_partner.category),
                         title: getPartnerCategoryLabel(

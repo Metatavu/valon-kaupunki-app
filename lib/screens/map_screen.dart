@@ -1,5 +1,6 @@
 import "dart:ui";
 
+import "package:dropdown_button2/dropdown_button2.dart";
 import "package:flutter/material.dart";
 import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_animations/flutter_map_animations.dart";
@@ -14,8 +15,11 @@ import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/api/strapi_client.dart";
 import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
+import "package:valon_kaupunki_app/location_utils.dart";
+import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/widgets/attraction_info_overlay.dart";
 import "package:valon_kaupunki_app/widgets/coupon_overlay.dart";
+import "package:valon_kaupunki_app/widgets/filter_button_list.dart";
 import "package:valon_kaupunki_app/widgets/large_list_card.dart";
 import "package:valon_kaupunki_app/widgets/listing.dart";
 import "package:valon_kaupunki_app/widgets/small_list_card.dart";
@@ -54,10 +58,12 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
-  final List<_MarkerData> _markers = List.empty(growable: true);
+  final List<_MarkerData> _allMarkers = List.empty(growable: true);
+  List<_MarkerData> _markers = List.empty(growable: true);
 
   final StrapiClient _client = StrapiClient.instance();
   final List<StrapiAttraction> _attractions = List.empty(growable: true);
+  List<StrapiAttraction> _shownAttractions = List.empty(growable: true);
 
   final List<StrapiPartner> _partners = List.empty(growable: true);
   late final AppLocalizations _localizations = AppLocalizations.of(context)!;
@@ -78,13 +84,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   LatLng? _lastTapTarget;
   double _zoomLevel = 12.0;
 
+  bool _showPermanentAttractions = Preferences.showPermanentAttractions;
+  bool _showEventAttractions = Preferences.showEventAttractions;
+
+  bool _showRestaurants = Preferences.showRestaurants;
+  bool _showCafes = Preferences.showCafes;
+
+  bool _showBars = Preferences.showBars;
+  bool _showShops = Preferences.showShops;
+
+  bool _showOthers = Preferences.showOthers;
+
   // Builder functions for the list views
   Widget? _attractionsBuilder(BuildContext context, int index) {
-    if (index >= _attractions.length) {
+    if (index >= _shownAttractions.length) {
       return null;
     }
 
-    final attraction = _attractions[index].attraction;
+    final attraction = _shownAttractions[index].attraction;
     return SmallListCard(
       index: index,
       leftIcon: SvgPicture.asset(
@@ -98,6 +115,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
       title: getAttractionCategoryLabel(attraction.category, _localizations),
       text: attraction.title,
+      secondaryLabel: Text(
+        _currentLocation == null
+            ? "- m"
+            : LocationUtils.formatDistance(
+                _currentLocation!, attraction.location.toMarkerType()),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
       proceedIcon: IconButton(
         onPressed: () {},
         icon: const Icon(
@@ -120,6 +144,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       leftIcon: getPartnerCategoryIcon(partner.category),
       title: getPartnerCategoryLabel(partner.category, _localizations),
       text: partner.name,
+      secondaryLabel: Text(
+        _currentLocation == null
+            ? "- m"
+            : LocationUtils.formatDistance(
+                _currentLocation!, partner.location.toMarkerType()),
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
       proceedIcon: IconButton(
         onPressed: () {},
         icon: const Icon(
@@ -138,12 +169,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     final benefit = _benefits[index].benefit;
     final alreadyUsed = _usedBenefits.contains(_benefits[index].id);
+    if (benefit.partner?.data?.partner == null) {
+      return null;
+    }
 
     return LargeListCard(
-      imageUrl: benefit.image!.image.url,
+      imageUrl: benefit.image?.image.url,
       couponText: benefit.title,
       couponBenefit: benefit.benefitText,
-      validTo: benefit.validTo!,
+      validTo: benefit.validTo,
       partner: benefit.partner!.data!.partner,
       currentLocation: _currentLocation,
       readMore: alreadyUsed
@@ -176,7 +210,56 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget get _filterDropdown {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.white,
+        ),
+        child: SizedBox(
+          height: 50,
+          child: DropdownButtonFormField2<Sorting>(
+            alignment: Alignment.centerLeft,
+            isExpanded: true,
+            onChanged: (item) async {
+              await Preferences.setSorting(item!);
+              _updateAttractions(item);
+            },
+            value: Preferences.sorting,
+            decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(style: BorderStyle.none)),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(style: BorderStyle.none)),
+                prefixIcon: Icon(
+                  Icons.filter_list,
+                  color: Colors.black,
+                )),
+            items: Sorting.values.map((item) {
+              final text = item.getDisplayValue(_localizations);
+              return DropdownMenuItem(
+                value: item,
+                alignment: Alignment.centerLeft,
+                child: Text(text),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget get _childForCurrentSection => Listing(
+        filter: _currentSection == _Section.attractions
+            ? Column(
+                children: [
+                  _filterDropdown,
+                  SizedBox(height: 40, child: _filterList),
+                ],
+              )
+            : null,
         builder: _dataFetchFailed
             ? (context, index) {
                 if (index == 0) {
@@ -224,9 +307,46 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
+  void _sortAttractions(Sorting sorting) {
+    _shownAttractions = _shownAttractions.where((attraction) {
+      return (_showPermanentAttractions &&
+              attraction.attraction.category == "static") ||
+          (_showEventAttractions && attraction.attraction.category == "event");
+    }).toList();
+
+    _shownAttractions.sort((attraction, another) {
+      if (sorting == Sorting.alphabetical) {
+        return attraction.attraction.title.compareTo(another.attraction.title);
+      } else if (_currentLocation != null) {
+        final distanceToFirst = LocationUtils.distanceBetween(
+            attraction.attraction.location.toMarkerType(), _currentLocation!);
+        final distanceToSecond = LocationUtils.distanceBetween(
+            another.attraction.location.toMarkerType(), _currentLocation!);
+
+        if (distanceToFirst == distanceToSecond) {
+          return 0;
+        }
+
+        return distanceToFirst < distanceToSecond ? -1 : 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
+  void _updateAttractions(Sorting sorting) {
+    _shownAttractions.clear();
+    _shownAttractions.addAll(_attractions);
+
+    setState(() {
+      _sortAttractions(sorting);
+    });
+  }
+
   void _addMarkers(List<_MarkerData> markers) {
     setState(() {
-      _markers.addAll(markers);
+      _allMarkers.addAll(markers);
+      _markers.addAll(_filterMarkers(markers));
     });
   }
 
@@ -264,7 +384,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       _benefits.clear();
       _benefits.addAll(allBenefitsResp.data);
 
-      _markers.clear();
+      _allMarkers.clear();
+
       _addMarkers(markers);
     } on Exception {
       await Fluttertoast.showToast(
@@ -276,6 +397,48 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         _dataFetchFailed = true;
       });
     }
+  }
+
+  List<_MarkerData> _filterMarkers(List<_MarkerData> markers) {
+    final result = List<_MarkerData>.empty(growable: true);
+
+    if (_showPermanentAttractions) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.permanentAttractionAsset));
+    }
+
+    if (_showEventAttractions) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.eventAttractionAsset));
+    }
+
+    if (_showRestaurants) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.restaurantPartnerAsset));
+    }
+
+    if (_showCafes) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.cafePartnerAsset));
+    }
+
+    if (_showBars) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.barPartnerAsset));
+    }
+
+    if (_showShops) {
+      result.addAll(
+          markers.where((marker) => marker.asset == Assets.shopPartnerAsset));
+    }
+
+    if (_showOthers) {
+      result.addAll(markers
+          .where((marker) => marker.asset == Assets.genericPartnerAsset));
+    }
+
+    _updateAttractions(Preferences.sorting);
+    return result;
   }
 
   void _setSection(_Section section) {
@@ -301,6 +464,50 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _posStream.listen((event) {
       _currentLocation = event?.latLng;
     });
+  }
+
+  Widget get _filterList {
+    return FilterButtonList(
+      onMarkerFilterUpdate: () => setState(() {
+        _markers = _filterMarkers(_allMarkers);
+      }),
+      onFilterPermanentAttractions: () async {
+        _showPermanentAttractions = !_showPermanentAttractions;
+        await Preferences.setShowPermanentAttractions(
+            _showPermanentAttractions);
+      },
+      onFilterEventAttractions: () async {
+        _showEventAttractions = !_showEventAttractions;
+        await Preferences.setShowEventAttractions(_showEventAttractions);
+      },
+      onFilterRestaurants: () async {
+        _showRestaurants = !_showRestaurants;
+        await Preferences.setShowRestaurants(_showRestaurants);
+      },
+      onFilterBars: () async {
+        _showBars = !_showBars;
+        await Preferences.setShowBars(_showBars);
+      },
+      onFilterCafes: () async {
+        _showCafes = !_showCafes;
+        await Preferences.setShowCafes(_showCafes);
+      },
+      onFilterShops: () async {
+        _showShops = !_showShops;
+        await Preferences.setShowShops(_showShops);
+      },
+      onFilterOthers: () async {
+        _showOthers = !_showOthers;
+        await Preferences.setShowOthers(_showOthers);
+      },
+      permanentAttractionsState: _showPermanentAttractions,
+      eventAttractionsState: _showEventAttractions,
+      restaurantsState: _showRestaurants,
+      barsState: _showBars,
+      cafesState: _showCafes,
+      shopsState: _showShops,
+      othersState: _showOthers,
+    );
   }
 
   List<Widget> _buildMapContent() {
@@ -388,6 +595,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
+      if (_currentSection == _Section.home)
+        Padding(
+          padding: const EdgeInsets.only(top: 104.0),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              height: 40,
+              child: _filterList,
+            ),
+          ),
+        ),
       _currentSection != _Section.home
           ? ClipRect(
               child: BackdropFilter(
@@ -400,7 +618,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             )
           : Padding(
-              padding: const EdgeInsets.only(top: 94.0),
+              padding: const EdgeInsets.only(top: 144.0),
               child: Align(
                 alignment: Alignment.topRight,
                 child: Column(
