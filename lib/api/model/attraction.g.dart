@@ -16,6 +16,7 @@ Attraction _$AttractionFromJson(Map<String, dynamic> json) => Attraction(
       json['address'] as String?,
       Location.fromJson(json['location'] as Map<String, dynamic>),
       ImageData.fromJson(json['image'] as Map<String, dynamic>),
+      SoundData.fromJson(json['sound'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AttractionToJson(Attraction instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$AttractionToJson(Attraction instance) =>
       'address': instance.address,
       'location': instance.location,
       'image': instance.data,
+      'sound': instance.soundData,
     };

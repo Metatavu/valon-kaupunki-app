@@ -175,5 +175,9 @@
     "sortingClosest": "Closest",
     "@sortingClosest": {
         "description": "Sorting by closest"
+    },
+    "downloadInterrupted": "Downloading audio file was interrupted",
+    "@downloadInterrupted": {
+        "description": "Download interrupted toast"
     }
 }

@@ -39,5 +39,6 @@
     "shopsFilterText": "Kaupat",
     "othersFilterText": "Muut kumppanit",
     "sortingAlphabetical": "Aakkosittain",
-    "sortingClosest": "Lähimpänä"
+    "sortingClosest": "Lähimpänä",
+    "downloadInterrupted": "Äänitiedoston lataaminen keskeytettiin"
 }

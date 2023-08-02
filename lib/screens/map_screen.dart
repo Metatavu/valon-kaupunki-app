@@ -530,6 +530,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       artist: attraction.artist,
       currentLocation: _currentLocation,
       showFullscreenButton: true,
+      sound: attraction.sound?.sound,
       onClose: () {
         setState(() {
           _currentOverlay = null;
@@ -559,6 +560,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       artist: null,
       currentLocation: _currentLocation,
       showFullscreenButton: false,
+      sound: null,
       onClose: () {
         setState(() {
           _currentOverlay = null;

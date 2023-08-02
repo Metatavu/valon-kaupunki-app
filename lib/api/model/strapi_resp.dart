@@ -29,6 +29,38 @@ class PartnerData {
 }
 
 @JsonSerializable()
+class SoundData {
+  final StrapiSound? data;
+
+  const SoundData(this.data);
+
+  factory SoundData.fromJson(Map<String, dynamic> json) =>
+      _$SoundDataFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiSound {
+  @JsonKey(name: "attributes")
+  final Sound sound;
+  final int id;
+
+  const StrapiSound(this.sound, this.id);
+
+  factory StrapiSound.fromJson(Map<String, dynamic> json) =>
+      _$StrapiSoundFromJson(json);
+}
+
+@JsonSerializable()
+class Sound {
+  final String mime;
+  final String url;
+
+  const Sound(this.mime, this.url);
+
+  factory Sound.fromJson(Map<String, dynamic> json) => _$SoundFromJson(json);
+}
+
+@JsonSerializable()
 class StrapiAttraction {
   @JsonKey(name: "attributes")
   Attraction attraction;
