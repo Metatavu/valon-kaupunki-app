@@ -1,7 +1,11 @@
 import "dart:ui";
+import "package:audioplayers/audioplayers.dart";
+import "package:cancellation_token_http/http.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:fluttertoast/fluttertoast.dart";
 import "package:latlong2/latlong.dart";
+import "package:valon_kaupunki_app/api/caching_audio_client.dart";
 import "package:valon_kaupunki_app/api/model/location.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/assets.dart";
@@ -47,11 +51,138 @@ class TargetInfoOverlay extends StatefulWidget {
 
 class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
   bool _showFullscreenImage = false;
+  bool _downloading = false;
+  bool _playing = false;
+  bool _paused = false;
+  double _playProgress = -1.0;
+  final CancellationToken _cancel = CancellationToken();
+  final _client = CachingAudioClient.getInstance();
+  late AppLocalizations _localizations;
+
+  @override
+  void initState() {
+    super.initState();
+    _client.reinitPlayer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    if (_downloading) {
+      Fluttertoast.showToast(
+        msg: _localizations.downloadInterrupted,
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    }
+    _client.player.dispose();
+    _cancel.cancel();
+  }
+
+  Future<void> _playSound() async {
+    _client.play(widget.sound!.url, _cancel, (progress, [time]) {
+      switch (progress) {
+        case PlayingState.downloading:
+          setState(() {
+            _downloading = true;
+          });
+        case PlayingState.playing:
+          setState(() {
+            _downloading = false;
+            _playing = true;
+            _playProgress = time!;
+          });
+        case PlayingState.done:
+          setState(() {
+            _playing = false;
+            _playProgress = -1.0;
+          });
+        default:
+      }
+    });
+  }
+
+  Widget _soundButton() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (_downloading || _playing)
+          SizedBox(
+            height: 35,
+            width: 35,
+            child: _downloading
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
+                : CircularProgressIndicator(
+                    color: CustomThemeValues.appOrange,
+                    value: _playProgress.isFinite ? _playProgress : 0.0,
+                  ),
+          ),
+        SizedBox(
+          height: 40,
+          width: 40,
+          child: ElevatedButton(
+            onPressed: () async {
+              if (_playing) {
+                setState(() {
+                  _paused = !_paused;
+                  if (_paused) {
+                    _client.player.pause();
+                  } else {
+                    _client.player.resume();
+                  }
+                });
+              } else {
+                _playSound();
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              shape: CircleBorder(
+                side: BorderSide(color: CustomThemeValues.appOrange),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.transparent,
+            ),
+            child: Icon(
+              _playing
+                  ? (_paused ? Icons.play_arrow_outlined : Icons.pause_outlined)
+                  : Icons.volume_up_outlined,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _likeButton() {
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(
+            side: BorderSide(color: CustomThemeValues.appOrange),
+          ),
+          padding: const EdgeInsets.all(8.0),
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black38,
+        ),
+        child: const Icon(
+          Icons.favorite_outline,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context)!;
+    _localizations = AppLocalizations.of(context)!;
 
     if (widget.imageUrl != null && _showFullscreenImage) {
       return WillPopScope(
@@ -150,44 +281,17 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
                           ),
                         Positioned.fill(
                           bottom: 8.0,
+                          right: 8.0,
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                if (widget.sound != null)
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(
-                                        side: BorderSide(
-                                            color: CustomThemeValues.appOrange),
-                                      ),
-                                      padding: const EdgeInsets.all(10.0),
-                                      backgroundColor: Colors.transparent,
-                                      foregroundColor: Colors.black38,
-                                    ),
-                                    child: const Icon(
-                                      Icons.volume_up_outlined,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    shape: CircleBorder(
-                                      side: BorderSide(
-                                          color: CustomThemeValues.appOrange),
-                                    ),
-                                    padding: const EdgeInsets.all(10.0),
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: Colors.black38,
-                                  ),
-                                  child: const Icon(
-                                    Icons.favorite_outline,
-                                    color: Colors.white,
-                                  ),
-                                )
+                                if (widget.sound != null) _soundButton(),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: _likeButton(),
+                                ),
                               ],
                             ),
                           ),
@@ -227,7 +331,7 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
                         colorFilter: const ColorFilter.mode(
                             Colors.white, BlendMode.srcIn),
                       ),
-                      title: localizations.category,
+                      title: _localizations.category,
                       text: widget.category,
                       trailing: null,
                     ),
@@ -240,7 +344,7 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
                           colorFilter: const ColorFilter.mode(
                               Colors.white, BlendMode.srcIn),
                         ),
-                        title: localizations.address,
+                        title: _localizations.address,
                         text: widget.address!,
                         trailing: null,
                       ),
@@ -252,7 +356,7 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
                         colorFilter: const ColorFilter.mode(
                             Colors.white, BlendMode.srcIn),
                       ),
-                      title: localizations.distanceToTarget,
+                      title: _localizations.distanceToTarget,
                       text: widget.currentLocation == null
                           ? "- m"
                           : LocationUtils.formatDistance(
@@ -270,7 +374,7 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
                           colorFilter: const ColorFilter.mode(
                               Colors.white, BlendMode.srcIn),
                         ),
-                        title: localizations.designer,
+                        title: _localizations.designer,
                         text: widget.artist!,
                         trailing: null,
                       ),

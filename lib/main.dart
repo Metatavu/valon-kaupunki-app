@@ -8,7 +8,6 @@ import "package:flutter_gen/gen_l10n/app_localizations.dart";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterMapTileCaching.initialise();
-
   final instance =
       FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
   await instance.manage.createAsync();
