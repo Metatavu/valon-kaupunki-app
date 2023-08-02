@@ -4,6 +4,7 @@ import "package:async/async.dart";
 import "package:audioplayers/audioplayers.dart";
 import "package:flutter_cache_manager/flutter_cache_manager.dart";
 import "package:cancellation_token_http/http.dart" as http;
+import "package:valon_kaupunki_app/preferences/preferences.dart";
 
 class CachingAudioClient {
   static CachingAudioClient? _client;
@@ -11,7 +12,7 @@ class CachingAudioClient {
   static const String _playerId = "valon-kaupunki-audio-player";
 
   // Mapping from URLs from Strapi to cache file names
-  final Map<String, String> _cache = {};
+  final Map<String, String> _cache = Preferences.audioCacheMapping;
   AudioPlayer player = AudioPlayer(playerId: _playerId);
   CacheManager? _cacheManager;
 
@@ -40,6 +41,7 @@ class CachingAudioClient {
 
   Future<void> _writeCacheFile(String url, String filename, Uint8List bytes) {
     _cache[url] = filename;
+    Preferences.setAudioCacheMapping(_cache);
     return _cacheManager!.putFile(filename, bytes);
   }
 

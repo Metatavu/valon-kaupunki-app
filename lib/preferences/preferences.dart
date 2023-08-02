@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:shared_preferences/shared_preferences.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
@@ -66,6 +68,15 @@ class Preferences {
 
   static Future<void> setSorting(Sorting sorting) async =>
       await _sharedPrefs!.setString(_keySorting, sorting.prefValue);
+
+  static const String _keyAudioCacheMapping = "$_keyPrefix.audio-cache-mapping";
+  static Map<String, String> get audioCacheMapping =>
+      (jsonDecode(_sharedPrefs!.getString(_keyAudioCacheMapping) ?? "{}")
+              as Map<String, dynamic>)
+          .cast();
+
+  static Future<void> setAudioCacheMapping(Map<String, String> mapping) async =>
+      await _sharedPrefs!.setString(_keyAudioCacheMapping, jsonEncode(mapping));
 }
 
 enum Sorting {
