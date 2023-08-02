@@ -3,7 +3,9 @@ import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:latlong2/latlong.dart";
 import "package:valon_kaupunki_app/api/model/location.dart";
+import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/assets.dart";
+import "package:valon_kaupunki_app/custom_theme_values.dart";
 import "package:valon_kaupunki_app/location_utils.dart";
 import "package:valon_kaupunki_app/widgets/height_constrained_image.dart";
 import "package:valon_kaupunki_app/widgets/property_info.dart";
@@ -21,6 +23,7 @@ class TargetInfoOverlay extends StatefulWidget {
   final String category;
   final Location location;
   final String? artist;
+  final Sound? sound;
 
   const TargetInfoOverlay({
     super.key,
@@ -35,6 +38,7 @@ class TargetInfoOverlay extends StatefulWidget {
     required this.category,
     required this.location,
     required this.artist,
+    required this.sound,
   });
 
   @override
@@ -136,12 +140,60 @@ class _TargetInfoOverlayState extends State<TargetInfoOverlay> {
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (widget.imageUrl != null)
-                      HeightConstrainedImage.network(
-                        height: 200,
-                        radius: 00,
-                        url: widget.imageUrl!,
-                      ),
+                    Stack(
+                      children: [
+                        if (widget.imageUrl != null)
+                          HeightConstrainedImage.network(
+                            height: 200,
+                            radius: 00,
+                            url: widget.imageUrl!,
+                          ),
+                        Positioned.fill(
+                          bottom: 8.0,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if (widget.sound != null)
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(
+                                        side: BorderSide(
+                                            color: CustomThemeValues.appOrange),
+                                      ),
+                                      padding: const EdgeInsets.all(10.0),
+                                      backgroundColor: Colors.transparent,
+                                      foregroundColor: Colors.black38,
+                                    ),
+                                    child: const Icon(
+                                      Icons.volume_up_outlined,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    shape: CircleBorder(
+                                      side: BorderSide(
+                                          color: CustomThemeValues.appOrange),
+                                    ),
+                                    padding: const EdgeInsets.all(10.0),
+                                    backgroundColor: Colors.transparent,
+                                    foregroundColor: Colors.black38,
+                                  ),
+                                  child: const Icon(
+                                    Icons.favorite_outline,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(

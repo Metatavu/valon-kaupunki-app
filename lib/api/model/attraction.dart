@@ -6,8 +6,18 @@ part "attraction.g.dart";
 
 @JsonSerializable()
 class Attraction {
-  Attraction(this.title, this.category, this.subTitle, this.description,
-      this.artist, this.link, this.address, this.location, this.data);
+  Attraction(
+    this.title,
+    this.category,
+    this.subTitle,
+    this.description,
+    this.artist,
+    this.link,
+    this.address,
+    this.location,
+    this.data,
+    this.soundData,
+  );
 
   factory Attraction.fromJson(Map<String, dynamic> json) =>
       _$AttractionFromJson(json);
@@ -22,6 +32,9 @@ class Attraction {
   final Location location;
   @JsonKey(name: "image")
   final ImageData data;
+  @JsonKey(name: "sound")
+  final SoundData soundData;
 
   StrapiImage? get image => data.data;
+  StrapiSound? get sound => soundData.data;
 }

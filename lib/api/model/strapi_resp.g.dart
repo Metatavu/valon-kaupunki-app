@@ -27,6 +27,37 @@ Map<String, dynamic> _$PartnerDataToJson(PartnerData instance) =>
       'data': instance.data,
     };
 
+SoundData _$SoundDataFromJson(Map<String, dynamic> json) => SoundData(
+      json['data'] == null
+          ? null
+          : StrapiSound.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SoundDataToJson(SoundData instance) => <String, dynamic>{
+      'data': instance.data,
+    };
+
+StrapiSound _$StrapiSoundFromJson(Map<String, dynamic> json) => StrapiSound(
+      Sound.fromJson(json['attributes'] as Map<String, dynamic>),
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$StrapiSoundToJson(StrapiSound instance) =>
+    <String, dynamic>{
+      'attributes': instance.sound,
+      'id': instance.id,
+    };
+
+Sound _$SoundFromJson(Map<String, dynamic> json) => Sound(
+      json['mime'] as String,
+      json['url'] as String,
+    );
+
+Map<String, dynamic> _$SoundToJson(Sound instance) => <String, dynamic>{
+      'mime': instance.mime,
+      'url': instance.url,
+    };
+
 StrapiAttraction _$StrapiAttractionFromJson(Map<String, dynamic> json) =>
     StrapiAttraction(
       Attraction.fromJson(json['attributes'] as Map<String, dynamic>),
