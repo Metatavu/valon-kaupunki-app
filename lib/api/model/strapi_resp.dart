@@ -3,6 +3,7 @@ import "package:json_annotation/json_annotation.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/benefit_user.dart";
+import "package:valon_kaupunki_app/api/model/favourite_user.dart";
 import "package:valon_kaupunki_app/api/model/image.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
 
@@ -70,6 +71,15 @@ class StrapiAttraction {
 
   factory StrapiAttraction.fromJson(Map<String, dynamic> json) =>
       _$StrapiAttractionFromJson(json);
+}
+
+@JsonSerializable()
+class OnlyId {
+  final int id;
+
+  const OnlyId(this.id);
+
+  factory OnlyId.fromJson(Map<String, dynamic> json) => _$OnlyIdFromJson(json);
 }
 
 @JsonSerializable()
@@ -172,6 +182,29 @@ class StrapiBenefitUserResponse {
 
   factory StrapiBenefitUserResponse.fromJson(Map<String, dynamic> json) =>
       _$StrapiBenefitUserResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiFavouriteUser {
+  @JsonKey(name: "attributes")
+  final FavouriteUser favouriteUser;
+  final int id;
+
+  const StrapiFavouriteUser(this.favouriteUser, this.id);
+
+  factory StrapiFavouriteUser.fromJson(Map<String, dynamic> json) =>
+      _$StrapiFavouriteUserFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiFavouriteUserResponse {
+  final List<StrapiFavouriteUser> data;
+  final StrapiResponseMeta? meta;
+
+  const StrapiFavouriteUserResponse(this.data, this.meta);
+
+  factory StrapiFavouriteUserResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiFavouriteUserResponseFromJson(json);
 }
 
 // The meta object in the response.
