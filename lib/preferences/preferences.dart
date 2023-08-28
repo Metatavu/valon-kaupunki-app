@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:shared_preferences/shared_preferences.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
 
@@ -21,9 +23,12 @@ class Preferences {
   static const String _keyShowShopsMap = "$_keyPrefix.map.show-shops";
   static const String _keyShowCafesMap = "$_keyPrefix.map.show-cafes";
   static const String _keyShowOthersMap = "$_keyPrefix.map.show-others";
+  static const String _keySorting = "$_keyPrefix.filter.sorting";
+  static const String _keyAudioCacheMapping = "$_keyPrefix.audio-cache-mapping";
 
   static bool get showPermanentAttractions =>
       _sharedPrefs!.getBool(_keyShowPermanentAttractionsMap) ?? true;
+
   static Future<void> setShowPermanentAttractions(
           bool showPermanentAttractions) async =>
       _sharedPrefs!
@@ -31,6 +36,7 @@ class Preferences {
 
   static bool get showEventAttractions =>
       _sharedPrefs!.getBool(_keyShowEventAttractionsMap) ?? true;
+
   static Future<void> setShowEventAttractions(
           bool showEventAttractions) async =>
       await _sharedPrefs!
@@ -38,34 +44,45 @@ class Preferences {
 
   static bool get showRestaurants =>
       _sharedPrefs!.getBool(_keyShowRestaurantsMap) ?? true;
+
   static Future<void> setShowRestaurants(bool showRestaurants) async =>
       await _sharedPrefs!.setBool(_keyShowRestaurantsMap, showRestaurants);
 
   static bool get showBars => _sharedPrefs!.getBool(_keyShowBarsMap) ?? true;
+
   static Future<void> setShowBars(bool showBars) async =>
       await _sharedPrefs!.setBool(_keyShowBarsMap, showBars);
 
   static bool get showShops => _sharedPrefs!.getBool(_keyShowShopsMap) ?? true;
+
   static Future<void> setShowShops(bool showShops) async =>
       await _sharedPrefs!.setBool(_keyShowShopsMap, showShops);
 
   static bool get showCafes => _sharedPrefs!.getBool(_keyShowCafesMap) ?? true;
+
   static Future<void> setShowCafes(bool showCafes) async =>
       await _sharedPrefs!.setBool(_keyShowCafesMap, showCafes);
 
   static bool get showOthers =>
       _sharedPrefs!.getBool(_keyShowOthersMap) ?? true;
+
   static Future<void> setShowOthers(bool showOthers) async =>
       await _sharedPrefs!.setBool(_keyShowOthersMap, showOthers);
 
-  static const String _keySorting = "$_keyPrefix.filter.sorting";
-
   static Sorting get sorting =>
-      Sorting.parse(_sharedPrefs!.getString(_keySorting)!) ??
+      Sorting.parse(_sharedPrefs!.getString(_keySorting) ?? "alphabetical") ??
       Sorting.alphabetical;
 
   static Future<void> setSorting(Sorting sorting) async =>
       await _sharedPrefs!.setString(_keySorting, sorting.prefValue);
+
+  static Map<String, String> get audioCacheMapping =>
+      (jsonDecode(_sharedPrefs!.getString(_keyAudioCacheMapping) ?? "{}")
+              as Map<String, dynamic>)
+          .cast();
+
+  static Future<void> setAudioCacheMapping(Map<String, String> mapping) async =>
+      await _sharedPrefs!.setString(_keyAudioCacheMapping, jsonEncode(mapping));
 }
 
 enum Sorting {
