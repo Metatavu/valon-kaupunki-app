@@ -1,4 +1,5 @@
 {
+    "@@locale": "en",
     "welcomeToValonKaupunki": "WELCOME TO VALON KAUPUNKI!",
     "@welcomeToValonKaupunki": {
         "description": "Welcome screen greeting"
@@ -7,7 +8,7 @@
     "@appName": {
         "description": "Application name"
     },
-    "introductionTextPart1": "With this application you may find information about Jyväskylä's permanent lighting attractions, artworks related to the event and about our parners. Read more about Valon kaupunki from the ",
+    "introductionTextPart1": "With this application you may find information about Jyväskylä''s permanent lighting attractions, artworks related to the event and about our partners. Read more about Valon kaupunki from the ",
     "@introductionTextPart1": {
         "description": "Welcome screen text, first component before link"
     },
@@ -15,7 +16,7 @@
     "@introductionTextLink": {
         "description": "Welcome screen text, link part"
     },
-    "introductionTextPart2": "This autumn's Valon kaupunki event takes place at 28.9.-7.10.2023",
+    "introductionTextPart2": "This autumn''s Valon kaupunki event takes place at 28.9.-7.10.2023",
     "@introductionTextPart2": {
         "description": "Welcome screen text, after link"
     },
@@ -39,33 +40,29 @@
     "@partnersButtonText": {
         "description": "Partners button text"
     },
-    "permanentAttractionText": "Permanent attraction",
-    "@permanentAttractionText": {
-        "description": "Permanent attraction label"
+    "permanentAttractionsText": "Permanent attractions",
+    "@permanentAttractionsText": {
+        "description": "Permanent attractions label"
     },
-    "eventAttractionText": "Event attraction",
-    "@eventAttractionText": {
-        "description": "Event attraction label"
+    "eventLightArtPiecesText": "Event light art pieces",
+    "@eventLightArtPiecesText": {
+        "description": "Event light art pieces label"
     },
-    "restaurantText": "Restaurant",
-    "@restaurantText": {
-        "description": "Restaurant text"
+    "restaurantsOrCafesText": "Restaurants and cafes",
+    "@restaurantsOrCafesText": {
+        "description": "Restaurants and cafes text"
     },
-    "cafeText": "Cafe",
-    "@cafeText": {
-        "description": "Cafe text"
+    "shoppingText": "Shopping",
+    "@shoppingText": {
+        "description": "Shopping text"
     },
-    "barText": "Bar",
-    "@barText": {
-        "description": "Bar text"
+    "supplementaryShowsText": "Supplementary shows",
+    "@supplementaryShowsText": {
+        "description": "Supplementary shows text"
     },
-    "shopText": "Shop",
-    "@shopText": {
-        "description": "Shop text"
-    },
-    "otherText": "Other",
-    "@otherText": {
-        "description": "Other text"
+    "jyvasParkkiText": "Jyväs-Parkki",
+    "@jyvasParkkiText": {
+        "description": "Jyväs-Parkki text"
     },
     "loadingDataFailed": "Loading event attraction data failed",
     "@loadingDataFailed": {
@@ -127,9 +124,27 @@
     "@claimBenefit": {
         "description": "Claim benefit text"
     },
-    "cannotUseBenefit": "Could not claim benefit {text}. Benefit already claimed on this device",
+    "cannotUseBenefit": "Could not claim benefit {text}.",
     "@cannotUseBenefit": {
         "description": "Could not use benefit message",
+        "placeholders": {
+            "text": {
+                "type": "String"
+            }
+        }
+    },
+    "cannotAddFavouriteAttraction": "Could not add attraction {text} as favourite.",
+    "@cannotAddFavouriteAttraction": {
+        "description": "Could not add favourite attraction message",
+        "placeholders": {
+            "text": {
+                "type": "String"
+            }
+        }
+    },
+    "cannotAddFavouritePartner": "Could not add partner {text} as favourite.",
+    "@cannotAddFavouritePartner": {
+        "description": "Could not add favourite partner message",
         "placeholders": {
             "text": {
                 "type": "String"
@@ -139,34 +154,6 @@
     "claimed": "Claimed",
     "@claimed": {
         "description": "Claimed"
-    },
-    "permanentAttractionsFilterText": "Permanent attractions",
-    "@permanentAttractionsFilterText": {
-        "description": "Permanent attractions filter text"
-    },
-    "eventAttractionsFilterText": "Event attractions",
-    "@eventAttractionsFilterText": {
-        "description": "Event attractions filter text"
-    },
-    "restaurantsFilterText": "Restaurants",
-    "@restaurantsFilterText": {
-        "description": "Restaurants filter text"
-    },
-    "cafesFilterText": "Cafes",
-    "@cafesFilterText": {
-        "description": "Cafes filter text"
-    },
-    "barsFilterText": "Bars",
-    "@barsFilterText": {
-        "description": "Bars filter text"
-    },
-    "shopsFilterText": "Shops",
-    "@shopsFilterText": {
-        "description": "Shops filter text"
-    },
-    "othersFilterText": "Other partners",
-    "@othersFilterText": {
-        "description": "Others filter text"
     },
     "sortingAlphabetical": "Alphabetical",
     "@sortingAlphabetical": {
@@ -179,5 +166,9 @@
     "downloadInterrupted": "Downloading audio file was interrupted",
     "@downloadInterrupted": {
         "description": "Download interrupted toast"
+    },
+    "showWelcomePage": "Information about Valon Kaupunki",
+    "@showWelcomePage": {
+        "description": "Welcome page link text"
     }
 }

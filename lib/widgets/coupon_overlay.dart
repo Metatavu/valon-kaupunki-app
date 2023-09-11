@@ -115,7 +115,7 @@ class CouponOverlay extends StatelessWidget {
                       if (partner.address != null)
                         PropertyInfo(
                           leading: SvgPicture.asset(
-                            Assets.homeIconAsset,
+                            Assets.homeIcon,
                             width: 24.0,
                             height: 24.0,
                             colorFilter: const ColorFilter.mode(
@@ -127,7 +127,7 @@ class CouponOverlay extends StatelessWidget {
                         ),
                       PropertyInfo(
                         leading: SvgPicture.asset(
-                          Assets.locationIconAsset,
+                          Assets.locationIcon,
                           width: 24.0,
                           height: 24.0,
                           colorFilter: const ColorFilter.mode(
@@ -174,7 +174,7 @@ class CouponOverlay extends StatelessWidget {
                             Expanded(
                               child: OutlinedButton(
                                 style: theme.outlinedButtonTheme.style,
-                                onPressed: () {},
+                                onPressed: onClose,
                                 child: Text(
                                   localizations.close,
                                   style: theme.textTheme.bodySmall!,

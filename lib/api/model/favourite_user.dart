@@ -6,9 +6,11 @@ part "favourite_user.g.dart";
 @JsonSerializable()
 class FavouriteUser {
   final String deviceIdentifier;
-  final FavouriteUserData attraction;
+  final FavouriteUserData? attraction;
 
   const FavouriteUser(this.deviceIdentifier, this.attraction);
+
+  int? get attractionId => attraction?.data.id;
 
   factory FavouriteUser.fromJson(Map<String, dynamic> json) =>
       _$FavouriteUserFromJson(json);

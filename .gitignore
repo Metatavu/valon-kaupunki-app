@@ -46,3 +46,6 @@ app.*.map.json
 
 .env
 .bad_env
+.local.env
+.staging.env
+.production.env

@@ -15,7 +15,7 @@ class Attraction {
     this.link,
     this.address,
     this.location,
-    this.data,
+    this.imageData,
     this.soundData,
   );
 
@@ -31,10 +31,10 @@ class Attraction {
   final String? address;
   final Location location;
   @JsonKey(name: "image")
-  final ImageData data;
+  final ImageData imageData;
   @JsonKey(name: "sound")
   final SoundData soundData;
 
-  StrapiImage? get image => data.data;
+  StrapiImage? get image => imageData.data;
   StrapiSound? get sound => soundData.data;
 }

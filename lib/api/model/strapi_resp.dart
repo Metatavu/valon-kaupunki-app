@@ -3,11 +3,22 @@ import "package:json_annotation/json_annotation.dart";
 import "package:valon_kaupunki_app/api/model/attraction.dart";
 import "package:valon_kaupunki_app/api/model/benefit.dart";
 import "package:valon_kaupunki_app/api/model/benefit_user.dart";
+import "package:valon_kaupunki_app/api/model/favourite_partner.dart";
 import "package:valon_kaupunki_app/api/model/favourite_user.dart";
 import "package:valon_kaupunki_app/api/model/image.dart";
 import "package:valon_kaupunki_app/api/model/partner.dart";
 
 part "strapi_resp.g.dart";
+
+@JsonSerializable()
+class BenefitData {
+  final List<StrapiBenefit> data;
+
+  const BenefitData(this.data);
+
+  factory BenefitData.fromJson(Map<String, dynamic> json) =>
+      _$BenefitDataFromJson(json);
+}
 
 @JsonSerializable()
 class ImageData {
@@ -205,6 +216,52 @@ class StrapiFavouriteUserResponse {
 
   factory StrapiFavouriteUserResponse.fromJson(Map<String, dynamic> json) =>
       _$StrapiFavouriteUserResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiCreateFavouriteUserResponse {
+  final StrapiFavouriteUser data;
+
+  const StrapiCreateFavouriteUserResponse(this.data);
+
+  factory StrapiCreateFavouriteUserResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$StrapiCreateFavouriteUserResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiFavouritePartner {
+  @JsonKey(name: "attributes")
+  final FavouritePartner favouritePartner;
+  final int id;
+
+  const StrapiFavouritePartner(this.favouritePartner, this.id);
+
+  factory StrapiFavouritePartner.fromJson(Map<String, dynamic> json) =>
+      _$StrapiFavouritePartnerFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiFavouritePartnerResponse {
+  final List<StrapiFavouritePartner> data;
+  final StrapiResponseMeta? meta;
+
+  const StrapiFavouritePartnerResponse(this.data, this.meta);
+
+  factory StrapiFavouritePartnerResponse.fromJson(Map<String, dynamic> json) =>
+      _$StrapiFavouritePartnerResponseFromJson(json);
+}
+
+@JsonSerializable()
+class StrapiCreateFavouritePartnerResponse {
+  final StrapiFavouritePartner data;
+
+  const StrapiCreateFavouritePartnerResponse(this.data);
+
+  factory StrapiCreateFavouritePartnerResponse.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$StrapiCreateFavouritePartnerResponseFromJson(json);
 }
 
 // The meta object in the response.

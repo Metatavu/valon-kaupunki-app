@@ -29,6 +29,6 @@ Map<String, dynamic> _$AttractionToJson(Attraction instance) =>
       'link': instance.link,
       'address': instance.address,
       'location': instance.location,
-      'image': instance.data,
+      'image': instance.imageData,
       'sound': instance.soundData,
     };

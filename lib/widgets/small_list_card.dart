@@ -6,6 +6,7 @@ class SmallListCard extends StatelessWidget {
   final String title;
   final String text;
   final Widget proceedIcon;
+  final void Function()? onTap;
   final Widget? secondaryLabel;
 
   const SmallListCard({
@@ -13,8 +14,9 @@ class SmallListCard extends StatelessWidget {
     required this.leftIcon,
     required this.title,
     required this.text,
-    required this.secondaryLabel,
     required this.proceedIcon,
+    this.onTap,
+    this.secondaryLabel,
     Key? key,
   }) : super(key: key);
 
@@ -22,14 +24,16 @@ class SmallListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SizedBox(
-      height: 60.0,
-      child: Padding(
-        padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        height: 60.0,
         child: Container(
+          height: 60,
           decoration: const BoxDecoration(
             color: Colors.black38,
           ),
+          padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
           child: Row(
             children: [
               Padding(
@@ -56,7 +60,10 @@ class SmallListCard extends StatelessWidget {
               ),
               const Spacer(),
               if (secondaryLabel != null) secondaryLabel!,
-              proceedIcon,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: proceedIcon,
+              ),
             ],
           ),
         ),

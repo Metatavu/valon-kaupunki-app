@@ -1,50 +1,146 @@
-import "dart:math";
-
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:url_launcher/url_launcher.dart";
+import "package:valon_kaupunki_app/assets.dart";
 import "package:valon_kaupunki_app/custom_theme_values.dart";
-import "package:valon_kaupunki_app/widgets/welcome_slide_up_animation.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+
+import "map_screen.dart";
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _WelcomeScreenState();
-  }
+  State<StatefulWidget> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-  bool _showAnimation = true;
+  Image backgroundImage = Image.asset(
+    Assets.valonKaupunkiBackground,
+    fit: BoxFit.cover,
+  );
 
   @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    controller.forward();
-    controller.addStatusListener(
-      (status) {
-        if (status == AnimationStatus.completed) {
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            () => {setState(() => _showAnimation = false)},
-          );
-        }
-      },
-    );
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(backgroundImage.image, context);
   }
 
-  void _launchWebsite(String url) async {
-    launchUrl(Uri.parse(url));
+  void _launchWebsite(String url) async => launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
+
+  Widget _renderContent({
+    required BuildContext context,
+    required AppLocalizations localizations,
+    required ThemeData theme,
+  }) {
+    return Stack(
+      children: [
+        Positioned.fill(child: backgroundImage),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 120),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: SvgPicture.asset(
+                  Assets.valonKaupunkiLogo,
+                  width: 280,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 300),
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Text(
+                      localizations.welcomeToValonKaupunki,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24.0),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: theme.textTheme.bodySmall,
+                          children: [
+                            TextSpan(text: localizations.introductionTextPart1),
+                            TextSpan(
+                              text: localizations.introductionTextLink,
+                              style: CustomThemeValues.linkTheme(theme),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => _launchWebsite(
+                                      "https://valonkaupunki.jyvaskyla.fi/",
+                                    ),
+                            ),
+                            const TextSpan(text: ".\n\n"),
+                            TextSpan(
+                              text: localizations.introductionTextPart2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 24.0,
+                        bottom: 24.0,
+                      ),
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const MapScreen(),
+                          ),
+                        ),
+                        style: theme.outlinedButtonTheme.style,
+                        child: Text(
+                          localizations.enterButtonText,
+                          style: theme.outlinedButtonTheme.style!.textStyle!
+                              .resolve({}),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => _launchWebsite(
+                            "https://www.facebook.com/jyvaskylacityoflight/",
+                          ),
+                          icon: SvgPicture.asset(Assets.facebookIcon),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => _launchWebsite(
+                            "https://www.instagram.com/valonkaupunki/",
+                          ),
+                          icon: SvgPicture.asset(Assets.instagramIcon),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () => _launchWebsite(
+                            "https://www.linkedin.com/company/valon-kaupunki-city-of-light/",
+                          ),
+                          icon: SvgPicture.asset(Assets.linkedinIcon),
+                        ),
+                        const Spacer(),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -64,100 +160,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           end: Alignment.bottomCenter,
         ),
       ),
-      child: _showAnimation
-          ? WelcomeSlideUpAnimation(
-              animation: Tween<Offset>(
-                begin: Offset.zero,
-                end: Offset.fromDirection(3 * pi / 2, 0.5),
-              ).animate(controller),
-            )
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 80),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SvgPicture.asset(
-                      "assets/valon_kaupunki.svg",
-                      width: 250,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 300),
-                    child: Column(
-                      children: [
-                        const Spacer(),
-                        Text(
-                          localizations.welcomeToValonKaupunki,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: theme.textTheme.bodySmall,
-                              children: [
-                                TextSpan(
-                                    text: localizations.introductionTextPart1),
-                                TextSpan(
-                                  text: localizations.introductionTextLink,
-                                  style: CustomThemeValues.linkTheme(theme),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      _launchWebsite(
-                                          "https://valonkaupunki.jyvaskyla.fi/");
-                                    },
-                                ),
-                                const TextSpan(text: ".\n\n"),
-                                TextSpan(
-                                    text: localizations.introductionTextPart2),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 24.0, bottom: 24.0),
-                          child: OutlinedButton(
-                            onPressed: () => {},
-                            style: theme.outlinedButtonTheme.style,
-                            child: Text(
-                              localizations.enterButtonText,
-                              style: theme.outlinedButtonTheme.style!.textStyle!
-                                  .resolve({}),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () => {},
-                              icon: SvgPicture.asset("assets/facebook.svg"),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () => {},
-                              icon: SvgPicture.asset("assets/instagram.svg"),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              onPressed: () => {},
-                              icon: SvgPicture.asset("assets/linkedin.svg"),
-                            ),
-                            const Spacer(),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+      child: _renderContent(
+        context: context,
+        localizations: localizations,
+        theme: theme,
+      ),
     );
   }
 }

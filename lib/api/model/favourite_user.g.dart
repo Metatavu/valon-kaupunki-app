@@ -9,7 +9,10 @@ part of 'favourite_user.dart';
 FavouriteUser _$FavouriteUserFromJson(Map<String, dynamic> json) =>
     FavouriteUser(
       json['deviceIdentifier'] as String,
-      FavouriteUserData.fromJson(json['attraction'] as Map<String, dynamic>),
+      json['attraction'] == null
+          ? null
+          : FavouriteUserData.fromJson(
+              json['attraction'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$FavouriteUserToJson(FavouriteUser instance) =>

@@ -1,4 +1,5 @@
 import "dart:convert";
+import "dart:ui";
 
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:http/http.dart" as http;
@@ -8,16 +9,20 @@ enum StrapiContentType {
   attraction,
   benefit,
   partner,
-  benefitUser;
+  benefitUser,
+  favouriteAttraction,
+  favouritePartner;
 
   String path() => switch (this) {
         attraction => "attractions",
         benefit => "benefits",
         partner => "partners",
         benefitUser => "benefit-users",
+        favouriteAttraction => "favourite-users",
+        favouritePartner => "favourite-partners",
       };
 
-  dynamic fromJson(String jsonData) {
+  dynamic fromJson<StrapiContentType>(String jsonData) {
     final json = jsonDecode(jsonData);
 
     return switch (this) {
@@ -25,6 +30,8 @@ enum StrapiContentType {
       benefit => StrapiBenefitResponse.fromJson(json),
       partner => StrapiPartnerResponse.fromJson(json),
       benefitUser => StrapiBenefitUserResponse.fromJson(json),
+      favouriteAttraction => StrapiFavouriteUserResponse.fromJson(json),
+      favouritePartner => StrapiFavouritePartnerResponse.fromJson(json),
     };
   }
 }
@@ -33,7 +40,8 @@ class StrapiClient {
   static const String _accessToken =
       String.fromEnvironment("STRAPI_ACCESS_TOKEN");
   static const String _strapiUrl = String.fromEnvironment("STRAPI_URL");
-  static const String _strapiBase = String.fromEnvironment("STRAPI_BASE_PATH");
+  static const String _strapiBasePath =
+      String.fromEnvironment("STRAPI_BASE_PATH");
 
   static StrapiClient? _instance;
   static String? _deviceId;
@@ -45,54 +53,109 @@ class StrapiClient {
     return _instance!;
   }
 
-  Future<T> _getContentType<T>(StrapiContentType ct,
+  Future<T> _getContentType<T>(StrapiContentType contentType,
       [Map<String, String>? queryParams]) async {
     final resp = await http.get(
-        Uri(
-          scheme: "https",
-          host: _strapiUrl,
-          pathSegments: [_strapiBase, ct.path()],
-          queryParameters: queryParams,
-        ),
-        headers: {"Authorization": "Bearer $_accessToken"});
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [_strapiBasePath, contentType.path()],
+        queryParameters: queryParams,
+      ),
+      headers: {
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
 
     if (resp.statusCode != 200) {
-      throw ApiException("failed to retrieve ${ct.path()} list");
+      throw ApiException(
+        "failed to retrieve ${contentType.path()} list: ${resp.statusCode} - ${resp.body}",
+      );
     }
 
-    return ct.fromJson(resp.body);
+    return contentType.fromJson(resp.body);
   }
 
-  Future<StrapiAttractionResponse> getAttractions() async =>
-      _getContentType<StrapiAttractionResponse>(
-          StrapiContentType.attraction, {"populate": "image,sound"});
+  Future<StrapiAttractionResponse> listAttractions({Locale? locale}) async {
+    var queryParams = {"populate": "image,sound"};
 
-  Future<StrapiBenefitResponse> getBenefits() async =>
-      _getContentType<StrapiBenefitResponse>(StrapiContentType.benefit, {
-        "populate[1]": Uri.encodeQueryComponent("partner.image"),
-        "populate": "image"
-      });
+    if (locale != null) {
+      queryParams["locale"] = locale.languageCode;
+    }
 
-  Future<List<StrapiBenefit>> getUsedBenefitsForDevice() async {
-    _deviceId ??= await getUniqueDeviceId();
-    final resp = await _getContentType<StrapiBenefitUserResponse>(
-        StrapiContentType.benefitUser, {
-      "populate": "benefit,benefit.image,partner.image",
-      "filters[deviceIdentifier][\$eq]": _deviceId!
-    });
-
-    return Future.value(
-        resp.data.map((e) => e.benefitUser.benefit.data).toList());
+    return _getContentType<StrapiAttractionResponse>(
+      StrapiContentType.attraction,
+      queryParams,
+    );
   }
 
-  Future<StrapiPartnerResponse> getPartners() async =>
-      _getContentType<StrapiPartnerResponse>(
-          StrapiContentType.partner, {"populate": "image,benefits"});
-
-  Future<bool> claimBenefit(int id) async {
+  Future<List<StrapiFavouriteUser>> listFavouriteAttractionsForUser() async {
     _deviceId ??= await getUniqueDeviceId();
-    final usedBenefits = await getUsedBenefitsForDevice();
-    if (usedBenefits.map((e) => e.id).contains(id)) {
+
+    final response = await _getContentType<StrapiFavouriteUserResponse>(
+      StrapiContentType.favouriteAttraction,
+      {
+        "populate": "*",
+        "filters[deviceIdentifier][\$eq]": _deviceId!,
+      },
+    );
+
+    return response.data.toList();
+  }
+
+  Future<StrapiBenefitResponse> listBenefits() async =>
+      _getContentType<StrapiBenefitResponse>(
+        StrapiContentType.benefit,
+        {
+          "populate": "benefit,benefit.image,partner.image",
+        },
+      );
+
+  Future<List<StrapiBenefit>> listUsedBenefitsForDevice() async {
+    _deviceId ??= await getUniqueDeviceId();
+
+    final response = await _getContentType<StrapiBenefitUserResponse>(
+      StrapiContentType.benefitUser,
+      {"populate": "benefit", "filters[deviceIdentifier][\$eq]": _deviceId!},
+    );
+
+    return response.data
+        .map((usedBenefit) => usedBenefit.benefitUser.benefit.data)
+        .toList();
+  }
+
+  Future<StrapiPartnerResponse> listPartners({Locale? locale}) async {
+    var queryParams = {"populate": "image,benefits"};
+
+    if (locale != null) {
+      queryParams["locale"] = locale.languageCode;
+    }
+
+    return _getContentType<StrapiPartnerResponse>(
+      StrapiContentType.partner,
+      queryParams,
+    );
+  }
+
+  Future<List<StrapiFavouritePartner>> listFavouritePartnersForUser() async {
+    _deviceId ??= await getUniqueDeviceId();
+
+    final resp = await _getContentType<StrapiFavouritePartnerResponse>(
+      StrapiContentType.favouritePartner,
+      {
+        "populate": "*",
+        "filters[deviceIdentifier][\$eq]": _deviceId!,
+      },
+    );
+
+    return resp.data.toList();
+  }
+
+  Future<bool> claimBenefit(int benefitId) async {
+    _deviceId ??= await getUniqueDeviceId();
+    final usedBenefits = await listUsedBenefitsForDevice();
+
+    if (usedBenefits.map((benefit) => benefit.id).contains(benefitId)) {
       return false;
     }
 
@@ -100,15 +163,80 @@ class StrapiClient {
       Uri(
         scheme: "https",
         host: _strapiUrl,
-        pathSegments: [_strapiBase, StrapiContentType.benefitUser.path()],
+        pathSegments: [_strapiBasePath, StrapiContentType.benefitUser.path()],
       ),
-      body: jsonEncode(
-        {
-          "data": {
-            "deviceIdentifier": _deviceId!,
-            "benefit": id,
-          },
+      body: jsonEncode({
+        "data": {
+          "deviceIdentifier": _deviceId!,
+          "benefit": benefitId,
         },
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw ApiException(
+        "failed to add benefit user: ${resp.statusCode} - ${resp.body}",
+      );
+    }
+
+    return true;
+  }
+
+  Future<StrapiFavouriteUser> addFavouriteAttraction(
+    int attractionId,
+  ) async {
+    _deviceId ??= await getUniqueDeviceId();
+
+    final resp = await http.post(
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [
+          _strapiBasePath,
+          StrapiContentType.favouriteAttraction.path()
+        ],
+        queryParameters: {
+          "populate": "*",
+        },
+      ),
+      body: jsonEncode({
+        "data": {
+          "deviceIdentifier": _deviceId!,
+          "attraction": attractionId,
+        },
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw ApiException(
+        "failed to add favourite attraction: ${resp.statusCode} - ${resp.body}",
+      );
+    }
+
+    return StrapiCreateFavouriteUserResponse.fromJson(jsonDecode(resp.body))
+        .data;
+  }
+
+  Future<void> removeFavouriteAttraction(
+    StrapiFavouriteUser favouriteAttraction,
+  ) async {
+    final resp = await http.delete(
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [
+          _strapiBasePath,
+          StrapiContentType.favouriteAttraction.path(),
+          favouriteAttraction.id.toString()
+        ],
       ),
       headers: {
         "Content-Type": "application/json",
@@ -117,10 +245,75 @@ class StrapiClient {
     );
 
     if (resp.statusCode != 200) {
-      throw ApiException("failed to add benefit user: ${resp.body}");
+      throw ApiException(
+        "failed to remove favourite attraction: ${resp.statusCode} - ${resp.body}",
+      );
+    }
+  }
+
+  Future<StrapiFavouritePartner> addFavouritePartner(
+    int partnerId,
+  ) async {
+    _deviceId ??= await getUniqueDeviceId();
+
+    final resp = await http.post(
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [
+          _strapiBasePath,
+          StrapiContentType.favouritePartner.path()
+        ],
+        queryParameters: {
+          "populate": "*",
+        },
+      ),
+      body: jsonEncode({
+        "data": {
+          "deviceIdentifier": _deviceId!,
+          "partner": partnerId,
+        },
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw ApiException(
+        "failed to add favourite partner: ${resp.statusCode} - ${resp.body}",
+      );
     }
 
-    return true;
+    return StrapiCreateFavouritePartnerResponse.fromJson(jsonDecode(resp.body))
+        .data;
+  }
+
+  Future<void> removeFavouritePartner(
+    StrapiFavouritePartner favouritePartner,
+  ) async {
+    final resp = await http.delete(
+      Uri(
+        scheme: "https",
+        host: _strapiUrl,
+        pathSegments: [
+          _strapiBasePath,
+          StrapiContentType.favouritePartner.path(),
+          favouritePartner.id.toString(),
+        ],
+      ),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $_accessToken",
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw ApiException(
+        "failed to remove favourite partner: ${resp.statusCode} - ${resp.body}",
+      );
+    }
   }
 }
 

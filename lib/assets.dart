@@ -1,22 +1,46 @@
 class Assets {
-  static const String homeIconAsset = "assets/home.svg";
-  static const String attractionsIconAsset = "assets/attraction.svg";
-  static const String benefitsIconAsset = "assets/benefit.svg";
-  static const String partnersIconAsset = "assets/partner.svg";
-  static const String permanentAttractionAsset = "assets/permanent.svg";
-  static const String eventAttractionAsset = "assets/event-attraction.svg";
-  static const String restaurantPartnerAsset = "assets/restaurant.svg";
-  static const String cafePartnerAsset = "assets/cafe.svg";
-  static const String barPartnerAsset = "assets/bar.svg";
-  static const String shopPartnerAsset = "assets/shop.svg";
-  static const String genericPartnerAsset = "assets/other.svg";
-  static const String restaurantPartnerAssetIcon = "assets/restaurant-icon.svg";
-  static const String cafePartnerAssetIcon = "assets/cafe-icon.svg";
-  static const String barPartnerAssetIcon = "assets/bar-icon.svg";
-  static const String shopPartnerAssetIcon = "assets/shop-icon.svg";
-  static const String genericPartnerAssetIcon = "assets/other-icon.svg";
-  static const String locationIconAsset = "assets/location-icon.svg";
-  static const String designerIconAsset = "assets/designer-icon.svg";
+  static const String valonKaupunkiBackground =
+      "assets/valon-kaupunki-background.png";
+  static const String valonKaupunkiLogo = "assets/valon-kaupunki-logo.svg";
+  static const String facebookIcon = "assets/facebook-icon.svg";
+  static const String instagramIcon = "assets/instagram-icon.svg";
+  static const String linkedinIcon = "assets/linkedin-icon.svg";
+  static const String homeIcon = "assets/home-icon.svg";
+  static const String attractionsIcon = "assets/attractions-icon.svg";
+  static const String benefitsIcon = "assets/benefits-icon.svg";
+  static const String partnersIcon = "assets/partners-icon.svg";
+  static const String permanentAttractionMarker =
+      "assets/permanent-attraction-marker.svg";
+  static const String permanentAttractionFavouriteMarker =
+      "assets/permanent-attraction-favourite-marker.svg";
+  static const String eventLightArtPieceMarker =
+      "assets/event-light-art-piece-marker.svg";
+  static const String eventLightArtPieceFavouriteMarker =
+      "assets/event-light-art-piece-favourite-marker.svg";
+  static const String restaurantOrCafeMarker =
+      "assets/restaurant-or-cafe-marker.svg";
+  static const String restaurantOrCafeFavouriteMarker =
+      "assets/restaurant-or-cafe-favourite-marker.svg";
+  static const String shoppingMarker = "assets/shopping-marker.svg";
+  static const String shoppingFavouriteMarker =
+      "assets/shopping-favourite-marker.svg";
+  static const String supplementaryShowMarker =
+      "assets/supplementary-show-marker.svg";
+  static const String supplementaryShowFavouriteMarker =
+      "assets/supplementary-show-favourite-marker.svg";
+  static const String jyvasParkkiMarker = "assets/jyvas-parkki-marker.svg";
+  static const String jyvasParkkiFavouriteMarker =
+      "assets/jyvas-parkki-favourite-marker.svg";
+  static const String eventLightArtPieceIcon =
+      "assets/event-light-art-piece-icon.svg";
+  static const String restaurantOrCafeIcon =
+      "assets/restaurant-or-cafe-icon.svg";
+  static const String shoppingIcon = "assets/shopping-icon.svg";
+  static const String supplementaryShowIcon =
+      "assets/supplementary-show-icon.svg";
+  static const String jyvasParkkiIcon = "assets/jyvas-parkki-icon.svg";
+  static const String locationIcon = "assets/location-icon.svg";
+  static const String designerIcon = "assets/designer-icon.svg";
 
   Assets._();
 }
