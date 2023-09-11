@@ -9,7 +9,7 @@
     "homeButtonText": "Koti",
     "attractionsButtonText": "Kohteet",
     "benefitsButtonText": "Edut",
-    "partnersButtonText": "Kumppanit",
+    "partnersButtonText": "Oheistapahtumat & kumppanit",
     "permanentAttractionsText": "Pysyvät kohteet",
     "eventLightArtPiecesText": "Tapahtuman valoteokset",
     "restaurantsOrCafesText": "Ravintolat ja kahvilat",
@@ -24,6 +24,7 @@
     "distanceToTarget": "Etäisyys kohteeseen",
     "address": "Osoite",
     "designer": "Valaistuksen suunnittelija",
+    "link": "Linkki",
     "errorLoadingImageText": "Virhe ladattaessa kuvaa",
     "readMoreAbout": "Lue lisää kohteessa",
     "linkOpensInNewWindow": "Linkki avautuu uudessa ikkunassa",
@@ -36,5 +37,6 @@
     "sortingAlphabetical": "Aakkosittain",
     "sortingClosest": "Lähimpänä",
     "downloadInterrupted": "Äänitiedoston lataaminen keskeytettiin",
-    "showWelcomePage": "Tietoja Valon kaupungista"
+    "showWelcomePage": "Tietoja Valon kaupungista",
+    "noItems": "Ei tuloksia"
 }

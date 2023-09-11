@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:latlong2/latlong.dart";
+import "package:url_launcher/url_launcher.dart";
 import "package:valon_kaupunki_app/api/model/location.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
 import "package:valon_kaupunki_app/assets.dart";
@@ -56,6 +57,7 @@ class _PartnerInfoOverlayState extends State<PartnerInfoOverlay> {
         _localizations,
       );
   Location get _location => widget.strapiPartner.partner.location;
+  String? get _link => widget.strapiPartner.partner.link;
 
   @override
   void initState() {
@@ -319,6 +321,23 @@ class _PartnerInfoOverlayState extends State<PartnerInfoOverlay> {
                         trailing: null,
                       ),
                     ),
+                    if (_link != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: PropertyInfo(
+                          leading: const Icon(
+                            Icons.link,
+                            color: Colors.white,
+                          ),
+                          title: _localizations.link,
+                          text: _link!,
+                          trailing: null,
+                          onTap: () => launchUrl(
+                            Uri.parse(_link!),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),

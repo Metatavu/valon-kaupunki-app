@@ -36,7 +36,7 @@
     "@benefitsButtonText": {
         "description": "Benefits button text"
     },
-    "partnersButtonText": "Partners",
+    "partnersButtonText": "Side events & partners",
     "@partnersButtonText": {
         "description": "Partners button text"
     },
@@ -104,6 +104,10 @@
     "@designer": {
         "description": "Designer of attraction label"
     },
+    "link": "Link",
+    "@link": {
+        "description": "Link of attraction label"
+    },
     "errorLoadingImageText": "Error loading image",
     "@errorLoadingImageText": {
         "description": "Error loading image text"
@@ -170,5 +174,9 @@
     "showWelcomePage": "Information about Valon Kaupunki",
     "@showWelcomePage": {
         "description": "Welcome page link text"
+    },
+    "noItems": "No items found",
+    "@noItems": {
+        "description": "No items found text"
     }
 }

@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "valon-kaupunki-app",
+      "name": "valon-kaupunki-app (debug w/ staging)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "name": "valon-kaupunki-app (profile mode)",
+      "name": "valon-kaupunki-app (profile mode w/ staging)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile",
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "name": "valon-kaupunki-app (release mode)",
+      "name": "valon-kaupunki-app (release mode w/ staging)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release",
@@ -35,7 +35,27 @@
       ]
     },
     {
-      "name": "valon-kaupunki-app (production)",
+      "name": "valon-kaupunki-app (debug w/ production)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "toolArgs": [
+        "--dart-define-from-file",
+        ".production.env"
+      ]
+    },
+    {
+      "name": "valon-kaupunki-app (profile mode w/ production)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "toolArgs": [
+        "--dart-define-from-file",
+        ".production.env"
+      ]
+    },
+    {
+      "name": "valon-kaupunki-app (release mode w/ production)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release",
@@ -43,6 +63,6 @@
         "--dart-define-from-file",
         ".production.env"
       ]
-    }
+    },
   ]
 }

@@ -92,6 +92,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final Map<int, StrapiFavouritePartner> _strapiFavouritePartners = {};
   List<StrapiPartner> _shownPartners = List.empty(growable: true);
   late AppLocalizations _localizations = AppLocalizations.of(context)!;
+  Locale? _currentLocale;
 
   late final Stream<LocationMarkerPosition?> _posStream;
   final Set<int> _usedBenefits = {};
@@ -106,7 +107,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   bool _showMenu = false;
   bool _loading = true;
   bool _trackLocation = false;
-  late Locale _locale = Localizations.localeOf(context);
 
   double _compassAngle = 0.0;
   bool _dataFetchFailed = false;
@@ -126,14 +126,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _initLocationTracking();
-    _fetchData(locale: _locale);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _localizations = AppLocalizations.of(context)!;
-    _locale = Localizations.localeOf(context);
+    final newLocale = Localizations.localeOf(context);
+
+    if (_currentLocale?.languageCode != newLocale.languageCode) {
+      _fetchData(newLocale);
+    }
+
+    _currentLocale = newLocale;
   }
 
   _initLocationTracking() async {
@@ -385,6 +390,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     return Listing(
       filter: filter,
+      emptyMessage: _localizations.noItems,
       errorMessage: errorMessage,
       builder: builder,
       itemCount: itemCount,
@@ -514,7 +520,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _fetchData({Locale? locale}) async {
+  Future<void> _fetchData(Locale locale) async {
     setState(() {
       _dataFetchFailed = false;
       _loading = true;
@@ -528,6 +534,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       final strapiAttractionsResponse = await _client.listAttractions(
         locale: locale,
       );
+
       _strapiAttractions.clear();
       _strapiAttractions.addAll(strapiAttractionsResponse.data);
 
@@ -1080,10 +1087,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     ],
                     selected: {Localizations.localeOf(context).languageCode},
                     onSelectionChanged: (values) {
-                      ValonKaupunkiApp.of(context)!
-                          .setLocale(Locale(values.first));
-                      _locale = Locale(values.first);
-                      _fetchData(locale: Locale(values.first));
+                      final newLocale = Locale(values.first);
+                      ValonKaupunkiApp.of(context)!.setLocale(newLocale);
                     },
                     style: ButtonStyle(
                       visualDensity: VisualDensity.compact,
@@ -1220,7 +1225,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       child: RefreshIndicator(
         backgroundColor: const Color.fromARGB(0x7F, 0x1B, 0x26, 0x37),
         color: Colors.white,
-        onRefresh: () => _fetchData(locale: _locale),
+        onRefresh: () => _fetchData(_currentLocale!),
         child: Stack(
           children: [
             _buildMainContent(),

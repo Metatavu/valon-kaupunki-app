@@ -5,6 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:latlong2/latlong.dart";
+import "package:url_launcher/url_launcher.dart";
 import "package:valon_kaupunki_app/api/caching_audio_client.dart";
 import "package:valon_kaupunki_app/api/model/location.dart";
 import "package:valon_kaupunki_app/api/model/strapi_resp.dart";
@@ -58,6 +59,7 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
   String get _subTitle => widget.strapiAttraction.attraction.subTitle;
   String? get _description => widget.strapiAttraction.attraction.description;
   String? get _address => widget.strapiAttraction.attraction.address;
+  String? get _link => widget.strapiAttraction.attraction.link;
   String get _category => getAttractionCategoryLabel(
         widget.strapiAttraction.attraction.category,
         _localizations,
@@ -444,6 +446,23 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
                           title: _localizations.designer,
                           text: _artist!,
                           trailing: null,
+                        ),
+                      ),
+                    if (_link != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: PropertyInfo(
+                          leading: const Icon(
+                            Icons.link,
+                            color: Colors.white,
+                          ),
+                          title: _localizations.link,
+                          text: _link!,
+                          trailing: null,
+                          onTap: () => launchUrl(
+                            Uri.parse(_link!),
+                            mode: LaunchMode.externalApplication,
+                          ),
                         ),
                       ),
                   ],

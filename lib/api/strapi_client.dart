@@ -77,7 +77,10 @@ class StrapiClient {
   }
 
   Future<StrapiAttractionResponse> listAttractions({Locale? locale}) async {
-    var queryParams = {"populate": "image,sound"};
+    var queryParams = {
+      "populate": "image,sound",
+      "pagination[pageSize]": "999",
+    };
 
     if (locale != null) {
       queryParams["locale"] = locale.languageCode;
@@ -97,6 +100,7 @@ class StrapiClient {
       {
         "populate": "*",
         "filters[deviceIdentifier][\$eq]": _deviceId!,
+        "pagination[pageSize]": "999",
       },
     );
 
@@ -108,6 +112,7 @@ class StrapiClient {
         StrapiContentType.benefit,
         {
           "populate": "benefit,benefit.image,partner.image",
+          "pagination[pageSize]": "999",
         },
       );
 
@@ -125,7 +130,10 @@ class StrapiClient {
   }
 
   Future<StrapiPartnerResponse> listPartners({Locale? locale}) async {
-    var queryParams = {"populate": "image,benefits"};
+    var queryParams = {
+      "populate": "image,benefits",
+      "pagination[pageSize]": "999",
+    };
 
     if (locale != null) {
       queryParams["locale"] = locale.languageCode;
@@ -145,6 +153,7 @@ class StrapiClient {
       {
         "populate": "*",
         "filters[deviceIdentifier][\$eq]": _deviceId!,
+        "pagination[pageSize]": "999"
       },
     );
 
