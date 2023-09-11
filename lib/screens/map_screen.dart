@@ -1,4 +1,5 @@
 import "dart:developer";
+import "dart:io";
 import "dart:ui";
 import "package:collection/collection.dart";
 
@@ -809,9 +810,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   void _handleMapMarkerTap(_MarkerData markerData) async {
     if (_mapController.center != markerData.point) {
+      var zoom = _mapController.zoom < _animTargetZoom
+          ? _animTargetZoom
+          : _mapController.zoom;
       await _animMapController.animateTo(
         dest: markerData.point,
-        zoom: _animTargetZoom,
+        zoom: zoom,
       );
 
       _lastTapTarget = markerData.point;
@@ -921,7 +925,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
       if (_currentSection == _Section.home)
         Padding(
-          padding: const EdgeInsets.only(top: 104.0),
+          padding: EdgeInsets.only(top: Platform.isIOS ? 115.0 : 104.0),
           child: Align(
             alignment: Alignment.topCenter,
             child: SizedBox(
@@ -942,7 +946,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             )
           : Padding(
-              padding: const EdgeInsets.only(top: 144.0),
+              padding: EdgeInsets.only(top: Platform.isIOS ? 155.0 : 144.0),
               child: Align(
                 alignment: Alignment.topRight,
                 child: Column(
@@ -1000,7 +1004,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             constraints: const BoxConstraints.expand(),
             child: Container(
               color: Colors.transparent.withAlpha(0x7F),
-              padding: const EdgeInsets.only(top: 90, bottom: 20),
+              padding:
+                  EdgeInsets.only(top: Platform.isIOS ? 100 : 90, bottom: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
