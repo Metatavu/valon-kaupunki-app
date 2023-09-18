@@ -6,19 +6,32 @@ part "partner.g.dart";
 
 @JsonSerializable()
 class Partner {
+  Partner(
+    this.name,
+    this.category,
+    this.location,
+    this.description,
+    this.link,
+    this.address,
+    this.imageData,
+    this.benefitsData,
+  );
+
   final String name;
   final String category;
-  final StrapiImageResponse image;
   final Location location;
-  final StrapiBenefitResponse? benefits;
 
   final String? description;
   final String? link;
   final String? address;
-
-  Partner(this.name, this.category, this.image, this.location, this.benefits,
-      this.description, this.link, this.address);
+  @JsonKey(name: "image")
+  final ImageData? imageData;
+  @JsonKey(name: "benefits")
+  final BenefitData? benefitsData;
 
   factory Partner.fromJson(Map<String, dynamic> json) =>
       _$PartnerFromJson(json);
+
+  StrapiImage? get image => imageData?.data;
+  List<StrapiBenefit>? get benefits => benefitsData?.data;
 }

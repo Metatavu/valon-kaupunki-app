@@ -13,5 +13,5 @@ Future<String> getUniqueDeviceId() async {
     return androidDeviceInfo.fingerprint;
   }
 
-  throw AssertionError("We should've run out of gas a long time ago...");
+  throw AssertionError("Unsupported platform");
 }

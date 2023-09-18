@@ -14,8 +14,15 @@ class Benefit {
   @JsonKey(name: "image")
   final ImageData? data;
 
-  const Benefit(this.title, this.benefitText, this.description, this.validFrom,
-      this.validTo, this.data, this.partner);
+  const Benefit(
+    this.title,
+    this.benefitText,
+    this.description,
+    this.validFrom,
+    this.validTo,
+    this.data,
+    this.partner,
+  );
 
   factory Benefit.fromJson(Map<String, dynamic> json) =>
       _$BenefitFromJson(json);

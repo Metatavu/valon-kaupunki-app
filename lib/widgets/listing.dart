@@ -1,25 +1,71 @@
 import "package:flutter/material.dart";
 
 class Listing extends StatelessWidget {
+  final int itemCount;
   final Widget? Function(BuildContext ctx, int index) builder;
   final Widget? filter;
+  final String emptyMessage;
+  final String? errorMessage;
 
-  const Listing({required this.builder, required this.filter, Key? key})
-      : super(key: key);
+  const Listing({
+    required this.itemCount,
+    required this.builder,
+    required this.emptyMessage,
+    this.filter,
+    this.errorMessage,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    if (errorMessage != null) {
+      return Center(
+        child: Text(
+          errorMessage.toString(),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      );
+    }
+
+    if (itemCount == 0 && filter != null) {
+      return ListView.builder(
+        itemCount: 1,
+        itemBuilder: (context, index) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: filter!,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 100),
+              child: Text(
+                emptyMessage,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      itemCount: itemCount,
       itemBuilder: (context, index) {
         if (index == 0 && filter != null) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: filter!,
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: filter!,
+              ),
+              builder(context, index)!
+            ],
           );
+        } else {
+          return builder(context, index);
         }
-
-        return builder(context, index - (filter != null ? 1 : 0));
       },
+      separatorBuilder: (context, index) => const SizedBox(height: 8.0),
     );
   }
 }

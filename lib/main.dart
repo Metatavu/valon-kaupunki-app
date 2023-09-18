@@ -4,29 +4,86 @@ import "package:flutter_map_tile_caching/flutter_map_tile_caching.dart";
 import "package:valon_kaupunki_app/preferences/preferences.dart";
 import "package:valon_kaupunki_app/screens/map_screen.dart";
 import "package:flutter_gen/gen_l10n/app_localizations.dart";
+import "package:valon_kaupunki_app/screens/welcome_screen.dart";
+import "package:devicelocale/devicelocale.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterMapTileCaching.initialise();
-  final instance =
-      FMTC.instance(const String.fromEnvironment("FMTC_STORE_NAME"));
+  final instance = FMTC.instance(
+    const String.fromEnvironment("FMTC_STORE_NAME"),
+  );
   await instance.manage.createAsync();
 
-  final mySystemTheme = SystemUiOverlayStyle.light
-      .copyWith(systemNavigationBarColor: Colors.black);
+  final mySystemTheme = SystemUiOverlayStyle.light.copyWith(
+    systemNavigationBarColor: Colors.black,
+  );
   SystemChrome.setSystemUIOverlayStyle(mySystemTheme);
 
   await Preferences.init();
-  runApp(const MyApp());
+
+  // Locale
+  var locale = Preferences.selectedLocale;
+  if (locale == null) {
+    final deviceLocales = await Devicelocale.preferredLanguages;
+
+    locale = switch (deviceLocales?.first) {
+      Locale(languageCode: "fi") => const Locale("fi"),
+      null => const Locale("fi"),
+      _ => const Locale("en")
+    };
+
+    await Preferences.setSelectedLocale(locale);
+  }
+
+  // App launched once
+  final appLaunchedOnce = Preferences.appLaunchedOnce;
+  if (!appLaunchedOnce) {
+    await Preferences.setAppLaunchedOnce(true);
+  }
+
+  runApp(ValonKaupunkiApp(
+    appLaunchedOnce: Preferences.appLaunchedOnce,
+    initialLocale: locale,
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ValonKaupunkiApp extends StatefulWidget {
+  final bool appLaunchedOnce;
+  final Locale initialLocale;
+
+  const ValonKaupunkiApp({
+    required this.appLaunchedOnce,
+    required this.initialLocale,
+    super.key,
+  });
+
+  @override
+  State<StatefulWidget> createState() => ValonKaupunkiAppState();
+
+  static ValonKaupunkiAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<ValonKaupunkiAppState>();
+}
+
+class ValonKaupunkiAppState extends State<ValonKaupunkiApp> {
+  Locale? _locale;
+
+  @override
+  void initState() {
+    super.initState();
+    _locale = widget.initialLocale;
+  }
+
+  void setLocale(Locale locale) async {
+    setState(() => _locale = locale);
+    await Preferences.setSelectedLocale(locale);
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: _locale,
       title: "Valon kaupunki",
       theme: ThemeData(
         highlightColor: Colors.transparent,
@@ -69,7 +126,7 @@ class MyApp extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const MapScreen(),
+      home: widget.appLaunchedOnce ? const MapScreen() : const WelcomeScreen(),
     );
   }
 }

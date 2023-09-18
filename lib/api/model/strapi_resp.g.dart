@@ -6,6 +6,17 @@ part of 'strapi_resp.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+BenefitData _$BenefitDataFromJson(Map<String, dynamic> json) => BenefitData(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiBenefit.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$BenefitDataToJson(BenefitData instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
 ImageData _$ImageDataFromJson(Map<String, dynamic> json) => ImageData(
       json['data'] == null
           ? null
@@ -67,6 +78,14 @@ StrapiAttraction _$StrapiAttractionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$StrapiAttractionToJson(StrapiAttraction instance) =>
     <String, dynamic>{
       'attributes': instance.attraction,
+      'id': instance.id,
+    };
+
+OnlyId _$OnlyIdFromJson(Map<String, dynamic> json) => OnlyId(
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$OnlyIdToJson(OnlyId instance) => <String, dynamic>{
       'id': instance.id,
     };
 
@@ -194,6 +213,94 @@ Map<String, dynamic> _$StrapiBenefitUserResponseToJson(
     <String, dynamic>{
       'data': instance.data,
       'meta': instance.meta,
+    };
+
+StrapiFavouriteUser _$StrapiFavouriteUserFromJson(Map<String, dynamic> json) =>
+    StrapiFavouriteUser(
+      FavouriteUser.fromJson(json['attributes'] as Map<String, dynamic>),
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$StrapiFavouriteUserToJson(
+        StrapiFavouriteUser instance) =>
+    <String, dynamic>{
+      'attributes': instance.favouriteUser,
+      'id': instance.id,
+    };
+
+StrapiFavouriteUserResponse _$StrapiFavouriteUserResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiFavouriteUserResponse(
+      (json['data'] as List<dynamic>)
+          .map((e) => StrapiFavouriteUser.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['meta'] == null
+          ? null
+          : StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiFavouriteUserResponseToJson(
+        StrapiFavouriteUserResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+StrapiCreateFavouriteUserResponse _$StrapiCreateFavouriteUserResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiCreateFavouriteUserResponse(
+      StrapiFavouriteUser.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiCreateFavouriteUserResponseToJson(
+        StrapiCreateFavouriteUserResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
+StrapiFavouritePartner _$StrapiFavouritePartnerFromJson(
+        Map<String, dynamic> json) =>
+    StrapiFavouritePartner(
+      FavouritePartner.fromJson(json['attributes'] as Map<String, dynamic>),
+      json['id'] as int,
+    );
+
+Map<String, dynamic> _$StrapiFavouritePartnerToJson(
+        StrapiFavouritePartner instance) =>
+    <String, dynamic>{
+      'attributes': instance.favouritePartner,
+      'id': instance.id,
+    };
+
+StrapiFavouritePartnerResponse _$StrapiFavouritePartnerResponseFromJson(
+        Map<String, dynamic> json) =>
+    StrapiFavouritePartnerResponse(
+      (json['data'] as List<dynamic>)
+          .map(
+              (e) => StrapiFavouritePartner.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['meta'] == null
+          ? null
+          : StrapiResponseMeta.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$StrapiFavouritePartnerResponseToJson(
+        StrapiFavouritePartnerResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+StrapiCreateFavouritePartnerResponse
+    _$StrapiCreateFavouritePartnerResponseFromJson(Map<String, dynamic> json) =>
+        StrapiCreateFavouritePartnerResponse(
+          StrapiFavouritePartner.fromJson(json['data'] as Map<String, dynamic>),
+        );
+
+Map<String, dynamic> _$StrapiCreateFavouritePartnerResponseToJson(
+        StrapiCreateFavouritePartnerResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
     };
 
 StrapiResponseMeta _$StrapiResponseMetaFromJson(Map<String, dynamic> json) =>
