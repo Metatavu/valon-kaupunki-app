@@ -53,9 +53,11 @@ class StrapiClient {
     return _instance!;
   }
 
-  Future<T> _getContentType<T>(StrapiContentType contentType,
-      [Map<String, String>? queryParams]) async {
-    final resp = await http.get(
+  Future<T> _getContentType<T>(
+    StrapiContentType contentType, [
+    Map<String, String>? queryParams,
+  ]) async {
+    final response = await http.get(
       Uri(
         scheme: "https",
         host: _strapiUrl,
@@ -67,13 +69,13 @@ class StrapiClient {
       },
     );
 
-    if (resp.statusCode != 200) {
+    if (response.statusCode != 200) {
       throw ApiException(
-        "failed to retrieve ${contentType.path()} list: ${resp.statusCode} - ${resp.body}",
+        "failed to retrieve ${contentType.path()} list: ${response.statusCode} - ${response.body}",
       );
     }
 
-    return contentType.fromJson(resp.body);
+    return contentType.fromJson(response.body);
   }
 
   Future<StrapiAttractionResponse> listAttractions({Locale? locale}) async {
@@ -107,21 +109,42 @@ class StrapiClient {
     return response.data.toList();
   }
 
-  Future<StrapiBenefitResponse> listBenefits() async =>
-      _getContentType<StrapiBenefitResponse>(
-        StrapiContentType.benefit,
-        {
-          "populate": "benefit,benefit.image,partner.image",
-          "pagination[pageSize]": "999",
-        },
-      );
+  Future<StrapiBenefitResponse> listBenefits({Locale? locale}) async {
+    var queryParams = {
+      "populate[image][fields][0]": "url",
+      "populate[image][fields][1]": "width",
+      "populate[image][fields][2]": "height",
+      "populate[partner]": "true",
+      "pagination[pageSize]": "999",
+    };
 
-  Future<List<StrapiBenefit>> listUsedBenefitsForDevice() async {
+    if (locale != null) {
+      queryParams["locale"] = locale.languageCode;
+    }
+
+    return _getContentType<StrapiBenefitResponse>(
+      StrapiContentType.benefit,
+      queryParams,
+    );
+  }
+
+  Future<List<StrapiBenefit>> listUsedBenefitsForDevice({
+    Locale? locale,
+  }) async {
     _deviceId ??= await getUniqueDeviceId();
+
+    var queryParams = {
+      "populate": "benefit",
+      "filters[deviceIdentifier][\$eq]": _deviceId!,
+    };
+
+    if (locale != null) {
+      queryParams["locale"] = locale.languageCode;
+    }
 
     final response = await _getContentType<StrapiBenefitUserResponse>(
       StrapiContentType.benefitUser,
-      {"populate": "benefit", "filters[deviceIdentifier][\$eq]": _deviceId!},
+      queryParams,
     );
 
     return response.data

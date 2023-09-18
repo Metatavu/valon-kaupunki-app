@@ -215,12 +215,18 @@ class _PartnerInfoOverlayState extends State<PartnerInfoOverlay> {
                   children: [
                     Stack(
                       children: [
-                        if (_imageUrl != null)
-                          HeightConstrainedImage.network(
-                            height: 200,
-                            radius: 00,
-                            url: _imageUrl!,
-                          ),
+                        _imageUrl != null
+                            ? HeightConstrainedImage.network(
+                                height: 200,
+                                radius: 00,
+                                url: _imageUrl!,
+                              )
+                            : Image.asset(
+                                Assets.valonKaupunkiBackground,
+                                height: 200,
+                                width: Size.infinite.width,
+                                fit: BoxFit.cover,
+                              ),
                         Positioned.fill(
                           bottom: 8,
                           right: 8,

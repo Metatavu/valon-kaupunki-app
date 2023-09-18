@@ -1,4 +1,8 @@
 import "package:flutter/material.dart";
+import "package:valon_kaupunki_app/assets.dart";
+import "package:valon_kaupunki_app/custom_theme_values.dart";
+
+import "height_constrained_image.dart";
 
 class SmallListCard extends StatelessWidget {
   final int index;
@@ -8,6 +12,7 @@ class SmallListCard extends StatelessWidget {
   final Widget proceedIcon;
   final void Function()? onTap;
   final Widget? secondaryLabel;
+  final String? imageUrl;
 
   const SmallListCard({
     required this.index,
@@ -17,6 +22,7 @@ class SmallListCard extends StatelessWidget {
     required this.proceedIcon,
     this.onTap,
     this.secondaryLabel,
+    this.imageUrl,
     Key? key,
   }) : super(key: key);
 
@@ -26,46 +32,44 @@ class SmallListCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      child: SizedBox(
-        height: 60.0,
-        child: Container(
-          height: 60,
-          decoration: const BoxDecoration(
-            color: Colors.black38,
+      child: Card(
+        color: const Color.fromARGB(0x77, 0x00, 0x00, 0x00),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: CustomThemeValues.appOrange,
+            width: 0.5,
           ),
-          padding: EdgeInsets.only(top: index == 0 ? 0.0 : 4.0),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: leftIcon,
+        ),
+        child: Column(
+          children: [
+            imageUrl != null
+                ? HeightConstrainedImage.network(
+                    height: 200,
+                    radius: 5,
+                    url: imageUrl!,
+                  )
+                : Image.asset(
+                    Assets.valonKaupunkiBackground,
+                    height: 200,
+                    width: Size.infinite.width,
+                    fit: BoxFit.cover,
+                  ),
+            ListTile(
+              leading: leftIcon,
+              title: Text(
+                title,
+                overflow: TextOverflow.fade,
+                style: theme.textTheme.bodyMedium!.copyWith(fontSize: 14.0),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style:
-                          theme.textTheme.bodyMedium!.copyWith(fontSize: 14.0),
-                    ),
-                    Text(
-                      text,
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+              subtitle: Text(
+                text,
+                overflow: TextOverflow.fade,
+                style: theme.textTheme.bodySmall,
               ),
-              const Spacer(),
-              if (secondaryLabel != null) secondaryLabel!,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: proceedIcon,
-              ),
-            ],
-          ),
+              trailing: proceedIcon,
+            ),
+          ],
         ),
       ),
     );

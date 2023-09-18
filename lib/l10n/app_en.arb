@@ -24,7 +24,7 @@
     "@enterButtonText": {
         "description": "Enter button text"
     },
-    "homeButtonText": "Home",
+    "homeButtonText": "Map",
     "@homeButtonText": {
         "description": "Home button text"
     },
@@ -56,9 +56,9 @@
     "@shoppingText": {
         "description": "Shopping text"
     },
-    "supplementaryShowsText": "Supplementary shows",
+    "supplementaryShowsText": "Side events",
     "@supplementaryShowsText": {
-        "description": "Supplementary shows text"
+        "description": "Side events text"
     },
     "jyvasParkkiText": "Jyväs-Parkki",
     "@jyvasParkkiText": {
@@ -100,7 +100,7 @@
     "@address": {
         "description": "Address label"
     },
-    "designer": "Designer",
+    "designer": "Designer/artist",
     "@designer": {
         "description": "Designer of attraction label"
     },
@@ -178,5 +178,21 @@
     "noItems": "No items found",
     "@noItems": {
         "description": "No items found text"
+    },
+    "useBenefit": "Use benefit?",
+    "@useBenefit": {
+        "description": "Use benefit dialog title"
+    },
+    "benefitMustBeUsedAtCounter": "Benefit must be used at the counter.",
+    "@benefitMustBeUsedAtCounter": {
+        "description": "Benefit must be used at the counter text"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Cancel text"
+    },
+    "use": "Use",
+    "@use": {
+        "description": "Use text"
     }
 }

@@ -170,6 +170,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     return SmallListCard(
       index: index,
+      imageUrl: attraction.image?.image.url,
       leftIcon: SvgPicture.asset(
         attraction.category == AttractionCategories.permanentAttraction
             ? Assets.attractionsIcon
@@ -216,6 +217,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     return SmallListCard(
       index: index,
+      imageUrl: partner.image?.image.url,
       leftIcon: getPartnerCategoryIcon(partner.category),
       title: getPartnerCategoryLabel(partner.category, _localizations),
       text: partner.name,
@@ -241,16 +243,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final confirmedBenefitUse = await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Käytä etu?"),
-            content: const Text("Etu on käytettävä kassalla."),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: CustomThemeValues.appOrange,
+                width: 0.5,
+              ),
+            ),
+            backgroundColor: Colors.black,
+            titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+            contentTextStyle: Theme.of(context).textTheme.bodySmall,
+            title: Text(_localizations.useBenefit),
+            content: Text(_localizations.benefitMustBeUsedAtCounter),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("Peruuta"),
+                style: TextButton.styleFrom(
+                  foregroundColor: CustomThemeValues.appOrange,
+                ),
+                child: Text(_localizations.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Käytä"),
+                style: TextButton.styleFrom(
+                  foregroundColor: CustomThemeValues.appOrange,
+                ),
+                child: Text(_localizations.use),
               ),
             ],
           ),
@@ -270,9 +288,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       }
 
       _usedBenefits.add(_benefits[index].id);
-    }
 
-    setState(() => _currentOverlay = null);
+      setState(() => _currentOverlay = null);
+    }
   }
 
   Widget? _benefitsBuilder(BuildContext context, int index) {
@@ -293,6 +311,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       validTo: benefit.validTo,
       partner: benefit.partner!.data!.partner,
       currentLocation: _currentLocation,
+      alreadyUsed: alreadyUsed,
       readMore: alreadyUsed
           ? null
           : () => setState(
@@ -303,7 +322,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   onClaim: () => handleClaimBenefit(benefit, index),
                 ),
               ),
-      alreadyUsed: alreadyUsed,
     );
   }
 
@@ -590,11 +608,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         }).toList(),
       );
 
-      final usedBenefitsResponse = await _client.listUsedBenefitsForDevice();
+      final usedBenefitsResponse = await _client.listUsedBenefitsForDevice(
+        locale: locale,
+      );
       _usedBenefits.clear();
       _usedBenefits.addAll(usedBenefitsResponse.map((e) => e.id));
 
-      final benefitsResponse = await _client.listBenefits();
+      final benefitsResponse = await _client.listBenefits(
+        locale: locale,
+      );
       _benefits.clear();
       _benefits.addAll(benefitsResponse.data);
 

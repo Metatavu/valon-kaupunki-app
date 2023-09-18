@@ -6,7 +6,7 @@
     "introductionTextLink": "Valon kaupungista nettisivuilta",
     "introductionTextPart2": "Syksyn Valon kaupunki -tapahtuma järjestetään 28.9.-7.10.2023",
     "enterButtonText": "Astu sisään!",
-    "homeButtonText": "Koti",
+    "homeButtonText": "Kartta",
     "attractionsButtonText": "Kohteet",
     "benefitsButtonText": "Edut",
     "partnersButtonText": "Oheistapahtumat & kumppanit",
@@ -23,7 +23,7 @@
     "category": "Kategoria",
     "distanceToTarget": "Etäisyys kohteeseen",
     "address": "Osoite",
-    "designer": "Valaistuksen suunnittelija",
+    "designer": "Suunnittelija/taiteilija",
     "link": "Linkki",
     "errorLoadingImageText": "Virhe ladattaessa kuvaa",
     "readMoreAbout": "Lue lisää kohteessa",
@@ -38,5 +38,9 @@
     "sortingClosest": "Lähimpänä",
     "downloadInterrupted": "Äänitiedoston lataaminen keskeytettiin",
     "showWelcomePage": "Tietoja Valon kaupungista",
-    "noItems": "Ei tuloksia"
+    "noItems": "Ei tuloksia",
+    "useBenefit": "Käytä etu?",
+    "benefitMustBeUsedAtCounter": "Etu on käytettävä kassalla.",
+    "cancel": "Peruuta",
+    "use": "Käytä"
 }
