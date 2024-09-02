@@ -19,8 +19,8 @@ class FilterButton extends StatelessWidget {
     required this.onClick,
     this.onMarkerFilterUpdate,
     this.noPad = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

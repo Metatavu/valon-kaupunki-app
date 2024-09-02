@@ -31,7 +31,6 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-.fvm/flutter_sdk
 
 # Symbolication related
 app.*.symbols
@@ -49,3 +48,6 @@ app.*.map.json
 .local.env
 .staging.env
 .production.env
+
+# FVM Version Cache
+.fvm/

@@ -9,7 +9,7 @@ import "package:flutter_gen/gen_l10n/app_localizations.dart";
 import "map_screen.dart";
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _WelcomeScreenState();

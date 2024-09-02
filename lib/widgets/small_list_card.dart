@@ -23,8 +23,8 @@ class SmallListCard extends StatelessWidget {
     this.onTap,
     this.secondaryLabel,
     this.imageUrl,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

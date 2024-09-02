@@ -9,11 +9,10 @@ import "package:devicelocale/devicelocale.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterMapTileCaching.initialise();
-  final instance = FMTC.instance(
-    const String.fromEnvironment("FMTC_STORE_NAME"),
-  );
-  await instance.manage.createAsync();
+  await FMTCObjectBoxBackend().initialise();
+  await const FMTCStore(
+    String.fromEnvironment("FMTC_STORE_NAME"),
+  ).manage.create();
 
   final mySystemTheme = SystemUiOverlayStyle.light.copyWith(
     systemNavigationBarColor: Colors.black,

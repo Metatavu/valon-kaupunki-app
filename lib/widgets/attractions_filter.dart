@@ -18,8 +18,8 @@ class AttractionsFilter extends StatefulWidget {
     required this.permanentAttractionsState,
     required this.eventLightArtPiecesState,
     required this.onMarkerFilterUpdate,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _AttractionsFilterState();
