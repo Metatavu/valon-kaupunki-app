@@ -8,7 +8,7 @@
     "@appName": {
         "description": "Application name"
     },
-    "introductionTextPart1": "With this application you may find information about Jyväskylä''s permanent lighting attractions, artworks related to the event and about our partners. Read more about Valon kaupunki from the ",
+    "introductionTextPart1": "With this application you may find information about Jyväskylä's permanent lighting attractions, artworks related to the event and about our partners. Read more about Valon kaupunki from the ",
     "@introductionTextPart1": {
         "description": "Welcome screen text, first component before link"
     },
@@ -16,7 +16,7 @@
     "@introductionTextLink": {
         "description": "Welcome screen text, link part"
     },
-    "introductionTextPart2": "This autumn''s Valon kaupunki event takes place at 28.9.-7.10.2023",
+    "introductionTextPart2": "This autumn's Valon kaupunki event takes place at Thu-Sat 26.-28.9.2024",
     "@introductionTextPart2": {
         "description": "Welcome screen text, after link"
     },
