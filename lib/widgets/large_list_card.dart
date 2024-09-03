@@ -142,8 +142,8 @@ class LargeListCard extends StatelessWidget {
                       style: _readMore == null
                           ? theme.outlinedButtonTheme.style!.copyWith(
                               backgroundColor:
-                                  const MaterialStatePropertyAll(Colors.grey),
-                              side: const MaterialStatePropertyAll(
+                                  const WidgetStatePropertyAll(Colors.grey),
+                              side: const WidgetStatePropertyAll(
                                 BorderSide(style: BorderStyle.none),
                               ),
                             )

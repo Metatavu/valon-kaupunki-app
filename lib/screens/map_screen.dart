@@ -1110,25 +1110,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     },
                     style: ButtonStyle(
                       visualDensity: VisualDensity.compact,
-                      side: MaterialStateBorderSide.resolveWith(
+                      side: WidgetStateBorderSide.resolveWith(
                         (states) => BorderSide(
                           width: 1.0,
                           color: CustomThemeValues.appOrange,
                         ),
                       ),
-                      backgroundColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) =>
-                            states.contains(MaterialState.selected)
+                      backgroundColor: WidgetStateColor.resolveWith(
+                        (Set<WidgetState> states) =>
+                            states.contains(WidgetState.selected)
                                 ? CustomThemeValues.appOrange
                                 : Colors.transparent,
                       ),
-                      foregroundColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) =>
-                            states.contains(MaterialState.selected)
+                      foregroundColor: WidgetStateColor.resolveWith(
+                        (Set<WidgetState> states) =>
+                            states.contains(WidgetState.selected)
                                 ? Colors.black
                                 : Colors.white,
                       ),
-                      shape: MaterialStateProperty.all(
+                      shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
@@ -1231,7 +1231,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _currentOverlay != null,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) setState(() => _currentOverlay = null);
       },
       child: RefreshIndicator(

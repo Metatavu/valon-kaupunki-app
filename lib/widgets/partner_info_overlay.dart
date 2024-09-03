@@ -136,7 +136,8 @@ class _PartnerInfoOverlayState extends State<PartnerInfoOverlay> {
     if (_imageUrl != null && _showFullScreenImage) {
       return PopScope(
         canPop: false,
-        onPopInvoked: (didPop) => setState(() => _showFullScreenImage = false),
+        onPopInvokedWithResult: (didPop, result) =>
+            setState(() => _showFullScreenImage = false),
         child: GestureDetector(
           onVerticalDragCancel: () =>
               setState(() => _showFullScreenImage = false),
