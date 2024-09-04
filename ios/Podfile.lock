@@ -13,10 +13,10 @@ PODS:
     - Toast
   - geolocator_apple (1.2.0):
     - Flutter
-  - ObjectBox (1.9.2)
+  - ObjectBox (2.0.0)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 1.9.2)
+    - ObjectBox (= 2.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -88,8 +88,8 @@ SPEC CHECKSUMS:
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
-  ObjectBox: 46757a559717ab49b1cc0612eaff82b705acf394
-  objectbox_flutter_libs: 103f3a273b594cb664255086a386740bc179f97d
+  ObjectBox: f5319bd9ad2ea960796eff7227e86471867e9ef0
+  objectbox_flutter_libs: c7748f6c6fda47d22f15c8062fb8208063fd948a
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
