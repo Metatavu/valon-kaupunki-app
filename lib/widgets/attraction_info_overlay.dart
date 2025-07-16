@@ -242,11 +242,10 @@ class _AttractionInfoOverlayState extends State<AttractionInfoOverlay> {
     _localizations = AppLocalizations.of(context)!;
 
     if (_imageUrl != null && _showFullScreenImage) {
-      return WillPopScope(
-        onWillPop: () async {
-          setState(() => _showFullScreenImage = false);
-          return false;
-        },
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) =>
+            setState(() => _showFullScreenImage = false),
         child: GestureDetector(
           onVerticalDragCancel: () =>
               setState(() => _showFullScreenImage = false),

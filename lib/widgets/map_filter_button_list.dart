@@ -35,8 +35,8 @@ class MapFilterButtonList extends StatefulWidget {
     required this.shoppingState,
     required this.supplementaryShowsState,
     required this.jyvasParkkiState,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _MapFilterButtonListState();

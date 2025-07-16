@@ -13,8 +13,8 @@ class Listing extends StatelessWidget {
     required this.emptyMessage,
     this.filter,
     this.errorMessage,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

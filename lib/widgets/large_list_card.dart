@@ -26,15 +26,14 @@ class LargeListCard extends StatelessWidget {
     required void Function()? readMore,
     required this.alreadyUsed,
     LatLng? currentLocation,
-    Key? key,
+    super.key,
   })  : _imageUrl = imageUrl,
         _couponText = couponText,
         _couponBenefit = couponBenefit,
         _couponValidTo = validTo,
         _partner = partner,
         _currentLocation = currentLocation,
-        _readMore = readMore,
-        super(key: key);
+        _readMore = readMore;
 
   @override
   Widget build(BuildContext context) {
@@ -143,8 +142,8 @@ class LargeListCard extends StatelessWidget {
                       style: _readMore == null
                           ? theme.outlinedButtonTheme.style!.copyWith(
                               backgroundColor:
-                                  const MaterialStatePropertyAll(Colors.grey),
-                              side: const MaterialStatePropertyAll(
+                                  const WidgetStatePropertyAll(Colors.grey),
+                              side: const WidgetStatePropertyAll(
                                 BorderSide(style: BorderStyle.none),
                               ),
                             )

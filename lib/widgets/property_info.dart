@@ -8,13 +8,13 @@ class PropertyInfo extends StatelessWidget {
   final void Function()? onTap;
 
   const PropertyInfo({
-    Key? key,
+    super.key,
     required this.leading,
     required this.title,
     required this.text,
     required this.trailing,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

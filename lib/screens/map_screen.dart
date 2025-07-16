@@ -70,7 +70,7 @@ enum _Section {
 }
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key}) : super(key: key);
+  const MapScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -112,7 +112,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   bool _dataFetchFailed = false;
 
   LatLng? _lastTapTarget;
-  double _zoomLevel = 12.0;
 
   bool _showPermanentAttractions = Preferences.showPermanentAttractions;
   bool _showEventLightArtPieces = Preferences.showEventLightArtPieces;
@@ -838,10 +837,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _handleMapMarkerTap(_MarkerData markerData) async {
-    if (_mapController.center != markerData.point) {
-      var zoom = _mapController.zoom < _animTargetZoom
+    if (_mapController.camera.center != markerData.point) {
+      var zoom = _mapController.camera.zoom < _animTargetZoom
           ? _animTargetZoom
-          : _mapController.zoom;
+          : _mapController.camera.zoom;
       await _animMapController.animateTo(
         dest: markerData.point,
         zoom: zoom,
@@ -882,12 +881,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _handleMapEvent(MapEvent event) {
-    final mapRotationMultiplier =
-        _mapController.rotation == 360.0 ? 0.0 : _mapController.rotation;
+    final mapRotationMultiplier = _mapController.camera.rotation == 360.0
+        ? 0.0
+        : _mapController.camera.rotation;
 
     setState(() {
       _compassAngle = (pi / 180) * mapRotationMultiplier;
-      _zoomLevel = _mapController.zoom;
     });
   }
 
@@ -907,25 +906,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   List<Widget> _buildMapContent() {
-    final instance = FMTC.instance(
-      const String.fromEnvironment("FMTC_STORE_NAME"),
-    );
-    final provider = instance.getTileProvider();
-
     return [
       FlutterMap(
         mapController: _animMapController.mapController,
         options: MapOptions(
-          center: _lastTapTarget ?? const LatLng(62.24147, 25.72088),
-          zoom: _zoomLevel,
+          initialCenter: _lastTapTarget ?? const LatLng(62.24147, 25.72088),
+          initialZoom: 12,
           maxZoom: 18,
           minZoom: 9,
           onMapEvent: _handleMapEvent,
+          backgroundColor: Colors.black,
         ),
         children: [
           TileLayer(
-            tileProvider: provider,
-            backgroundColor: Colors.black,
+            tileProvider:
+                const FMTCStore(String.fromEnvironment("FMTC_STORE_NAME"))
+                    .getTileProvider(),
             urlTemplate: const String.fromEnvironment("MAP_TILE_URL_TEMPLATE"),
             userAgentPackageName: "fi.metatavu.valon-kaupunki-app",
           ),
@@ -942,7 +938,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     point: data.point,
                     height: 80,
                     width: 80,
-                    builder: (context) => GestureDetector(
+                    child: GestureDetector(
                       child: _resolveMarkerIcon(data),
                       onTap: () => _handleMapMarkerTap(data),
                     ),
@@ -1000,10 +996,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       IconButton(
                         icon: Icon(
                           Icons.location_on,
-                          color:
-                              _mapController.bounds!.contains(_currentLocation!)
-                                  ? Colors.white
-                                  : CustomThemeValues.appOrange,
+                          color: _mapController.camera.visibleBounds
+                                  .contains(_currentLocation!)
+                              ? Colors.white
+                              : CustomThemeValues.appOrange,
                         ),
                         iconSize: 36.0,
                         onPressed: () {
@@ -1114,25 +1110,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     },
                     style: ButtonStyle(
                       visualDensity: VisualDensity.compact,
-                      side: MaterialStateBorderSide.resolveWith(
+                      side: WidgetStateBorderSide.resolveWith(
                         (states) => BorderSide(
                           width: 1.0,
                           color: CustomThemeValues.appOrange,
                         ),
                       ),
-                      backgroundColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) =>
-                            states.contains(MaterialState.selected)
+                      backgroundColor: WidgetStateColor.resolveWith(
+                        (Set<WidgetState> states) =>
+                            states.contains(WidgetState.selected)
                                 ? CustomThemeValues.appOrange
                                 : Colors.transparent,
                       ),
-                      foregroundColor: MaterialStateColor.resolveWith(
-                        (Set<MaterialState> states) =>
-                            states.contains(MaterialState.selected)
+                      foregroundColor: WidgetStateColor.resolveWith(
+                        (Set<WidgetState> states) =>
+                            states.contains(WidgetState.selected)
                                 ? Colors.black
                                 : Colors.white,
                       ),
-                      shape: MaterialStateProperty.all(
+                      shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),
@@ -1231,19 +1227,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    if (_currentOverlay != null) {
-      setState(() => _currentOverlay = null);
-      return false;
-    }
-
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: _currentOverlay != null,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) setState(() => _currentOverlay = null);
+      },
       child: RefreshIndicator(
         backgroundColor: const Color.fromARGB(0x7F, 0x1B, 0x26, 0x37),
         color: Colors.white,

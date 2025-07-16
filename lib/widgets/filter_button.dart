@@ -19,18 +19,18 @@ class FilterButton extends StatelessWidget {
     required this.onClick,
     this.onMarkerFilterUpdate,
     this.noPad = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     var style = theme.outlinedButtonTheme.style!.copyWith(
-      padding: const MaterialStatePropertyAll(
+      padding: const WidgetStatePropertyAll(
         EdgeInsets.only(left: 8.0, right: 8.0),
       ),
-      side: MaterialStatePropertyAll(theme.outlinedButtonTheme.style!.side!
+      side: WidgetStatePropertyAll(theme.outlinedButtonTheme.style!.side!
           .resolve({})!.copyWith(color: color)),
     );
 
@@ -40,7 +40,7 @@ class FilterButton extends StatelessWidget {
 
     if (state) {
       style = style.copyWith(
-        backgroundColor: MaterialStatePropertyAll(color),
+        backgroundColor: WidgetStatePropertyAll(color),
       );
 
       textStyle = textStyle.copyWith(
